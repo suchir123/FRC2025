@@ -1,0 +1,52 @@
+{
+  "version": 1.0,
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 2.0,
+        "y": 5.521063899270655
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 2.05,
+        "y": 5.521063899270655
+      },
+      "isLocked": false,
+      "linkedName": "midpoint shooting location"
+    },
+    {
+      "anchor": {
+        "x": 2.30385717914293,
+        "y": 5.521063899270655
+      },
+      "prevControl": {
+        "x": 2.25385717914293,
+        "y": 5.521063899270655
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": "middle close note end location"
+    }
+  ],
+  "rotationTargets": [],
+  "constraintZones": [],
+  "eventMarkers": [],
+  "globalConstraints": {
+    "maxVelocity": 2.0,
+    "maxAcceleration": 1.5,
+    "maxAngularVelocity": 540.0,
+    "maxAngularAcceleration": 720.0
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": 0,
+    "rotateFast": false
+  },
+  "reversed": false,
+  "folder": "arbitrary location to note",
+  "previewStartingState": {
+    "rotation": 0,
+    "velocity": 0
+  },
+  "useDefaultConstraints": true
+}
