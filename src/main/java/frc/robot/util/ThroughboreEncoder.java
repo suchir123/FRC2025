@@ -4,6 +4,9 @@ import edu.wpi.first.wpilibj.CounterBase.EncodingType;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.Encoder;
 
+/**
+ * DO NOT USE BROKEN TODO: FIX 
+ */
 public class ThroughboreEncoder {
     private final DutyCycleEncoder throughboreAbsoluteEncoder;
     private final Encoder throughboreRelativeEncoder;
@@ -13,7 +16,7 @@ public class ThroughboreEncoder {
         this.throughboreAbsoluteEncoder = new DutyCycleEncoder(encoderAbsPort);
         this.throughboreRelativeEncoder = new Encoder(encoderAPort, encoderBPort, false, EncodingType.k4X);
 
-        this.throughboreAbsoluteEncoder.setPositionOffset(absoluteOffset);
+        // this.throughboreAbsoluteEncoder.setPositionOffset(absoluteOffset);
         this.reversed = reverse;
 
         System.out.println(this.throughboreAbsoluteEncoder.isConnected());
@@ -28,6 +31,6 @@ public class ThroughboreEncoder {
     }
 
     public double getAbsoluteEncoderValue() {
-        return (reversed ? -1 : 1) * (this.throughboreAbsoluteEncoder.getAbsolutePosition() - this.throughboreAbsoluteEncoder.getPositionOffset()) * 360;
+        return -1;// (reversed ? -1 : 1) * (this.throughboreAbsoluteEncoder.getAbsolutePosition() - this.throughboreAbsoluteEncoder.getPositionOffset()) * 360;
     }
 }

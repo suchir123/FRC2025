@@ -6,11 +6,6 @@ package frc.robot.subsystems.swerve;
 
 import java.util.ArrayList;
 
-import com.pathplanner.lib.auto.AutoBuilder;
-import com.pathplanner.lib.util.GeometryUtil;
-import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
-import com.pathplanner.lib.util.ReplanningConfig;
-
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.Nat;
@@ -129,17 +124,18 @@ public class DriveTrainSubsystem extends SubsystemBase {
         SmartDashboard.putData("estimated field", estimatedField);
 
         // this.setPose(new Pose2d(1.7, 5.50, RobotGyro.getRotation2d()));
-        this.setPose(GeometryUtil.flipFieldPose(new Pose2d(1.37, 5.52, new Rotation2d())));
+        // this.setPose(GeometryUtil.flipFieldPose(new Pose2d(1.37, 5.52, new Rotation2d())));
 
-        AutoBuilder.configureHolonomic(
+        /*
+        AutoBuilder.configure(
                 this::getPose,
                 this::setPose,
                 this::getRobotRelativeChassisSpeeds,
-                (chassisSpeeds) -> this.consumeRawModuleStates(kinematics.toSwerveModuleStates(chassisSpeeds)),
+                (chassisSpeeds, feedForwards) -> this.consumeRawModuleStates(kinematics.toSwerveModuleStates(chassisSpeeds)),
                 new HolonomicPathFollowerConfig(2.00, RobotConstants.LEG_LENGTHS_M * RobotConstants.LEG_LENGTHS_M, new ReplanningConfig(true, true, 1, 0.1)),
                 () -> !Util.onBlueTeam(),
                 this
-        );
+        );*/
     }
 
     /**
@@ -149,7 +145,7 @@ public class DriveTrainSubsystem extends SubsystemBase {
         if(Util.onBlueTeam()) {
             this.setPose(new Pose2d(1.35, 5.50, new Rotation2d()));
         } else {
-            this.setPose(GeometryUtil.flipFieldPose(new Pose2d(1.35, 5.50, new Rotation2d())));
+            // this.setPose(GeometryUtil.flipFieldPose(new Pose2d(1.35, 5.50, new Rotation2d())));
         }
     }
 

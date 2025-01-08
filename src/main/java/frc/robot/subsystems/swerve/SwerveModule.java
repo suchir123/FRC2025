@@ -5,12 +5,17 @@
 package frc.robot.subsystems.swerve;
 
 import com.ctre.phoenix6.hardware.CANcoder;
-import com.revrobotics.CANSparkBase.ControlType;
-import com.revrobotics.CANSparkBase.IdleMode;
-import com.revrobotics.CANSparkLowLevel.MotorType;
-import com.revrobotics.CANSparkMax;
+import com.revrobotics.spark.SparkClosedLoopController;
+import com.revrobotics.spark.SparkMax;
+import com.revrobotics.spark.SparkBase.ControlType;
+import com.revrobotics.spark.SparkBase.PersistMode;
+import com.revrobotics.spark.SparkLowLevel.MotorType;
+import com.revrobotics.spark.config.SparkMaxConfig;
+import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
+import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.RelativeEncoder;
-import com.revrobotics.SparkPIDController;
+import com.revrobotics.spark.SparkBase.ResetMode;
+
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
@@ -50,9 +55,11 @@ import frc.robot.util.NetworkTablesUtil;
  */
 public class SwerveModule {
     private static final double SWERVE_ROTATION_OPTIMIZATION_THRESH_DEG = 90;
+    private final SparkMax driveMotor;
+    private final SparkMax turnMotor;
 
-    private final CANSparkMax driveMotor;
-    private final CANSparkMax turnMotor;
+    private final SparkClosedLoopController drivePIDController;
+    private final SparkClosedLoopController turnPIDController;
 
     private final RelativeEncoder driveEncoder;
     private final RelativeEncoder turnEncoder; // + power = CCW, - power = CW
@@ -60,9 +67,6 @@ public class SwerveModule {
     private final CANcoder turnAbsoluteEncoder;
 
     private final String name;
-
-    private final SparkPIDController drivePIDController;
-    private final SparkPIDController turnPIDController;
 
     private final GenericPublisher rotationPublisher;
 
@@ -75,8 +79,8 @@ public class SwerveModule {
      * @param invertTurnMotor     Whether to invert the turn motor. This should be the same across all modules.
      */
     public SwerveModule(int driveMotorCANID, int turningMotorCANID, int turningEncoderCANID, String name, boolean invertDriveMotor, boolean invertTurnMotor) {
-        driveMotor = new CANSparkMax(driveMotorCANID, MotorType.kBrushless);
-        turnMotor = new CANSparkMax(turningMotorCANID, MotorType.kBrushless);
+        driveMotor = new SparkMax(driveMotorCANID, MotorType.kBrushless);
+        turnMotor = new SparkMax(turningMotorCANID, MotorType.kBrushless);
         this.name = name;
         driveEncoder = driveMotor.getEncoder();
         turnEncoder = turnMotor.getEncoder();
@@ -84,8 +88,8 @@ public class SwerveModule {
 
         rotationPublisher = NetworkTablesUtil.getPublisher(NetworkTablesConstants.MAIN_TABLE_NAME, name + "_rot", NetworkTableType.kDouble);
 
-        driveMotor.setInverted(invertDriveMotor);
-        turnMotor.setInverted(invertTurnMotor);
+        // driveMotor.setInverted(invertDriveMotor);
+        // turnMotor.setInverted(invertTurnMotor);
 
         // this.driveMotor.setSmartCurrentLimit(30);
         // this.driveMotor.setSecondaryCurrentLimit(100);
@@ -96,11 +100,32 @@ public class SwerveModule {
         // Circumference / Gear Ratio (L2 of MK4i). This evaluates to ~1.86 inches/rotation, which is close to experimental values.
         // We are therefore using the calculated value. (Thanks Ivan)
         // Since everything else is in meters, convert to meters.
-        this.driveEncoder.setPositionConversionFactor(Units.inchesToMeters(4 * Math.PI / 6.75));
-        this.driveEncoder.setVelocityConversionFactor(Units.inchesToMeters(4 * Math.PI / 6.75) / 60);
+        //this.driveEncoder.setPositionConversionFactor(Units.inchesToMeters(4 * Math.PI / 6.75));
+        //this.driveEncoder.setVelocityConversionFactor(Units.inchesToMeters(4 * Math.PI / 6.75) / 60);
 
-        this.turnEncoder.setPositionConversionFactor(150d / 7d * Math.PI / 180 / 1.28); // ???
-        this.turnEncoder.setVelocityConversionFactor(150d / 7d / 60d * Math.PI / 180 / 1.28);
+        SparkMaxConfig driveConfig = new SparkMaxConfig();
+        SparkMaxConfig turnConfig = new SparkMaxConfig();
+        driveConfig
+            .idleMode(IdleMode.kCoast)
+            .smartCurrentLimit(40)
+            .voltageCompensation(10)
+            .inverted(invertDriveMotor);
+
+        turnConfig
+            .smartCurrentLimit(40)
+            .voltageCompensation(10)
+            .inverted(invertTurnMotor);
+
+        driveConfig.encoder
+            .positionConversionFactor(Units.inchesToMeters(4 * Math.PI / 6.75))
+            .velocityConversionFactor(Units.inchesToMeters(4 * Math.PI / 6.75) / 60);
+
+        turnConfig.encoder
+            .positionConversionFactor(150d / 7d * Math.PI / 180 / 1.28)
+            .velocityConversionFactor(150d / 7d / 60d * Math.PI / 180 / 1.28);
+
+        //this.turnEncoder.setPositionConversionFactor(150d / 7d * Math.PI / 180 / 1.28); // ???
+        //this.turnEncoder.setVelocityConversionFactor(150d / 7d / 60d * Math.PI / 180 / 1.28);
 
         this.driveEncoder.setPosition(0);
         // this.turnEncoder.setPosition(0);
@@ -115,23 +140,36 @@ public class SwerveModule {
 
         this.turnEncoder.setPosition(this.getTurnAbsolutelyAbsolutePosition());
 
-        this.driveMotor.enableVoltageCompensation(10);
-        this.drivePIDController = this.driveMotor.getPIDController();
+        // this.driveMotor.enableVoltageCompensation(10);
+        this.drivePIDController = this.driveMotor.getClosedLoopController();
 
-        this.drivePIDController.setP(0.22);
-        this.drivePIDController.setI(0);
-        this.drivePIDController.setD(0.2);
-        this.drivePIDController.setFF(0.3);
-        this.drivePIDController.setOutputRange(-1, 1);
+        driveConfig.closedLoop
+            .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
+            .pidf(0.22, 0, 0.2, 0.3)
+            .outputRange(-1, 1);
 
-        this.driveMotor.enableVoltageCompensation(10);
-        this.turnMotor.enableVoltageCompensation(10);
-        this.turnPIDController = this.turnMotor.getPIDController();
+        //this.drivePIDController.setP(0.22);
+        //this.drivePIDController.setI(0);
+        //this.drivePIDController.setD(0.2);
+        //this.drivePIDController.setFF(0.3);
+        //this.drivePIDController.setOutputRange(-1, 1);
 
-        this.driveMotor.setSmartCurrentLimit(40);
-        this.turnMotor.setSmartCurrentLimit(40);
-        this.driveMotor.setIdleMode(IdleMode.kCoast);
+        //this.driveMotor.enableVoltageCompensation(10);
+        //this.turnMotor.enableVoltageCompensation(10);
+        this.turnPIDController = this.turnMotor.getClosedLoopController();
 
+        //this.driveMotor.setSmartCurrentLimit(40);
+        //this.turnMotor.setSmartCurrentLimit(40);
+        //this.driveMotor.setIdleMode(IdleMode.kCoast);
+
+        turnConfig.closedLoop
+            .positionWrappingEnabled(true)
+            .positionWrappingMinInput(-Math.PI)
+            .positionWrappingMaxInput(Math.PI)
+            .pidf(0.3, 0, 0, 0)
+            .outputRange(-1, 1);
+
+        /*
         this.turnPIDController.setPositionPIDWrappingEnabled(true);
         this.turnPIDController.setPositionPIDWrappingMinInput(-Math.PI);
         this.turnPIDController.setPositionPIDWrappingMaxInput(Math.PI);
@@ -140,8 +178,10 @@ public class SwerveModule {
         this.turnPIDController.setI(0);
         this.turnPIDController.setD(0);
         this.turnPIDController.setFF(0);
-        this.turnPIDController.setOutputRange(-1, 1);
+        this.turnPIDController.setOutputRange(-1, 1);*/
 
+        driveMotor.configure(driveConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+        turnMotor.configure(turnConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
         //System.out.println(this.name + " inverts drive: " + this.driveMotor.getInverted() + " turn: " + this.turnMotor.getInverted());
         // System.out.println(this.name + " abs pos " + RobotMathUtil.roundNearestHundredth(this.turnAbsoluteEncoder.getAbsolutePosition().getValueAsDouble()));

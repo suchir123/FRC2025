@@ -1,8 +1,5 @@
 package frc.robot;
 
-import com.pathplanner.lib.auto.AutoBuilder;
-import com.pathplanner.lib.auto.NamedCommands;
-
 import edu.wpi.first.networktables.GenericPublisher;
 import edu.wpi.first.networktables.NetworkTableType;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -42,7 +39,7 @@ public class RobotContainer {
     private final PowerHandler powerHandler = new PowerHandler();
     private final AprilTagHandler aprilTagHandler = new AprilTagHandler();
 
-    private final SendableChooser<Command> autonChooser;
+    //private final SendableChooser<Command> autonChooser;
 
     public RobotContainer() {
         this.driveTrain = Util.createIfFlagElseNull(() -> new DriveTrainSubsystem(aprilTagHandler), Flags.DriveTrain.IS_ATTACHED);
@@ -55,10 +52,10 @@ public class RobotContainer {
         ColorSensor.poke();
 
         if(Flags.DriveTrain.IS_ATTACHED) {
-            this.autonChooser = AutoBuilder.buildAutoChooser();
-            SmartDashboard.putData("choose your auto", this.autonChooser);
+            //this.autonChooser = AutoBuilder.buildAutoChooser();
+            //SmartDashboard.putData("choose your auto", this.autonChooser);
         } else {
-            this.autonChooser = null;
+            //this.autonChooser = null;
         }
 
         NetworkTablesUtil.getConnections();
@@ -100,7 +97,7 @@ public class RobotContainer {
     }
 
     public Command getAutonomousCommand() {
-        return this.autonChooser.getSelected();
+        return new InstantCommand(); //this.autonChooser.getSelected();
     }
 
     public void onTeleopPeriodic() {
