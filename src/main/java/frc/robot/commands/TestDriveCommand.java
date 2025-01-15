@@ -23,11 +23,11 @@ public class TestDriveCommand extends Command {
 
     @Override
     public void execute() {
-        this.driveTrain.directDriveSpeed(this.joystick.getLeftVerticalMovement());
+        this.driveTrain.directDriveSpeed(-this.joystick.getLeftVerticalMovement());
         this.driveTrain.directTurnSpeed(this.joystick.getRightHorizontalMovement());
 
         for (SwerveModule module : this.driveTrain.swerveModules) {
-            System.out.println("name: " + module.getName() + ", abs abs: " + Util.nearestHundredth(module.getTurnAbsolutelyAbsolutePosition()) + ", abs: " + Util.nearestHundredth(module.getTurnAbsEncoderPosition()) + ", rel: " + Util.nearestHundredth(module.getTurnRelativePosition()));
+           System.out.println("name: " + module.getName() + ", abs abs: " + Util.nearestHundredth(module.getTurnAbsolutelyAbsolutePosition()) + ", abs: " + Util.nearestHundredth(module.getTurnAbsEncoderPosition()) + ", rel: " + Util.nearestHundredth(module.getTurnRelativePosition()));
         }
     }
 

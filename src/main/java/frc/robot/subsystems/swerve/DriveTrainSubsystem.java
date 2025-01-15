@@ -40,7 +40,6 @@ import frc.robot.Constants.RobotConstants;
 import frc.robot.Flags;
 import frc.robot.commands.ManualDriveCommand;
 import frc.robot.subsystems.staticsubsystems.RobotGyro;
-import frc.robot.util.AprilTagHandler;
 import frc.robot.util.NetworkTablesUtil;
 import frc.robot.util.Util;
 
@@ -114,9 +113,9 @@ public class DriveTrainSubsystem extends SubsystemBase {
     DoublePublisher bLAmp = NetworkTablesUtil.MAIN_ROBOT_TABLE.getDoubleTopic("bl_amp").publish();
     DoublePublisher bRAmp = NetworkTablesUtil.MAIN_ROBOT_TABLE.getDoubleTopic("br_amp").publish();
 
-    private final AprilTagHandler aprilTagHandler;
-    public DriveTrainSubsystem(AprilTagHandler aprilTagHandler) {
-        this.aprilTagHandler = aprilTagHandler;
+    // private final AprilTagHandler aprilTagHandler;
+    public DriveTrainSubsystem(/*AprilTagHandler aprilTagHandler*/) {
+        // this.aprilTagHandler = aprilTagHandler;
 
         RobotGyro.resetGyroAngle();
 
@@ -399,35 +398,35 @@ public class DriveTrainSubsystem extends SubsystemBase {
      * Updates the field relative position of the robot using vision measurements.
      */
     public void updateOdometryWithJetsonVision() {
-        ArrayList<AprilTagHandler.RobotPoseAndTagDistance> tags = aprilTagHandler.getJetsonAprilTagPoses();
-        double timestamp = Timer.getFPGATimestamp() - 0.5;
-        Pose2d robotPose = this.getPose();
-        Rotation2d robotRotation = RobotGyro.getRotation2d();
-        for(AprilTagHandler.RobotPoseAndTagDistance poseAndTag : tags) {
-            Pose2d estimatedPose = poseAndTag.fieldRelativePose();
-            double poseDiff = estimatedPose.getTranslation().getDistance(robotPose.getTranslation());
-            if(poseDiff < 1 || (poseAndTag.tagDistanceFromRobot() < 2 && poseDiff < 2)) { // make sure our pose is somewhat close to where we think we are. If we're quite close to the tag we can allow for a slightly higher error since we'll likely be a bit off anyways
-                if(Math.random() > 0.3) return; // attempt to filter out false values using the "pure luck" strategy.
-                double distanceToTag = poseAndTag.tagDistanceFromRobot();
-                Matrix<N3, N1> stdevs;
-                ChassisSpeeds chassisSpeeds = this.getRobotRelativeChassisSpeeds();
-                boolean bruh = chassisSpeeds.vxMetersPerSecond > 1 || chassisSpeeds.vyMetersPerSecond > 1 || chassisSpeeds.omegaRadiansPerSecond > 0.15;
-                double mult = bruh ? 10 : 1;
-                if(distanceToTag < 2) {
-                    stdevs = VecBuilder.fill(0.4 * mult, 0.4 * mult, 1); // basically exact
-                } else if(distanceToTag < 4) {
-                    stdevs = VecBuilder.fill(1 * mult, 1 * mult, 1); // pretty accurate
-                } else {
-                    stdevs = VecBuilder.fill(1.5 * mult, 1.5 * mult, 1); // less accurate
-                }
-                this.poseEstimator.addVisionMeasurement(estimatedPose, timestamp, stdevs);
-                if(!bruh) {
-                    this.poseEstimator.addVisionMeasurement(estimatedPose, timestamp, stdevs);
-                }
-                estimatedField.setRobotPose(estimatedPose); // debugging
-            }
-            // System.out.println("psoe: " + estimatedPose);
-        }
+        // ArrayList<AprilTagHandler.RobotPoseAndTagDistance> tags = aprilTagHandler.getJetsonAprilTagPoses();
+        // double timestamp = Timer.getFPGATimestamp() - 0.5;
+        // Pose2d robotPose = this.getPose();
+        // Rotation2d robotRotation = RobotGyro.getRotation2d();
+        // for(AprilTagHandler.RobotPoseAndTagDistance poseAndTag : tags) {
+        //     Pose2d estimatedPose = poseAndTag.fieldRelativePose();
+        //     double poseDiff = estimatedPose.getTranslation().getDistance(robotPose.getTranslation());
+        //     if(poseDiff < 1 || (poseAndTag.tagDistanceFromRobot() < 2 && poseDiff < 2)) { // make sure our pose is somewhat close to where we think we are. If we're quite close to the tag we can allow for a slightly higher error since we'll likely be a bit off anyways
+        //         if(Math.random() > 0.3) return; // attempt to filter out false values using the "pure luck" strategy.
+        //         double distanceToTag = poseAndTag.tagDistanceFromRobot();
+        //         Matrix<N3, N1> stdevs;
+        //         ChassisSpeeds chassisSpeeds = this.getRobotRelativeChassisSpeeds();
+        //         boolean bruh = chassisSpeeds.vxMetersPerSecond > 1 || chassisSpeeds.vyMetersPerSecond > 1 || chassisSpeeds.omegaRadiansPerSecond > 0.15;
+        //         double mult = bruh ? 10 : 1;
+        //         if(distanceToTag < 2) {
+        //             stdevs = VecBuilder.fill(0.4 * mult, 0.4 * mult, 1); // basically exact
+        //         } else if(distanceToTag < 4) {
+        //             stdevs = VecBuilder.fill(1 * mult, 1 * mult, 1); // pretty accurate
+        //         } else {
+        //             stdevs = VecBuilder.fill(1.5 * mult, 1.5 * mult, 1); // less accurate
+        //         }
+        //         this.poseEstimator.addVisionMeasurement(estimatedPose, timestamp, stdevs);
+        //         if(!bruh) {
+        //             this.poseEstimator.addVisionMeasurement(estimatedPose, timestamp, stdevs);
+        //         }
+        //         estimatedField.setRobotPose(estimatedPose); // debugging
+        //     }
+        //     // System.out.println("psoe: " + estimatedPose);
+        // }
     }
 
     public void updateOdometryWithLimelightVision() {

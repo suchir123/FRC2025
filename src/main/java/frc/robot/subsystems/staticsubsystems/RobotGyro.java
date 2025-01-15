@@ -14,6 +14,7 @@ public final class RobotGyro {
     private static double angleAdjust = 0;
 
     static {
+        // TODO fix tje gy ro!!!
         // gyro.setYawAxis(ADIS16470_IMU.IMUAxis.kZ);
         gyro.calibrate();
         gyro.reset();

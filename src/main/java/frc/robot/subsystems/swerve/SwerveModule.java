@@ -20,12 +20,13 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.networktables.DoublePublisher;
 import edu.wpi.first.networktables.GenericPublisher;
 import edu.wpi.first.networktables.NetworkTableType;
 import frc.robot.Flags;
 import frc.robot.Constants.NetworkTablesConstants;
 import frc.robot.util.NetworkTablesUtil;
+
+import static frc.robot.util.Util.*;
 
 /**
  * There are three existing readouts for the module's rotational position.
@@ -166,11 +167,11 @@ public class SwerveModule {
             .positionWrappingEnabled(true)
             .positionWrappingMinInput(-Math.PI)
             .positionWrappingMaxInput(Math.PI)
-            .pidf(0.3, 0, 0, 0)
+            .pidf(0.55, 0, 0.3, 0) //Do not use ff because it will cause the motors to spin in the wrong direction
             .outputRange(-1, 1);
 
         /*
-        this.turnPIDController.setPositionPIDWrappingEnabled(true);
+        this.turnPIDController.setPositionPIDWppingEnabled(true);
         this.turnPIDController.setPositionPIDWrappingMinInput(-Math.PI);
         this.turnPIDController.setPositionPIDWrappingMaxInput(Math.PI);
 
@@ -378,7 +379,7 @@ public class SwerveModule {
      * Sets the module's target state to absolute zero. This method accepts a debug index.
      *
      * @param debugIdx The debug index of the array.
-     * @see DriveTrainSubsystem#optimizedTargetStates
+     * @see DriveTrainSubsystemOld#optimizedTargetStates
      */
     public void rotateToAbsoluteZero(int debugIdx) {
         SwerveModuleState zeroedState = new SwerveModuleState();
@@ -406,7 +407,7 @@ public class SwerveModule {
      *
      * @param desiredState Desired state with speed and angle.
      * @param debugIdx     The debug index of the array.
-     * @see DriveTrainSubsystem#optimizedTargetStates
+     * @see DriveTrainSubsystemOld#optimizedTargetStates
      */
     public void setDesiredState(SwerveModuleState desiredState, int debugIdx) {
         SwerveModuleState state;
@@ -441,7 +442,7 @@ public class SwerveModule {
      * @param desiredState Desired state with speed and angle.
      * @param debugIdx     The debug index of the array.
      * @see SwerveModule#optimize(SwerveModuleState, Rotation2d)
-     * @see DriveTrainSubsystem#optimizedTargetStates
+     * @see DriveTrainSubsystemOld#optimizedTargetStates
      */
     public void setDesiredStateNoOptimize(SwerveModuleState desiredState, int debugIdx) {
         this.setDriveDesiredState(desiredState);
@@ -472,8 +473,8 @@ public class SwerveModule {
         if (Math.abs(tar) > 0.01) {
             ratio = vel / tar;
         }
-        // System.out.println(this.name + " velocity: " + Util.nearestHundredth(driveEncoder.getVelocity()) + " target speed: " + Util.nearestHundredth(optimizedDesiredState.speedMetersPerSecond) + ", ratio: " + nearestHundredth(ratio));
-        // System.out.println(this.name + ", position: " + this.driveEncoder.getPosition());
+        //System.out.println(this.name + " velocity: " + nearestHundredth(driveEncoder.getVelocity()) + " target speed: " + nearestHundredth(optimizedDesiredState.speedMetersPerSecond) + ", ratio: " + nearestHundredth(ratio));
+        //System.out.println(this.name + ", position: " + this.driveEncoder.getPosition());
     }
 
     /**
@@ -488,7 +489,7 @@ public class SwerveModule {
             turnPIDController.setReference(optimizedDesiredState.angle.getRadians(), ControlType.kPosition);
         }
         rotationPublisher.setDouble(this.getTurnRelativePosition());
-        // System.out.println("target: " + roundNearestHundredth(bringAngleWithinUnitCircle(optimizedDesiredState.angle.getDegrees())) + ", rel: " + roundNearestHundredth(bringAngleWithinUnitCircle(this.getRelativeTurnRotations() * 180 / Math.PI)) + ", abs: " + roundNearestHundredth(bringAngleWithinUnitCircle(this.getTurningAbsEncoderPositionConverted() * 180 / Math.PI)));
+        System.out.println("target: " + nearestHundredth(bringAngleWithinUnitCircle(optimizedDesiredState.angle.getDegrees())) + ", rel: " + nearestHundredth(bringAngleWithinUnitCircle(this.getTurnRelativePosition() * 180 / Math.PI)) + ", abs: " + nearestHundredth(bringAngleWithinUnitCircle(this.getTurnAbsEncoderPosition() * 180 / Math.PI)));
     }
 
     /**

@@ -12,7 +12,6 @@ public final class Constants {
         throw new UnsupportedOperationException("This is a utility class and cannot be instantiated");
     }
 
-
     public static class NetworkTablesConstants {
         public static final String MAIN_TABLE_NAME = "robot";
     }
@@ -156,6 +155,8 @@ public final class Constants {
         public static final double TRAJ_THETA_CONTROLLER_KP = 0;
         public static final double TRAJ_MAX_ANG_VELO = 0;
         public static final double TRAJ_MAX_ANG_ACCEL = 0;
+
+        public static final double MAX_SPEED = 1.5;
     }
 
     public static class RobotConstants {
