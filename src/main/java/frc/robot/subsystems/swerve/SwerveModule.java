@@ -146,9 +146,17 @@ public class SwerveModule {
 
         driveConfig.closedLoop
             .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
-            .pidf(0.22, 0, 0.2, 0.3)
+            .pidf(0.3, 0, 0.2, 0.25)
             .outputRange(-1, 1);
 
+        // These numbers are recently made up and subject to change.
+        driveConfig.closedLoop.maxMotion
+                .maxVelocity(3.5)
+                .maxAcceleration(4.0)
+                // TODO: tune closed loop error constant
+                .allowedClosedLoopError(0.4);
+                
+        // driveConfig.closedLoop.velocityFF(1d/473);
         //this.drivePIDController.setP(0.22);
         //this.drivePIDController.setI(0);
         //this.drivePIDController.setD(0.2);
@@ -167,8 +175,9 @@ public class SwerveModule {
             .positionWrappingEnabled(true)
             .positionWrappingMinInput(-Math.PI)
             .positionWrappingMaxInput(Math.PI)
-            .pidf(0.55, 0, 0.3, 0) //Do not use ff because it will cause the motors to spin in the wrong direction
+            .pidf(0.55, 0, 0.3, 0) //Do not use ff because it will cause the motors to spin in the wrong direction :)
             .outputRange(-1, 1);
+        // TODO: add some more config for MAXMOTION
 
         /*
         this.turnPIDController.setPositionPIDWppingEnabled(true);
@@ -407,7 +416,7 @@ public class SwerveModule {
      *
      * @param desiredState Desired state with speed and angle.
      * @param debugIdx     The debug index of the array.
-     * @see DriveTrainSubsystemOld#optimizedTargetStates
+     * @see DriveTrainSubsystem#optimizedTargetStates
      */
     public void setDesiredState(SwerveModuleState desiredState, int debugIdx) {
         SwerveModuleState state;
@@ -442,7 +451,7 @@ public class SwerveModule {
      * @param desiredState Desired state with speed and angle.
      * @param debugIdx     The debug index of the array.
      * @see SwerveModule#optimize(SwerveModuleState, Rotation2d)
-     * @see DriveTrainSubsystemOld#optimizedTargetStates
+     * @see DriveTrainSubsystem#optimizedTargetStates
      */
     public void setDesiredStateNoOptimize(SwerveModuleState desiredState, int debugIdx) {
         this.setDriveDesiredState(desiredState);
@@ -465,7 +474,7 @@ public class SwerveModule {
     private void setDriveDesiredState(SwerveModuleState optimizedDesiredState) {
         // Calculate the drive output from the drive PID controller.
         if (Flags.DriveTrain.ENABLED && Flags.DriveTrain.ENABLE_DRIVE_MOTORS && Flags.DriveTrain.DRIVE_PID_CONTROL) {
-            drivePIDController.setReference(optimizedDesiredState.speedMetersPerSecond, ControlType.kVelocity);
+            drivePIDController.setReference(optimizedDesiredState.speedMetersPerSecond, ControlType.kMAXMotionVelocityControl);
         }
 
         double vel = driveEncoder.getVelocity(), tar = optimizedDesiredState.speedMetersPerSecond;

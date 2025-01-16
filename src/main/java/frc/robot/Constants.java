@@ -157,6 +157,7 @@ public final class Constants {
         public static final double TRAJ_MAX_ANG_ACCEL = 0;
 
         public static final double MAX_SPEED = 1.5;
+        public static final double ANGULAR_VELOCITY_COEFF = 0.1; // YAGSL
     }
 
     public static class RobotConstants {

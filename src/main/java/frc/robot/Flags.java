@@ -74,5 +74,13 @@ public final class Flags {
          * its initial heading.
          */
         public static final boolean ENABLE_LOCKED_HEADING_MODE = true;
+
+
+        //Currently just unused flags, don't know where to put them, copied from YAGSL.
+        public static final boolean ENABLE_HEADING_CORRECTIONS = false;
+
+        public static final boolean ENABLE_COSINE_COMPENSATOR = false;
+
+        public static final boolean ENABLE_ANGULAR_VELOCITY_COMPENSATION = true; //  No idea where this is going (from YAGSL)
     }
 }

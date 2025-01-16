@@ -4,12 +4,9 @@
 
 package frc.robot.subsystems.swerve;
 
-import java.util.ArrayList;
-
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.Nat;
-import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
@@ -20,14 +17,11 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
-import edu.wpi.first.math.numbers.N1;
-import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.networktables.DoublePublisher;
 import edu.wpi.first.networktables.StructArrayPublisher;
 import edu.wpi.first.networktables.StructPublisher;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -248,7 +242,7 @@ public class DriveTrainSubsystem extends SubsystemBase {
             if(shouldBeRotating) {
                 lockedHeadingMode = false;
             } else {
-                if(lockedHeadingMode == false) {
+                if(!lockedHeadingMode) {
                     lockedHeadingMode = true;
                     lockedHeading = RobotGyro.getRotation2d();
                 }
@@ -263,6 +257,24 @@ public class DriveTrainSubsystem extends SubsystemBase {
             chassisSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(forwardSpeed, sidewaysSpeed, rotSpeed, RobotGyro.getRotation2d());
         } else {
             chassisSpeeds = new ChassisSpeeds(forwardSpeed, sidewaysSpeed, rotSpeed);
+        }
+        if(Flags.DriveTrain.ENABLE_HEADING_CORRECTIONS) {
+            if (Math.abs(chassisSpeeds.omegaRadiansPerSecond) < HEADING_CORRECTION_DEADBAND
+                    && (Math.abs(chassisSpeeds.vxMetersPerSecond) > HEADING_CORRECTION_DEADBAND
+                    || Math.abs(chassisSpeeds.vyMetersPerSecond) > HEADING_CORRECTION_DEADBAND)) {
+                chassisSpeeds.omegaRadiansPerSecond =
+                        swerveController.headingCalculate(
+                                getOdometryHeading().getRadians(), lastHeadingRadians);
+            } else {
+                lastHeadingRadians = getOdometryHeading().getRadians();
+            }
+        }
+
+
+        if(Flags.DriveTrain.ENABLE_ANGULAR_VELOCITY_COMPENSATION) {
+            angularVelocityCorrection = useInTeleop;
+            autonomousAngularVelocityCorrection = useInAuto;
+            angularVelocityCoefficient = angularVelocityCoeff;
         }
         swerveModuleStates = kinematics.toSwerveModuleStates(chassisSpeeds);
 
