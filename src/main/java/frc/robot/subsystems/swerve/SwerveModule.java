@@ -22,10 +22,13 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.GenericPublisher;
 import edu.wpi.first.networktables.NetworkTableType;
+import edu.wpi.first.units.measure.LinearVelocity;
+import frc.robot.Constants;
 import frc.robot.Flags;
 import frc.robot.Constants.NetworkTablesConstants;
 import frc.robot.util.NetworkTablesUtil;
 
+import static edu.wpi.first.units.Units.MetersPerSecond;
 import static frc.robot.util.Util.*;
 
 /**
@@ -183,7 +186,6 @@ public class SwerveModule {
         this.turnPIDController.setPositionPIDWppingEnabled(true);
         this.turnPIDController.setPositionPIDWrappingMinInput(-Math.PI);
         this.turnPIDController.setPositionPIDWrappingMaxInput(Math.PI);
-
         this.turnPIDController.setP(0.3);
         this.turnPIDController.setI(0);
         this.turnPIDController.setD(0);
@@ -196,6 +198,25 @@ public class SwerveModule {
         //System.out.println(this.name + " inverts drive: " + this.driveMotor.getInverted() + " turn: " + this.turnMotor.getInverted());
         // System.out.println(this.name + " abs pos " + RobotMathUtil.roundNearestHundredth(this.turnAbsoluteEncoder.getAbsolutePosition().getValueAsDouble()));
     }
+
+    
+
+    private SwerveModuleState getCosineCompensatedState(SwerveModuleState desiredState) {
+        double cosineScalar = 1.0;
+        // Taken from the CTRE SwerveModule class.
+        // https://api.ctr-electronics.com/phoenix6/release/java/src-html/com/ctre/phoenix6/mechanisms/swerve/SwerveModule.html#line.46
+        /* From FRC 900's whitepaper, we add a cosine compensator to the applied drive velocity */
+        /* To reduce the "skew" that occurs when changing direction */
+        /* If error is close to 0 rotations, we're already there, so apply full power */
+        /* If the error is close to 0.25 rotations, then we're 90 degrees, so movement doesn't help us at all */
+        cosineScalar = desiredState.angle.minus(this.getAbsoluteModuleState().angle).getCos();
+        /* Make sure we don't invert our drive, even though we shouldn't ever target over 90 degrees anyway */
+        if (cosineScalar < 0.0) {
+            cosineScalar = 1;
+        }
+ 
+        return new SwerveModuleState(desiredState.speedMetersPerSecond * cosineScalar, desiredState.angle);
+  }
 
     /**
      * ORIGINAL: {@link SwerveModuleState#optimize(SwerveModuleState, Rotation2d)}
@@ -436,6 +457,10 @@ public class SwerveModule {
      * @see SwerveModule#optimize(SwerveModuleState, Rotation2d)
      */
     public void setDesiredStateNoOptimize(SwerveModuleState desiredState) {
+        if (Flags.DriveTrain.ENABLE_COSINE_COMPENSATOR) {
+            desiredState = getCosineCompensatedState(desiredState);
+        }
+
         this.setDriveDesiredState(desiredState);
         this.setRotationDesiredState(desiredState);
 
@@ -454,15 +479,8 @@ public class SwerveModule {
      * @see DriveTrainSubsystem#optimizedTargetStates
      */
     public void setDesiredStateNoOptimize(SwerveModuleState desiredState, int debugIdx) {
-        this.setDriveDesiredState(desiredState);
-        this.setRotationDesiredState(desiredState);
-
         DriveTrainSubsystem.optimizedTargetStates[debugIdx] = desiredState;
-
-        if (Math.abs(desiredState.speedMetersPerSecond) < 0.01 && Math.abs(this.getTurnRelativeVelocity()) < 0.01) {
-            this.resetEncodersToAbsoluteValue();
-            // System.out.println("resetting encoders");
-        }
+        setDesiredState(desiredState);
     }
 
     /**

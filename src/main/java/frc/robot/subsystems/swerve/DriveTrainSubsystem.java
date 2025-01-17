@@ -22,6 +22,7 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.networktables.DoublePublisher;
 import edu.wpi.first.networktables.StructArrayPublisher;
 import edu.wpi.first.networktables.StructPublisher;
+import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -36,6 +37,8 @@ import frc.robot.commands.ManualDriveCommand;
 import frc.robot.subsystems.staticsubsystems.RobotGyro;
 import frc.robot.util.NetworkTablesUtil;
 import frc.robot.util.Util;
+
+import static edu.wpi.first.units.Units.MetersPerSecond;
 
 /**
  * Represents a swerve drive style drivetrain.
@@ -258,24 +261,13 @@ public class DriveTrainSubsystem extends SubsystemBase {
         } else {
             chassisSpeeds = new ChassisSpeeds(forwardSpeed, sidewaysSpeed, rotSpeed);
         }
-        if(Flags.DriveTrain.ENABLE_HEADING_CORRECTIONS) {
-            if (Math.abs(chassisSpeeds.omegaRadiansPerSecond) < HEADING_CORRECTION_DEADBAND
-                    && (Math.abs(chassisSpeeds.vxMetersPerSecond) > HEADING_CORRECTION_DEADBAND
-                    || Math.abs(chassisSpeeds.vyMetersPerSecond) > HEADING_CORRECTION_DEADBAND)) {
-                chassisSpeeds.omegaRadiansPerSecond =
-                        swerveController.headingCalculate(
-                                getOdometryHeading().getRadians(), lastHeadingRadians);
-            } else {
-                lastHeadingRadians = getOdometryHeading().getRadians();
-            }
-        }
 
-
-        if(Flags.DriveTrain.ENABLE_ANGULAR_VELOCITY_COMPENSATION) {
-            angularVelocityCorrection = useInTeleop;
-            autonomousAngularVelocityCorrection = useInAuto;
-            angularVelocityCoefficient = angularVelocityCoeff;
-        }
+//        if(Flags.DriveTrain.ENABLE_ANGULAR_VELOCITY_COMPENSATION) {
+//            angularVelocityCorrection = useInTeleop;
+//            autonomousAngularVelocityCorrection = useInAuto;
+//            angularVelocityCoefficient = angularVelocityCoeff;
+//        }
+        
         swerveModuleStates = kinematics.toSwerveModuleStates(chassisSpeeds);
 
         SwerveDriveKinematics.desaturateWheelSpeeds(swerveModuleStates, ManualDriveCommand.MAX_SPEED_METERS_PER_SEC);
