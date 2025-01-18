@@ -37,6 +37,7 @@ import frc.robot.commands.ManualDriveCommand;
 import frc.robot.subsystems.staticsubsystems.RobotGyro;
 import frc.robot.util.NetworkTablesUtil;
 import frc.robot.util.Util;
+import swervelib.imu.SwerveIMU;
 
 import static edu.wpi.first.units.Units.MetersPerSecond;
 
@@ -277,6 +278,22 @@ public class DriveTrainSubsystem extends SubsystemBase {
         backRight .setDesiredState(swerveModuleStates[3], 3);
 
         targetSwerveStatePublisher.set(optimizedTargetStates);
+    }
+    
+    public ChassisSpeeds angularVelocitySkewCorrection(ChassisSpeeds robotRelativeVelocity) {
+        RobotGyro.
+        double yawAngularVelocity = yawVel.mut_setMagnitude(imu.getRate());
+        var angularVelocity =
+            new Rotation2d(
+                imu.getYawAngularVelocity().in(RadiansPerSecond) * angularVelocityCoefficient);
+        if (angularVelocity.getRadians() != 0.0) {
+        ChassisSpeeds fieldRelativeVelocity =
+            ChassisSpeeds.fromRobotRelativeSpeeds(robotRelativeVelocity, getOdometryHeading());
+        robotRelativeVelocity =
+            ChassisSpeeds.fromFieldRelativeSpeeds(
+                fieldRelativeVelocity, getOdometryHeading().plus(angularVelocity));
+        }
+        return robotRelativeVelocity;
     }
 
     /**
