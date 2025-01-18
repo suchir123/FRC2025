@@ -13,13 +13,13 @@ public final class ColorSensor {
     private static final ColorSensorV3 colorSensor = new ColorSensorV3(I2C.Port.kOnboard);
     private static final ColorMatch colorMatcher = new ColorMatch();
 
-    public static void poke() {
-        System.out.println("ColorSensor subsystem initialized.");
-    }
-    
     static {
         colorMatcher.addColorMatch(NOTE_COLOR);
         colorMatcher.addColorMatch(ANOTHER_NOTE_COLOR);
+    }
+
+    public static void poke() {
+        System.out.println("ColorSensor subsystem initialized.");
     }
 
     public static Color getColor() {

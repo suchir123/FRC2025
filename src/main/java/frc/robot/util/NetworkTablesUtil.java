@@ -11,6 +11,7 @@ public class NetworkTablesUtil {
     public static final NetworkTable MAIN_ROBOT_TABLE = INSTANCE.getTable(NetworkTablesConstants.MAIN_TABLE_NAME);
     private static final Map<String, GenericPublisher> publishers = new HashMap<>();
     private static final Map<String, GenericSubscriber> subscribers = new HashMap<>();
+
     /**
      * Gets the NetworkTablesConstants Instance being used by the program
      *
@@ -86,7 +87,7 @@ public class NetworkTablesUtil {
     }
 
     public static double[] getAprilTagEntry() {
-        return INSTANCE.getTable("jetson").getEntry("apriltags_pose").getDoubleArray(new double[] {0.0});
+        return INSTANCE.getTable("jetson").getEntry("apriltags_pose").getDoubleArray(new double[]{0.0});
     }
 
     /**

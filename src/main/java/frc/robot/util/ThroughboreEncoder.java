@@ -5,7 +5,7 @@ import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.Encoder;
 
 /**
- * DO NOT USE BROKEN TODO: FIX 
+ * DO NOT USE BROKEN TODO: FIX
  */
 public class ThroughboreEncoder {
     private final DutyCycleEncoder throughboreAbsoluteEncoder;

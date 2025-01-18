@@ -6,9 +6,10 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 
 public class FlagUploader {
-    public FlagUploader() {
+    private FlagUploader() {
         throw new UnsupportedOperationException("This is a utility class and cannot be instantiated");
     }
+
     /**
      * This method is used to upload the contents of the {@link frc.robot.Flags Flags} class to NetworkTables.
      * This is useful for debugging since the flags control robot functionality and allow an uploaded method to quickly check which parts of the robot code are enabled or disabled.

@@ -1,13 +1,11 @@
 package frc.robot.commands;
 
 import edu.wpi.first.math.filter.SlewRateLimiter;
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Flags;
 import frc.robot.controllers.AbstractController;
-import frc.robot.util.Util;
-
 import frc.robot.subsystems.swerve.DriveTrainSubsystem;
+import frc.robot.util.Util;
 
 public class ManualDriveCommand extends Command {
     public static final double MAX_SPEED_METERS_PER_SEC = Flags.DriveTrain.LOWER_MAX_SPEED ? 1.5 : 3;
@@ -21,12 +19,12 @@ public class ManualDriveCommand extends Command {
     // private final LinearFilter filter = LinearFilter.singlePoleIIR(0.1, 0.02);
     // private boolean wasAutomaticallyDrivingLastFrame = false;
 
-    public ManualDriveCommand(DriveTrainSubsystem driveTrain, AbstractController joystick){ //AprilTagHandler aprilTagHandler) {
+    public ManualDriveCommand(DriveTrainSubsystem driveTrain, AbstractController joystick) { //AprilTagHandler aprilTagHandler) {
         this.driveTrain = driveTrain;
         this.joystick = joystick;
         // this.aprilTagHandler = aprilTagHandler;
         // this.autoAimSubwoofer = ControlHandler.get(joystick, ControllerConstants.AUTO_AIM_FOR_SHOOT);
-   
+
         addRequirements(driveTrain);
     }
 
@@ -36,7 +34,7 @@ public class ManualDriveCommand extends Command {
     }
 
     private double flipFactor() {
-        if(Util.onBlueTeam()) {
+        if (Util.onBlueTeam()) {
             return 1;
         }
         return -1;
@@ -50,10 +48,10 @@ public class ManualDriveCommand extends Command {
         double ySpeed = Util.squareKeepSign(this.ySpeedLimiter.calculate(-this.joystick.getLeftVerticalMovement() * flip)) * MAX_SPEED_METERS_PER_SEC;
         double xSpeed = Util.squareKeepSign(this.xSpeedLimiter.calculate(this.joystick.getLeftHorizontalMovement() * flip)) * MAX_SPEED_METERS_PER_SEC;
 
-        double targetAngle =  Math.tan(this.joystick.getLeftVerticalMovement() / this.joystick.getLeftHorizontalMovement());
+        double targetAngle = Math.tan(this.joystick.getLeftVerticalMovement() / this.joystick.getLeftHorizontalMovement());
 
 
-         double rotSpeed;
+        double rotSpeed;
 
         //  if (autoAimSubwoofer.getAsBoolean()) {
         //      // addison & ivan run the robot
@@ -84,27 +82,27 @@ public class ManualDriveCommand extends Command {
         //              .orElse(0.0);
         //      wasAutomaticallyDrivingLastFrame = true;
         //  } else {
-             // phong runs the robot!
-            //  if (wasAutomaticallyDrivingLastFrame) {
-            //      //aprilTagHandler.resetAverageAutoAimPose();
-            //      filter.reset();
-            //  }
-             rotSpeed = -this.joystick.getRightHorizontalMovement() * 3.0;
+        // phong runs the robot!
+        //  if (wasAutomaticallyDrivingLastFrame) {
+        //      //aprilTagHandler.resetAverageAutoAimPose();
+        //      filter.reset();
         //  }
-
+        rotSpeed = -this.joystick.getRightHorizontalMovement() * 3.0;
+        //  }
 
 
         // System.out.println("forward speed: " + ySpeed + ", x speed: " + xSpeed);
         // System.out.println("y: " + RobotMathUtil.roundNearestHundredth(this.joystick.getLeftVerticalMovement()) + ", x: " + RobotMathUtil.roundNearestHundredth(this.joystick.getLeftHorizontalMovement()));
-        
+
         this.driveTrain.drive(xSpeed, ySpeed, rotSpeed, true);
     }
 
     /**
      * Calculate the angle the gyroscope should be at in order to look at the speaker
-     * 
+     *
      * @return A Rotation2d representing the angle to the speaker. The gyroscope value should equal this value when the robot is facing the speaker.
-    //  */
+     * //
+     */
     // private Optional<Rotation2d> directionToSubwooferTarget() {
     //     int tagId = Util.getTargetTagId();
     //     Pose2d targetPose2d = Util.getTagPose(tagId).toPose2d();

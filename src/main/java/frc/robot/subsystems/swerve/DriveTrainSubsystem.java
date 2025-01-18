@@ -22,7 +22,6 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.networktables.DoublePublisher;
 import edu.wpi.first.networktables.StructArrayPublisher;
 import edu.wpi.first.networktables.StructPublisher;
-import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -33,13 +32,14 @@ import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.PortConstants;
 import frc.robot.Constants.RobotConstants;
 import frc.robot.Flags;
+import frc.robot.Robot;
 import frc.robot.commands.ManualDriveCommand;
 import frc.robot.subsystems.staticsubsystems.RobotGyro;
 import frc.robot.util.NetworkTablesUtil;
+import frc.robot.util.QuestNav;
 import frc.robot.util.Util;
-import swervelib.imu.SwerveIMU;
 
-import static edu.wpi.first.units.Units.MetersPerSecond;
+import static edu.wpi.first.units.Units.RadiansPerSecond;
 
 /**
  * Represents a swerve drive style drivetrain.
@@ -50,15 +50,13 @@ public class DriveTrainSubsystem extends SubsystemBase {
     private static final double SMART_OPTIMIZATION_THRESH_M_PER_SEC = 2;
 
     private static final boolean INVERT_DRIVE_MOTORS = true;
-    static SwerveModuleState[] optimizedTargetStates = new SwerveModuleState[4]; // for debugging purposes
     // Location of each swerve drive, relative to motor center. +X -> moving to front of robot, +Y -> moving to left of robot. IMPORTANT.
     private static final Translation2d frontLeftLocation = new Translation2d(RobotConstants.LEG_LENGTHS_M, RobotConstants.LEG_LENGTHS_M);
     private static final Translation2d frontRightLocation = new Translation2d(RobotConstants.LEG_LENGTHS_M, -RobotConstants.LEG_LENGTHS_M);
     private static final Translation2d backLeftLocation = new Translation2d(-RobotConstants.LEG_LENGTHS_M, RobotConstants.LEG_LENGTHS_M);
     private static final Translation2d backRightLocation = new Translation2d(-RobotConstants.LEG_LENGTHS_M, -RobotConstants.LEG_LENGTHS_M);
-
     public static final Translation2d cameraLocation = backRightLocation.plus(new Translation2d(0.075, 0.205));
-
+    static SwerveModuleState[] optimizedTargetStates = new SwerveModuleState[4]; // for debugging purposes
     private final SwerveModule frontLeft = new SwerveModule(
             PortConstants.DTRAIN_FRONT_LEFT_DRIVE_MOTOR_ID,
             PortConstants.DTRAIN_FRONT_LEFT_ROTATION_MOTOR_ID,
@@ -93,7 +91,7 @@ public class DriveTrainSubsystem extends SubsystemBase {
     );
     public final SwerveModule[] swerveModules = {frontLeft, frontRight, backLeft, backRight};
     private final SwerveDriveKinematics kinematics = new SwerveDriveKinematics(frontLeftLocation, frontRightLocation, backLeftLocation, backRightLocation);
-    private final SwerveDrivePoseEstimator poseEstimator = new SwerveDrivePoseEstimator(kinematics, RobotGyro.getRotation2d(), this.getAbsoluteModulePositions(), new Pose2d(), new Matrix<>(Nat.N3(), Nat.N1(), new double[] {0.1, 0.1, 0.1}), new Matrix<>(Nat.N3(), Nat.N1(), new double[] {0.01, 0.01, 0.1}));
+    private final SwerveDrivePoseEstimator poseEstimator = new SwerveDrivePoseEstimator(kinematics, RobotGyro.getRotation2d(), this.getAbsoluteModulePositions(), new Pose2d(), new Matrix<>(Nat.N3(), Nat.N1(), new double[]{0.1, 0.1, 0.1}), new Matrix<>(Nat.N3(), Nat.N1(), new double[]{0.01, 0.01, 0.1}));
 
     private final Field2d field = new Field2d();
     private final Field2d estimatedField = new Field2d();
@@ -106,10 +104,13 @@ public class DriveTrainSubsystem extends SubsystemBase {
     // publish robot position relative to field
     StructPublisher<Pose2d> posePositionPublisher = NetworkTablesUtil.MAIN_ROBOT_TABLE.getStructTopic("estimatedOdometryPosition", Pose2d.struct).publish();
     StructPublisher<Rotation2d> robotRotationPublisher = NetworkTablesUtil.MAIN_ROBOT_TABLE.getStructTopic("rotation", Rotation2d.struct).publish();
+    StructPublisher<Pose2d> questNavPublisher = NetworkTablesUtil.MAIN_ROBOT_TABLE.getStructTopic("questnav", Pose2d.struct).publish();
     DoublePublisher fLAmp = NetworkTablesUtil.MAIN_ROBOT_TABLE.getDoubleTopic("fl_amp").publish();
     DoublePublisher fRAmp = NetworkTablesUtil.MAIN_ROBOT_TABLE.getDoubleTopic("fr_amp").publish();
     DoublePublisher bLAmp = NetworkTablesUtil.MAIN_ROBOT_TABLE.getDoubleTopic("bl_amp").publish();
     DoublePublisher bRAmp = NetworkTablesUtil.MAIN_ROBOT_TABLE.getDoubleTopic("br_amp").publish();
+    private boolean lockedHeadingMode = false;
+    private Rotation2d lockedHeading;
 
     // private final AprilTagHandler aprilTagHandler;
     public DriveTrainSubsystem(/*AprilTagHandler aprilTagHandler*/) {
@@ -139,7 +140,7 @@ public class DriveTrainSubsystem extends SubsystemBase {
      * Resets the robot's pose to the pose against the front (i.e. edge parallel to the y-axis) of the subwoofer of our alliance side.
      */
     public void resetPoseToMidSubwoofer() {
-        if(Util.onBlueTeam()) {
+        if (Util.onBlueTeam()) {
             this.setPose(new Pose2d(1.35, 5.50, new Rotation2d()));
         } else {
             // this.setPose(GeometryUtil.flipFieldPose(new Pose2d(1.35, 5.50, new Rotation2d())));
@@ -220,9 +221,6 @@ public class DriveTrainSubsystem extends SubsystemBase {
         });
     }
 
-    private boolean lockedHeadingMode = false;
-    private Rotation2d lockedHeading;
-
     public void setHeadingLockMode(boolean lockedHeading) {
         this.lockedHeadingMode = lockedHeading;
     }
@@ -242,56 +240,50 @@ public class DriveTrainSubsystem extends SubsystemBase {
         if (Flags.DriveTrain.ENABLE_LOCKED_HEADING_MODE) {
             // As soon as the robot isn't rotating (the driver's thumb isn't on the rotation joystick anymore),
             // we set lockedHeadingMode to true and store the current heading so we can keep moving at it.
-            boolean shouldBeRotating = Math.abs(rotSpeed) > 0.01;
-            if(shouldBeRotating) {
+            boolean robotIsTurning = Math.abs(rotSpeed) > 0.01;
+            if (robotIsTurning) {
                 lockedHeadingMode = false;
             } else {
-                if(!lockedHeadingMode) {
+                if (!lockedHeadingMode) {
                     lockedHeadingMode = true;
                     lockedHeading = RobotGyro.getRotation2d();
                 }
                 double headingError = lockedHeading.getRadians() - RobotGyro.getRotation2d().getRadians();
                 double unboundedRotSpeed = 1 * headingError; // 1 is changeable constant
-                rotSpeed = MathUtil.clamp(unboundedRotSpeed, -0.3, 0.3);
+                rotSpeed = MathUtil.clamp(unboundedRotSpeed, -0.3, 0.3); // TODO: tune unboundedRotSpeed & rotSpeed
             }
         }
-            
-        ChassisSpeeds chassisSpeeds; 
-        if(fieldRelative) {
+
+        ChassisSpeeds chassisSpeeds;
+        if (fieldRelative) {
             chassisSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(forwardSpeed, sidewaysSpeed, rotSpeed, RobotGyro.getRotation2d());
         } else {
             chassisSpeeds = new ChassisSpeeds(forwardSpeed, sidewaysSpeed, rotSpeed);
         }
 
-//        if(Flags.DriveTrain.ENABLE_ANGULAR_VELOCITY_COMPENSATION) {
-//            angularVelocityCorrection = useInTeleop;
-//            autonomousAngularVelocityCorrection = useInAuto;
-//            angularVelocityCoefficient = angularVelocityCoeff;
-//        }
-        
+        if (Flags.DriveTrain.ENABLE_ANGULAR_VELOCITY_COMPENSATION_TELEOP && Robot.INSTANCE.isTeleop()) {
+            // TODO: WE SET THIS TO 0.1 AT START. COULD JUST BE MAKING SKEW WORSE GOING IN OPPOSITE DIRECTION
+            // TODO: WE NEED TO TUNE THE CON STANT TO MAKE GOOD !
+            chassisSpeeds = angularVelocitySkewCorrection(chassisSpeeds, 0.1);
+        }
+
         swerveModuleStates = kinematics.toSwerveModuleStates(chassisSpeeds);
 
         SwerveDriveKinematics.desaturateWheelSpeeds(swerveModuleStates, ManualDriveCommand.MAX_SPEED_METERS_PER_SEC);
-        frontLeft .setDesiredState(swerveModuleStates[0], 0);
+        frontLeft.setDesiredState(swerveModuleStates[0], 0);
         frontRight.setDesiredState(swerveModuleStates[1], 1);
-        backLeft  .setDesiredState(swerveModuleStates[2], 2);
-        backRight .setDesiredState(swerveModuleStates[3], 3);
+        backLeft.setDesiredState(swerveModuleStates[2], 2);
+        backRight.setDesiredState(swerveModuleStates[3], 3);
 
         targetSwerveStatePublisher.set(optimizedTargetStates);
     }
-    
-    public ChassisSpeeds angularVelocitySkewCorrection(ChassisSpeeds robotRelativeVelocity) {
-        RobotGyro.
-        double yawAngularVelocity = yawVel.mut_setMagnitude(imu.getRate());
-        var angularVelocity =
-            new Rotation2d(
-                imu.getYawAngularVelocity().in(RadiansPerSecond) * angularVelocityCoefficient);
+
+    public ChassisSpeeds angularVelocitySkewCorrection(ChassisSpeeds robotRelativeVelocity, double angularVelocityCoefficient) {
+        var angularVelocity = new Rotation2d(RobotGyro.getYawAngularVelocity().in(RadiansPerSecond) * angularVelocityCoefficient);
         if (angularVelocity.getRadians() != 0.0) {
-        ChassisSpeeds fieldRelativeVelocity =
-            ChassisSpeeds.fromRobotRelativeSpeeds(robotRelativeVelocity, getOdometryHeading());
-        robotRelativeVelocity =
-            ChassisSpeeds.fromFieldRelativeSpeeds(
-                fieldRelativeVelocity, getOdometryHeading().plus(angularVelocity));
+            Rotation2d heading = RobotGyro.getRotation2d();
+            ChassisSpeeds fieldRelativeVelocity = ChassisSpeeds.fromRobotRelativeSpeeds(robotRelativeVelocity, heading);
+            robotRelativeVelocity = ChassisSpeeds.fromFieldRelativeSpeeds(fieldRelativeVelocity, heading.plus(angularVelocity));
         }
         return robotRelativeVelocity;
     }
@@ -302,10 +294,10 @@ public class DriveTrainSubsystem extends SubsystemBase {
      * @param speed The desired speed, [-1, 1]
      */
     public void directDriveSpeed(double speed) { // INCHES: 10 rot ~= 18.25, ~ 9 rot ~= 15.75
-        frontLeft .directDrive(speed);
+        frontLeft.directDrive(speed);
         frontRight.directDrive(speed);
-        backLeft  .directDrive(speed);
-        backRight .directDrive(speed);
+        backLeft.directDrive(speed);
+        backRight.directDrive(speed);
     }
 
     /**
@@ -314,10 +306,10 @@ public class DriveTrainSubsystem extends SubsystemBase {
      * @param speed The desired speed, [-1, 1]
      */
     public void directTurnSpeed(double speed) {
-        frontLeft .directTurn(speed);
+        frontLeft.directTurn(speed);
         frontRight.directTurn(speed);
-        backLeft  .directTurn(speed);
-        backRight .directTurn(speed);
+        backLeft.directTurn(speed);
+        backRight.directTurn(speed);
     }
 
     /**
@@ -326,10 +318,10 @@ public class DriveTrainSubsystem extends SubsystemBase {
      * @param volts The desired voltage output
      */
     public void directDriveVoltage(double volts) {
-        frontLeft .setVoltages(volts, 0);
+        frontLeft.setVoltages(volts, 0);
         frontRight.setVoltages(volts, 0);
-        backLeft  .setVoltages(volts, 0);
-        backRight .setVoltages(volts, 0);
+        backLeft.setVoltages(volts, 0);
+        backRight.setVoltages(volts, 0);
     }
 
     /**
@@ -338,20 +330,20 @@ public class DriveTrainSubsystem extends SubsystemBase {
      * @param states An array of 4 desired states, in the order FL, FR, BL, BR.
      */
     public void consumeRawModuleStates(SwerveModuleState[] states) {
-        frontLeft .setDesiredState(states[0]);
+        frontLeft.setDesiredState(states[0]);
         frontRight.setDesiredState(states[1]);
-        backLeft  .setDesiredState(states[2]);
-        backRight .setDesiredState(states[3]);
+        backLeft.setDesiredState(states[2]);
+        backRight.setDesiredState(states[3]);
     }
 
     /**
      * Stops all motors, driving or turning, by sending a target voltage of 0.
      */
     public void stop() {
-        this.frontLeft .stop();
+        this.frontLeft.stop();
         this.frontRight.stop();
-        this.backLeft  .stop();
-        this.backRight .stop();
+        this.backLeft.stop();
+        this.backRight.stop();
     }
 
     @Override
@@ -363,6 +355,7 @@ public class DriveTrainSubsystem extends SubsystemBase {
         //posts robot position to network table
         posePositionPublisher.set(this.getPose());
         robotRotationPublisher.set(RobotGyro.getRotation2d());
+        questNavPublisher.set(QuestNav.INSTANCE.getPose());
 
         //noinspection StatementWithEmptyBody
         for (SwerveModule module : swerveModules) {
@@ -451,7 +444,7 @@ public class DriveTrainSubsystem extends SubsystemBase {
     }
 
     public void updateOdometryWithLimelightVision() {
-        double[] vals = NetworkTablesUtil.getTable("limelight").getEntry("botpose_wpiblue").getDoubleArray(new double[] {});
+        double[] vals = NetworkTablesUtil.getTable("limelight").getEntry("botpose_wpiblue").getDoubleArray(new double[]{});
 
     }
 }

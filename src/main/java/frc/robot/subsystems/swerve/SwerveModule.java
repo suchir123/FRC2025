@@ -5,32 +5,28 @@
 package frc.robot.subsystems.swerve;
 
 import com.ctre.phoenix6.hardware.CANcoder;
-import com.revrobotics.spark.SparkClosedLoopController;
-import com.revrobotics.spark.SparkMax;
+import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.SparkBase.ControlType;
 import com.revrobotics.spark.SparkBase.PersistMode;
+import com.revrobotics.spark.SparkBase.ResetMode;
+import com.revrobotics.spark.SparkClosedLoopController;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
-import com.revrobotics.spark.config.SparkMaxConfig;
+import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
-import com.revrobotics.RelativeEncoder;
-import com.revrobotics.spark.SparkBase.ResetMode;
-
+import com.revrobotics.spark.config.SparkMaxConfig;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.GenericPublisher;
 import edu.wpi.first.networktables.NetworkTableType;
-import edu.wpi.first.units.measure.LinearVelocity;
-import frc.robot.Constants;
-import frc.robot.Flags;
 import frc.robot.Constants.NetworkTablesConstants;
+import frc.robot.Flags;
 import frc.robot.util.NetworkTablesUtil;
 
-import static edu.wpi.first.units.Units.MetersPerSecond;
-import static frc.robot.util.Util.*;
+import static frc.robot.util.Util.bringAngleWithinUnitCircle;
+import static frc.robot.util.Util.nearestHundredth;
 
 /**
  * There are three existing readouts for the module's rotational position.
@@ -111,23 +107,23 @@ public class SwerveModule {
         SparkMaxConfig driveConfig = new SparkMaxConfig();
         SparkMaxConfig turnConfig = new SparkMaxConfig();
         driveConfig
-            .idleMode(IdleMode.kCoast)
-            .smartCurrentLimit(40)
-            .voltageCompensation(10)
-            .inverted(invertDriveMotor);
+                .idleMode(IdleMode.kCoast)
+                .smartCurrentLimit(40)
+                .voltageCompensation(10)
+                .inverted(invertDriveMotor);
 
         turnConfig
-            .smartCurrentLimit(40)
-            .voltageCompensation(10)
-            .inverted(invertTurnMotor);
+                .smartCurrentLimit(40)
+                .voltageCompensation(10)
+                .inverted(invertTurnMotor);
 
         driveConfig.encoder
-            .positionConversionFactor(Units.inchesToMeters(4 * Math.PI / 6.75))
-            .velocityConversionFactor(Units.inchesToMeters(4 * Math.PI / 6.75) / 60);
+                .positionConversionFactor(Units.inchesToMeters(4 * Math.PI / 6.75))
+                .velocityConversionFactor(Units.inchesToMeters(4 * Math.PI / 6.75) / 60);
 
         turnConfig.encoder
-            .positionConversionFactor(150d / 7d * Math.PI / 180 / 1.28)
-            .velocityConversionFactor(150d / 7d / 60d * Math.PI / 180 / 1.28);
+                .positionConversionFactor(150d / 7d * Math.PI / 180 / 1.28)
+                .velocityConversionFactor(150d / 7d / 60d * Math.PI / 180 / 1.28);
 
         //this.turnEncoder.setPositionConversionFactor(150d / 7d * Math.PI / 180 / 1.28); // ???
         //this.turnEncoder.setVelocityConversionFactor(150d / 7d / 60d * Math.PI / 180 / 1.28);
@@ -149,17 +145,17 @@ public class SwerveModule {
         this.drivePIDController = this.driveMotor.getClosedLoopController();
 
         driveConfig.closedLoop
-            .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
-            .pidf(0.3, 0, 0.2, 0.25)
-            .outputRange(-1, 1);
+                .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
+                .pidf(0.3, 0, 0.2, 0.25) // p0.3, d 0.2 ff0.25
+                .outputRange(-1, 1);
 
         // These numbers are recently made up and subject to change.
         driveConfig.closedLoop.maxMotion
                 .maxVelocity(3.5)
                 .maxAcceleration(4.0)
                 // TODO: tune closed loop error constant
-                .allowedClosedLoopError(0.4);
-                
+                .allowedClosedLoopError(0.1);
+
         // driveConfig.closedLoop.velocityFF(1d/473);
         //this.drivePIDController.setP(0.22);
         //this.drivePIDController.setI(0);
@@ -176,11 +172,11 @@ public class SwerveModule {
         //this.driveMotor.setIdleMode(IdleMode.kCoast);
 
         turnConfig.closedLoop
-            .positionWrappingEnabled(true)
-            .positionWrappingMinInput(-Math.PI)
-            .positionWrappingMaxInput(Math.PI)
-            .pidf(0.55, 0, 0.3, 0) //Do not use ff because it will cause the motors to spin in the wrong direction :)
-            .outputRange(-1, 1);
+                .positionWrappingEnabled(true)
+                .positionWrappingMinInput(-Math.PI)
+                .positionWrappingMaxInput(Math.PI)
+                .pidf(0.55, 0, 0.3, 0) //Do not use ff because it will cause the motors to spin in the wrong direction :)
+                .outputRange(-1, 1);// used to be 0.55 0 0.3
         // TODO: add some more config for MAXMOTION
 
         /*
@@ -199,25 +195,6 @@ public class SwerveModule {
         //System.out.println(this.name + " inverts drive: " + this.driveMotor.getInverted() + " turn: " + this.turnMotor.getInverted());
         // System.out.println(this.name + " abs pos " + RobotMathUtil.roundNearestHundredth(this.turnAbsoluteEncoder.getAbsolutePosition().getValueAsDouble()));
     }
-
-    
-
-    private SwerveModuleState getCosineCompensatedState(SwerveModuleState desiredState) {
-        double cosineScalar = 1.0;
-        // Taken from the CTRE SwerveModule class.
-        // https://api.ctr-electronics.com/phoenix6/release/java/src-html/com/ctre/phoenix6/mechanisms/swerve/SwerveModule.html#line.46
-        /* From FRC 900's whitepaper, we add a cosine compensator to the applied drive velocity */
-        /* To reduce the "skew" that occurs when changing direction */
-        /* If error is close to 0 rotations, we're already there, so apply full power */
-        /* If the error is close to 0.25 rotations, then we're 90 degrees, so movement doesn't help us at all */
-        cosineScalar = desiredState.angle.minus(this.getAbsoluteModuleState().angle).getCos();
-        /* Make sure we don't invert our drive, even though we shouldn't ever target over 90 degrees anyway */
-        if (cosineScalar < 0.0) {
-            cosineScalar = 1;
-        }
- 
-        return new SwerveModuleState(desiredState.speedMetersPerSecond * cosineScalar, desiredState.angle);
-  }
 
     /**
      * ORIGINAL: {@link SwerveModuleState#optimize(SwerveModuleState, Rotation2d)}
@@ -254,6 +231,23 @@ public class SwerveModule {
         } else {
             return new SwerveModuleState(desiredState.speedMetersPerSecond, desiredState.angle);
         }
+    }
+
+    private SwerveModuleState getCosineCompensatedState(SwerveModuleState desiredState) {
+        double cosineScalar = 1.0;
+        // Taken from the CTRE SwerveModule class.
+        // https://api.ctr-electronics.com/phoenix6/release/java/src-html/com/ctre/phoenix6/mechanisms/swerve/SwerveModule.html#line.46
+        /* From FRC 900's whitepaper, we add a cosine compensator to the applied drive velocity */
+        /* To reduce the "skew" that occurs when changing direction */
+        /* If error is close to 0 rotations, we're already there, so apply full power */
+        /* If the error is close to 0.25 rotations, then we're 90 degrees, so movement doesn't help us at all */
+        cosineScalar = desiredState.angle.minus(this.getAbsoluteModuleState().angle).getCos();
+        /* Make sure we don't invert our drive, even though we shouldn't ever target over 90 degrees anyway */
+        if (cosineScalar < 0.0) {
+            cosineScalar = 1;
+        }
+
+        return new SwerveModuleState(desiredState.speedMetersPerSecond * cosineScalar, desiredState.angle);
     }
 
     public double getDriveAmperage() {

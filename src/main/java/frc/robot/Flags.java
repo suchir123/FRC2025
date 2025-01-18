@@ -68,15 +68,15 @@ public final class Flags {
         /**
          * Enables locked heading mode: when the rotation joystick is not moved, it uses gyroscope to
          * lock the heading (more in drive train code).
-         * 
+         *
          * @implNote: if the robot were to bounce off of something while in locked heading mode, AND the driver doesn't
          * adjust the heading, this would cause kinda unexpected behavior because the robot would try to reassume
          * its initial heading.
          */
-        public static final boolean ENABLE_LOCKED_HEADING_MODE = true;
+        public static final boolean ENABLE_LOCKED_HEADING_MODE = false;
 
-        public static final boolean ENABLE_COSINE_COMPENSATOR = false;
+        public static final boolean ENABLE_COSINE_COMPENSATOR = true;
 
-        public static final boolean ENABLE_ANGULAR_VELOCITY_COMPENSATION = true;
+        public static final boolean ENABLE_ANGULAR_VELOCITY_COMPENSATION_TELEOP = true;
     }
 }

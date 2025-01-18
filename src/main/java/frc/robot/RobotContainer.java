@@ -2,39 +2,23 @@ package frc.robot;
 
 import edu.wpi.first.networktables.GenericPublisher;
 import edu.wpi.first.networktables.NetworkTableType;
-import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandPS5Controller;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants.OperatorConstants;
-import frc.robot.Constants.OperatorConstants.ControllerConstants;
-import frc.robot.commands.*;
+import frc.robot.commands.ManualDriveCommand;
+import frc.robot.commands.TestDriveCommand;
 import frc.robot.controllers.AbstractController;
 import frc.robot.controllers.FlightJoystick;
 import frc.robot.controllers.NintendoProController;
 import frc.robot.controllers.PS5Controller;
 import frc.robot.subsystems.PowerHandler;
-// import frc.robot.subsystems.staticsubsystems.ColorSensor;
 import frc.robot.subsystems.staticsubsystems.LimeLight;
-// import frc.robot.subsystems.staticsubsystems.RobotGyro;
 import frc.robot.subsystems.swerve.DriveTrainSubsystem;
-// import frc.robot.util.AprilTagHandler;
-import frc.robot.util.ControlHandler;
 import frc.robot.util.NetworkTablesUtil;
 import frc.robot.util.Util;
-
-import java.io.File;
-import java.io.IOException;
-import java.io.PrintStream;
-
-import edu.wpi.first.wpilibj.Filesystem;
-import swervelib.parser.SwerveParser;
-import swervelib.SwerveDrive;
-import edu.wpi.first.math.util.Units;
 
 public class RobotContainer {
     private static final GenericPublisher COLOR_SENSOR_PUB = NetworkTablesUtil.getPublisher("robot", "color_sensor_sees_note", NetworkTableType.kBoolean);
@@ -56,6 +40,7 @@ public class RobotContainer {
     // private SwerveSubsystem driveTrain = new SwerveSubsystem(new File(Filesystem.getDeployDirectory(), "swerve"));
 
     private final DriveTrainSubsystem driveTrain;
+
     public RobotContainer() {
         this.driveTrain = Util.createIfFlagElseNull(() -> new DriveTrainSubsystem(), Flags.DriveTrain.IS_ATTACHED);
 
@@ -66,7 +51,7 @@ public class RobotContainer {
         // RobotGyro.poke();
         // ColorSensor.poke();
 
-        if(Flags.DriveTrain.IS_ATTACHED) {
+        if (Flags.DriveTrain.IS_ATTACHED) {
             //this.autonChooser = AutoBuilder.buildAutoChooser();
             //SmartDashboard.putData("choose your auto", this.autonChooser);
         } else {
@@ -75,7 +60,7 @@ public class RobotContainer {
 
         NetworkTablesUtil.getConnections();
     }
-    
+
     private void configureBindings() {
         // TODO: bindings need to be re-implemented if still in use for YAGSL drive
         // if (Flags.DriveTrain.IS_ATTACHED) {
@@ -110,7 +95,7 @@ public class RobotContainer {
                 this.driveTrain.setDefaultCommand(new TestDriveCommand(this.driveTrain, this.primaryController));
             } else {
                 this.driveTrain.setDefaultCommand(
-                    new ManualDriveCommand(this.driveTrain, this.primaryController)
+                        new ManualDriveCommand(this.driveTrain, this.primaryController)
                 );
             }
         }
@@ -123,7 +108,7 @@ public class RobotContainer {
     public void onTeleopPeriodic() {
         this.powerHandler.updateNT();
     }
-    
+
     public void onRobotPeriodic() {
         // COLOR_SENSOR_PUB.setBoolean(ColorSensor.isNoteColor());
     }

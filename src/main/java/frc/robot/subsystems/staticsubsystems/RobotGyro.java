@@ -1,9 +1,11 @@
 package frc.robot.subsystems.staticsubsystems;
 
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.units.measure.MutAngularVelocity;
 import edu.wpi.first.wpilibj.ADIS16470_IMU;
+import edu.wpi.first.wpilibj.ADIS16470_IMU.IMUAxis;
 
-import static edu.wpi.first.wpilibj.ADIS16470_IMU.IMUAxis;
+import static edu.wpi.first.units.Units.DegreesPerSecond;
 
 /**
  * Wrapper around gyro
@@ -11,6 +13,7 @@ import static edu.wpi.first.wpilibj.ADIS16470_IMU.IMUAxis;
 
 public final class RobotGyro {
     private static final ADIS16470_IMU gyro = new ADIS16470_IMU();
+    private static final MutAngularVelocity yawVel = new MutAngularVelocity(0, 0, DegreesPerSecond);
     private static double angleAdjust = 0;
 
     static {
@@ -21,6 +24,10 @@ public final class RobotGyro {
     }
 
     private RobotGyro() {
+    }
+
+    public static MutAngularVelocity getYawAngularVelocity() {
+        return yawVel.mut_setMagnitude(gyro.getRate());
     }
 
     /**
