@@ -121,6 +121,9 @@ public class DriveTrainSubsystem extends SubsystemBase {
         SmartDashboard.putData("Field", field);
         SmartDashboard.putData("estimated field", estimatedField);
 
+        QuestNav.INSTANCE.zeroPosition();
+        QuestNav.INSTANCE.zeroHeading();
+
         // this.setPose(new Pose2d(1.7, 5.50, RobotGyro.getRotation2d()));
         // this.setPose(GeometryUtil.flipFieldPose(new Pose2d(1.37, 5.52, new Rotation2d())));
 
