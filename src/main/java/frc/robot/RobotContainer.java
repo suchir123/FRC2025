@@ -36,7 +36,7 @@ public class RobotContainer {
     private final PowerHandler powerHandler = new PowerHandler();
     // private final AprilTagHandler aprilTagHandler = new AprilTagHandler();
 
-    private final SendableChooser<Command> autonChooser;
+    // private final SendableChooser<Command> autonChooser;
 
     private final DriveTrainSubsystem driveTrain;
 
@@ -50,12 +50,12 @@ public class RobotContainer {
         // RobotGyro.poke();
         // ColorSensor.poke();
 
-        if (Flags.DriveTrain.IS_ATTACHED && Flags.DriveTrain.ENABLE_AUTON_CHOOSER) {
-            this.autonChooser = AutoBuilder.buildAutoChooser();
-            SmartDashboard.putData("choose your auto", this.autonChooser);
-        } else {
-            this.autonChooser = null;
-        }
+        // if (Flags.DriveTrain.IS_ATTACHED && Flags.DriveTrain.ENABLE_AUTON_CHOOSER) {
+        //     this.autonChooser = AutoBuilder.buildAutoChooser();
+        //     SmartDashboard.putData("choose your auto", this.autonChooser);
+        // } else {
+        //     this.autonChooser = null;
+        // }
 
         NetworkTablesUtil.getConnections();
     }

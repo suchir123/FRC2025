@@ -47,7 +47,7 @@ import static edu.wpi.first.units.Units.RadiansPerSecond;
 public class DriveTrainSubsystem extends SubsystemBase {
     // public static final double MAX_SPEED = 3.0; // 3 meters per second
     // public static final double MAX_ANGULAR_SPEED = Math.PI; // 1/2 rotation per second
-    final int LOCK_HEADING_THRESHOLD = 0.1; // TODO: test if when rotate without translating does the robot turn in a "reasonable" manner
+    final double LOCK_HEADING_THRESHOLD = 0.1; // TODO: test if when rotate without translating does the robot turn in a "reasonable" manner
     private static final double SMART_OPTIMIZATION_THRESH_M_PER_SEC = 2;
 
     private static final boolean INVERT_DRIVE_MOTORS = true;
@@ -232,25 +232,7 @@ public class DriveTrainSubsystem extends SubsystemBase {
             return;
         }
         
-        double speed = Math.sqrt(Math.pow(forwardSpeed, 2) + Math.pow(sidewaysSpeed, 2));
-        boolean isMoving = speed > LOCK_HEADING_THRESHOLD;
-        if (Flags.DriveTrain.ENABLE_LOCKED_HEADING_MODE && isMoving) {
-            // As soon as the robot isn't rotating (the driver's thumb isn't on the rotation joystick anymore),
-            // we set lockedHeadingMode to true and store the current heading so we can keep moving at it.
-            boolean robotIsTurning = Math.abs(rotSpeed) > 0.01;
-            if (robotIsTurning) {
-                lockedHeadingMode = false;
-            } else if (lockedHeadingMode) {
-                // locked heading mode is ON! move back towards previous orientation.
-                double headingError = lockedHeading.getRadians() - RobotGyro.getRotation2d().getRadians();
-                double unboundedRotSpeed = 1.0 * headingError; // 1.0 is changeable constant (like kP)
-                rotSpeed = MathUtil.clamp(unboundedRotSpeed, -0.3, 0.3);
-            } else {
-                // if we JUST STOPPED turning, we store the current orientation so we can move back towards it later
-                lockedHeadingMode = true;
-                lockedHeading = RobotGyro.getRotation2d();
-            }
-        }
+        rotSpeed = applyLockHeadingMode(forwardSpeed, sidewaysSpeed, rotSpeed);
 
         ChassisSpeeds chassisSpeeds;
         if (fieldRelative) {
@@ -277,7 +259,29 @@ public class DriveTrainSubsystem extends SubsystemBase {
         targetSwerveStatePublisher.set(optimizedTargetStates);
     }
 
-    private double applyLockHeadingMode
+    @SuppressWarnings("unused")
+    private double applyLockHeadingMode(double forwardSpeed, double sidewaysSpeed, double rotSpeed) {
+        double speed = Math.sqrt(Math.pow(forwardSpeed, 2) + Math.pow(sidewaysSpeed, 2));
+        boolean isMoving = speed > LOCK_HEADING_THRESHOLD;
+        if (Flags.DriveTrain.ENABLE_LOCKED_HEADING_MODE && isMoving) {
+            // As soon as the robot isn't rotating (the driver's thumb isn't on the rotation joystick anymore),
+            // we set lockedHeadingMode to true and store the current heading so we can keep moving at it.
+            boolean robotIsTurning = Math.abs(rotSpeed) > 0.01;
+            if (robotIsTurning) {
+                lockedHeadingMode = false;
+            } else if (lockedHeadingMode) {
+                // locked heading mode is ON! move back towards previous orientation.
+                double headingError = lockedHeading.getRadians() - RobotGyro.getRotation2d().getRadians();
+                double unboundedRotSpeed = 1.0 * headingError; // 1.0 is changeable constant (like kP)
+                rotSpeed = MathUtil.clamp(unboundedRotSpeed, -0.3, 0.3);
+            } else {
+                // if we JUST STOPPED turning, we store the current orientation so we can move back towards it later
+                lockedHeadingMode = true;
+                lockedHeading = RobotGyro.getRotation2d();
+            }
+        }
+        return rotSpeed;
+    }
 
     public ChassisSpeeds angularVelocitySkewCorrection(ChassisSpeeds robotRelativeVelocity, double angularVelocityCoefficient) {
         var angularVelocity = new Rotation2d(RobotGyro.getYawAngularVelocity().in(RadiansPerSecond) * angularVelocityCoefficient);
