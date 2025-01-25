@@ -45,8 +45,8 @@ import static edu.wpi.first.units.Units.RadiansPerSecond;
  * Represents a swerve drive style drivetrain.
  */
 public class DriveTrainSubsystem extends SubsystemBase {
-    // public static final double MAX_SPEED = 3.0; // 3 meters per second
-    // public static final double MAX_ANGULAR_SPEED = Math.PI; // 1/2 rotation per second
+    public static final double MAX_SPEED = 3.0; // 3 meters per second
+    public static final double MAX_ANGULAR_SPEED = Math.PI; // 1/2 rotation per second
     private static final double SMART_OPTIMIZATION_THRESH_M_PER_SEC = 2;
 
     private static final boolean INVERT_DRIVE_MOTORS = true;
