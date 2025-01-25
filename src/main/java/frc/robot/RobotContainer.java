@@ -102,6 +102,7 @@ public class RobotContainer {
     }
 
     public Command getAutonomousCommand() {
+        // This method will return an actual auton path once we implement it & switch in the comment.
         return new InstantCommand(); //this.autonChooser.getSelected();
     }
 
@@ -110,6 +111,6 @@ public class RobotContainer {
     }
 
     public void onRobotPeriodic() {
-        // COLOR_SENSOR_PUB.setBoolean(ColorSensor.isNoteColor());
+
     }
 }

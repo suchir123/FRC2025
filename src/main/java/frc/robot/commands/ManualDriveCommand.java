@@ -36,8 +36,9 @@ public class ManualDriveCommand extends Command {
     private double flipFactor() {
         if (Util.onBlueTeam()) {
             return 1;
+        } else {
+            return -1;
         }
-        return -1;
     }
 
     @Override
@@ -45,50 +46,15 @@ public class ManualDriveCommand extends Command {
         // System.out.println("vert: " + this.joystick.getRightVerticalMovement() + ", hor: " + this.joystick.getRightHorizontalMovement());
         // this.driveTrain.drive(this.joystick.getVerticalMovement());
         double flip = flipFactor();
-        double ySpeed = Util.squareKeepSign(this.ySpeedLimiter.calculate(-this.joystick.getLeftVerticalMovement() * flip)) * MAX_SPEED_METERS_PER_SEC;
+        double ySpeed = Util.squareKeepSign(this.ySpeedLimiter.calculate(-this.joystick.getLeftVerticalMovement()  * flip)) * MAX_SPEED_METERS_PER_SEC;
         double xSpeed = Util.squareKeepSign(this.xSpeedLimiter.calculate(this.joystick.getLeftHorizontalMovement() * flip)) * MAX_SPEED_METERS_PER_SEC;
 
         double targetAngle = Math.tan(this.joystick.getLeftVerticalMovement() / this.joystick.getLeftHorizontalMovement());
 
 
-        double rotSpeed;
+        double rotSpeedMultiplier = 3.0;
 
-        //  if (autoAimSubwoofer.getAsBoolean()) {
-        //      // addison & ivan run the robot
-        //      // The auto rotSpeed will be empty IF:
-        //      // a: autoAim button pressed
-        //      // b. we can't see any notes.
-        //      // in this case, the robot will drive with speed 0.0.
-        //      rotSpeed = directionToSubwooferTarget()
-        //              .map(Rotation2d::getDegrees)
-        //              .map(avgDirectionToTarget -> {
-        //                  Rotation2d robotHeading = RobotGyro.getRotation2d();
-        //                  double headingDeg = 180 + Util.bringAngleWithinUnitCircle(robotHeading.getDegrees());
-        //                  double rotateByAmount = headingDeg - avgDirectionToTarget;
-        //                  if(rotateByAmount > 180) {
-        //                      rotateByAmount -= 360;
-        //                  }
-        //                  rotateByAmount = -rotateByAmount;
-        //                  if(rotateByAmount < -180) {
-        //                      rotateByAmount += 360;
-        //                  }
-        //                  double rotSpeed2 = MathUtil.clamp(3 * (Math.toRadians(rotateByAmount)), -1.7, 1.7);
-        //                  System.out.println("AVERAGE angle to subwoofer target: " + avgDirectionToTarget + ", rotating " + rotateByAmount + " at a speed of " + rotSpeed2 + " to get there");
-        //                  //System.out.println("current rot: " + RobotGyro.getRotation2d());
-        //                  return rotSpeed2;
-        //              })
-        //              // if we don't see an apriltag OR we haven't collected enough data,
-        //              // don't begin moving.
-        //              .orElse(0.0);
-        //      wasAutomaticallyDrivingLastFrame = true;
-        //  } else {
-        // phong runs the robot!
-        //  if (wasAutomaticallyDrivingLastFrame) {
-        //      //aprilTagHandler.resetAverageAutoAimPose();
-        //      filter.reset();
-        //  }
-        rotSpeed = -this.joystick.getRightHorizontalMovement() * 3.0;
-        //  }
+        double rotSpeed = -this.joystick.getRightHorizontalMovement() * rotSpeedMultiplier;
 
 
         // System.out.println("forward speed: " + ySpeed + ", x speed: " + xSpeed);
@@ -103,24 +69,6 @@ public class ManualDriveCommand extends Command {
      * @return A Rotation2d representing the angle to the speaker. The gyroscope value should equal this value when the robot is facing the speaker.
      * //
      */
-    // private Optional<Rotation2d> directionToSubwooferTarget() {
-    //     int tagId = Util.getTargetTagId();
-    //     Pose2d targetPose2d = Util.getTagPose(tagId).toPose2d();
-
-    //     // i love Optional<T> :3
-    //     return aprilTagHandler
-    //             .averageAutoAimPose(tagId)
-    //             .map((robotPose) -> // now we know where to aim, compare our current location with our target
-    //                 Math.atan2(
-    //                         targetPose2d.getY() - robotPose.getY(),
-    //                         targetPose2d.getX() - robotPose.getX()
-    //                 ) // trust me bro
-    //             )
-    //             // filter to decrease noise.
-    //             .map(filter::calculate)
-    //             .map(Rotation2d::new);
-    // }
-
     // Called once the command ends or is interrupted.
     @Override
     public void end(boolean interrupted) {

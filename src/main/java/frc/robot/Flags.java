@@ -8,6 +8,14 @@ package frc.robot;
  */
 public final class Flags {
     /**
+     * Flags relating to printing/information useful for debugging.
+     */
+    public static class Debug {
+        public static final boolean CLEAR_PDP_STICKY_FAULTS = true;
+        public static final boolean PRINT_PDP_STICKY_FAULTS = false;
+    }
+
+    /**
      * Flags relating to the Operator console (i.e. relating to the Driver Station laptop).
      */
     public static class Operator {
