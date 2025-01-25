@@ -243,7 +243,7 @@ public class DriveTrainSubsystem extends SubsystemBase {
             } else if (lockedHeadingMode) {
                 // locked heading mode is ON! move back towards previous orientation.
                 double headingError = lockedHeading.getRadians() - RobotGyro.getRotation2d().getRadians();
-                double unboundedRotSpeed = 1 * headingError; // 1 is changeable constant
+                double unboundedRotSpeed = 1.0 * headingError; // 1.0 is changeable constant (like kP)
                 rotSpeed = MathUtil.clamp(unboundedRotSpeed, -0.3, 0.3);
             } else {
                 // if we JUST STOPPED turning, we store the current orientation so we can move back towards it later
@@ -276,6 +276,8 @@ public class DriveTrainSubsystem extends SubsystemBase {
         // TODO: This is publishing a newly instantiated list UNRELATED to anything
         targetSwerveStatePublisher.set(optimizedTargetStates);
     }
+
+    private double applyLockHeadingMode
 
     public ChassisSpeeds angularVelocitySkewCorrection(ChassisSpeeds robotRelativeVelocity, double angularVelocityCoefficient) {
         var angularVelocity = new Rotation2d(RobotGyro.getYawAngularVelocity().in(RadiansPerSecond) * angularVelocityCoefficient);
