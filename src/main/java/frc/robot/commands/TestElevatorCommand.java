@@ -29,8 +29,8 @@ public class TestElevatorCommand extends Command {
 
         System.out.println("Right speed = " + rightSpeed + "\n" + 
                            "Left speed = " + leftSpeed + "\n" + 
-                           "Right position = " + this.telescopingArm.getLeadingThroughboreEncoderDistance() + "\n" + 
-                           "Left position = " + this.telescopingArm.getFollowingThroughboreEncoderDistance());
+                           "Right position = " + this.telescopingArm.getRightThroughboreEncoderDistance() + "\n" + 
+                           "Left position = " + this.telescopingArm.getLeftThroughboreEncoderDistance());
 
         // right is lead, left is follow.
         // this.telescopingArm.ascendSimple(rightSpeed, leftSpeed);
