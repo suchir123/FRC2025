@@ -47,52 +47,11 @@ public class ManualDriveCommand extends Command {
         double flip = flipFactor();
         double ySpeed = Util.squareKeepSign(this.ySpeedLimiter.calculate(-this.joystick.getLeftVerticalMovement() * flip)) * MAX_SPEED_METERS_PER_SEC;
         double xSpeed = Util.squareKeepSign(this.xSpeedLimiter.calculate(this.joystick.getLeftHorizontalMovement() * flip)) * MAX_SPEED_METERS_PER_SEC;
+        // System.out.println("xSpeed = " + xSpeed);
+        // System.out.println("ySpeed = " + ySpeed);
 
-        double targetAngle = Math.tan(this.joystick.getLeftVerticalMovement() / this.joystick.getLeftHorizontalMovement());
-
-
-        double rotSpeed;
-
-        //  if (autoAimSubwoofer.getAsBoolean()) {
-        //      // addison & ivan run the robot
-        //      // The auto rotSpeed will be empty IF:
-        //      // a: autoAim button pressed
-        //      // b. we can't see any notes.
-        //      // in this case, the robot will drive with speed 0.0.
-        //      rotSpeed = directionToSubwooferTarget()
-        //              .map(Rotation2d::getDegrees)
-        //              .map(avgDirectionToTarget -> {
-        //                  Rotation2d robotHeading = RobotGyro.getRotation2d();
-        //                  double headingDeg = 180 + Util.bringAngleWithinUnitCircle(robotHeading.getDegrees());
-        //                  double rotateByAmount = headingDeg - avgDirectionToTarget;
-        //                  if(rotateByAmount > 180) {
-        //                      rotateByAmount -= 360;
-        //                  }
-        //                  rotateByAmount = -rotateByAmount;
-        //                  if(rotateByAmount < -180) {
-        //                      rotateByAmount += 360;
-        //                  }
-        //                  double rotSpeed2 = MathUtil.clamp(3 * (Math.toRadians(rotateByAmount)), -1.7, 1.7);
-        //                  System.out.println("AVERAGE angle to subwoofer target: " + avgDirectionToTarget + ", rotating " + rotateByAmount + " at a speed of " + rotSpeed2 + " to get there");
-        //                  //System.out.println("current rot: " + RobotGyro.getRotation2d());
-        //                  return rotSpeed2;
-        //              })
-        //              // if we don't see an apriltag OR we haven't collected enough data,
-        //              // don't begin moving.
-        //              .orElse(0.0);
-        //      wasAutomaticallyDrivingLastFrame = true;
-        //  } else {
-        // phong runs the robot!
-        //  if (wasAutomaticallyDrivingLastFrame) {
-        //      //aprilTagHandler.resetAverageAutoAimPose();
-        //      filter.reset();
-        //  }
-        rotSpeed = -this.joystick.getRightHorizontalMovement() * 3.0;
-        //  }
-
-
-        // System.out.println("forward speed: " + ySpeed + ", x speed: " + xSpeed);
-        // System.out.println("y: " + RobotMathUtil.roundNearestHundredth(this.joystick.getLeftVerticalMovement()) + ", x: " + RobotMathUtil.roundNearestHundredth(this.joystick.getLeftHorizontalMovement()));
+        double rotSpeed = -this.joystick.getRightHorizontalMovement() * 3.0;
+        // System.out.println("rotSpeed = " + rotSpeed);
 
         this.driveTrain.drive(xSpeed, ySpeed, rotSpeed, true);
     }
