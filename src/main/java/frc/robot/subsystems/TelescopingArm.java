@@ -28,9 +28,11 @@ public class TelescopingArm extends SubsystemBase {
 
     private final ThroughboreEncoder rightThroughboreEncoder;
     private final ThroughboreEncoder leftThroughboreEncoder;
-    private final PIDController followingPIDController;
+    private final PIDController rightPIDController;
+    private final PIDController leftPIDController;
 
-    private final Rotation2d maximumDistance = Rotation2d.fromRotations(10.0);
+    private static final double maximumDistanceMeters = 2.0;
+    private static final double metersAscendedPerAbsoluteEncoderRotation = 0.1; // TODO: Figure out this constant.
 
     // Guaranteed not to send values 
     public static final double MAX_SPEED = 0.15;
@@ -47,15 +49,19 @@ public class TelescopingArm extends SubsystemBase {
         rightMotorEncoder = rightMotor.getEncoder();
         leftMotorEncoder = leftMotor.getEncoder();
 
-        rightThroughboreEncoder = new ThroughboreEncoder(Constants.PortConstants.RIGHT_CLIMB_ABS_ENCODER_ID, 
-                                                           Constants.PortConstants.RIGHT_CLIMB_A_ENCODER_ID, 
-                                                           Constants.PortConstants.RIGHT_CLIMB_B_ENCODER_ID);
-        leftThroughboreEncoder = new ThroughboreEncoder(Constants.PortConstants.LEFT_CLIMB_ABS_ENCODER_ID, 
-                                                             Constants.PortConstants.LEFT_CLIMB_A_ENCODER_ID, 
-                                                             Constants.PortConstants.LEFT_CLIMB_B_ENCODER_ID);
+        rightThroughboreEncoder = new ThroughboreEncoder(Constants.PortConstants.RIGHT_CLIMB_ABS_ENCODER_ID, 0.0,false);
+        leftThroughboreEncoder = new ThroughboreEncoder(Constants.PortConstants.LEFT_CLIMB_ABS_ENCODER_ID, 0.0,false);
         
         // TODO: tune
-        followingPIDController = new PIDController(0.055, 0, 0.03);
+        rightPIDController = new PIDController(0.055, 0, 0.03);
+        leftPIDController  = new PIDController(0.055, 0, 0.03);
+    }
+
+    /*
+     * inputs: heightMeters: the height of the setpoint in meters.
+     */
+    public void setHeight(double heightMeters) {
+        
     }
 
     /*
@@ -63,15 +69,15 @@ public class TelescopingArm extends SubsystemBase {
      * 
      * Speeds scaled & clamped between -0.15 and 0.15, then sent to motors.
      */
-    public void ascendSimple(double rightSpeed, double leftSpeed) {
-        Pair<Double, Double> speeds = new Pair<Double, Double>(rightSpeed, leftSpeed);
+    public void ascendSimple(double leftSpeed, double rightSpeed) {
+        Pair<Double, Double> speeds = new Pair<Double, Double>(leftSpeed, rightSpeed);
         speeds = scaleSpeeds(speeds, 1.0, MAX_SPEED);
         speeds = clampSpeeds(speeds, MAX_SPEED);
         setRawSpeeds(speeds);
     }
 
     public void ascendWithLeftBoost(double speed, double leftBoost) {
-        Pair<Double, Double> speeds = new Pair<Double, Double>(speed, speed * leftBoost);
+        Pair<Double, Double> speeds = new Pair<Double, Double>(speed * leftBoost, speed);
         speeds = scaleSpeeds(speeds, 1.0, MAX_SPEED);
         speeds = desaturateSpeeds(speeds, MAX_SPEED);
         setRawSpeeds(speeds);
@@ -89,25 +95,25 @@ public class TelescopingArm extends SubsystemBase {
     }
 
     private static Pair<Double, Double> desaturateSpeeds(Pair<Double, Double> speeds, double maxSpeed) {
-        double rightSpeed = speeds.getFirst();
-        double leftSpeed = speeds.getSecond();
-        double largerSpeed = Math.max(rightSpeed, leftSpeed);
+        double leftSpeed = speeds.getFirst();
+        double rightSpeed = speeds.getSecond();
+        double largerSpeed = Math.max(leftSpeed, rightSpeed);
         if (largerSpeed >= maxSpeed) {
             double scaleFactor = maxSpeed / largerSpeed;
-            rightSpeed *= scaleFactor;
             leftSpeed *= scaleFactor;
+            rightSpeed *= scaleFactor;
         }
-        return new Pair<Double, Double>(rightSpeed, leftSpeed);
+        return new Pair<Double, Double>(leftSpeed, rightSpeed);
     }
 
-    private void setRawSpeeds(double rightSpeed, double leftSpeed) {
-        this.rightMotor.set(rightSpeed);
+    private void setRawSpeeds(double leftSpeed, double rightSpeed) {
         this.leftMotor.set(leftSpeed);
+        this.rightMotor.set(rightSpeed);
     }
 
     private void setRawSpeeds(Pair<Double, Double> speeds) {
-        this.rightMotor.set(speeds.getFirst());
-        this.leftMotor.set(speeds.getSecond());
+        this.leftMotor.set(speeds.getFirst());
+        this.rightMotor.set(speeds.getSecond());
     }
 
     public Rotation2d getRightThroughboreEncoderDistance() {

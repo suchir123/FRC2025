@@ -51,6 +51,10 @@ public class ThroughboreEncoder {
         }
     }
 
+    public ThroughboreEncoder(int encoderAbsPort, double absoluteOffset, boolean reversed) {
+        this(encoderAbsPort, 0xDEADBEEF, 0xDEADBEEF, absoluteOffset, reversed, true);
+    }
+
     public ThroughboreEncoder(int encoderAbsPort, int encoderAPort, int encoderBPort) {
         this(encoderAbsPort, encoderAPort, encoderBPort, 0.0, false, false);
     }
