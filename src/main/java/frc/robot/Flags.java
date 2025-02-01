@@ -22,6 +22,12 @@ public final class Flags {
         public static final boolean NINTENDO_SWITCH_CONTROLLER_AS_PRIMARY = false;
     }
 
+    public static class TelescopingArm {
+        public static final boolean IS_ATTACHED = true;
+        public static final boolean ENABLED = true;
+        public static final boolean USE_TEST_ELEVATOR_COMMAND = true;
+    }
+
     /**
      * Flags relating to the drive train.
      */
@@ -34,7 +40,7 @@ public final class Flags {
         /**
          * Whether the drive train should be allowed to send power to motor controllers. If false, motors will not be set to any power and PID requests will not be sent.
          */
-        public static final boolean ENABLED = true;
+        public static final boolean ENABLED = false;
 
         /**
          * Whether the drive motors should be allowed to run. If false, drive motors will not be set to any power and PID requests will not be sent.

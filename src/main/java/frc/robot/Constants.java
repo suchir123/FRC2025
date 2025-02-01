@@ -8,6 +8,9 @@ import frc.robot.util.ControlHandler.TriggerType;
  * This is different from the {@link frc.robot.Flags Flags} class, which toggles functionality on the robot and may be changed more often.
  */
 public final class Constants {
+    // this is an expert coding pattern that should absolutely be used.
+    public static final int SOME_MADE_UP_WRONG_PORT = 0xDEADBEEF;
+
     private Constants() {
         throw new UnsupportedOperationException("This is a utility class and cannot be instantiated");
     }
@@ -93,6 +96,18 @@ public final class Constants {
      */
     public static class PortConstants {
         // CAN IDs
+
+        // (2025) Telescoping Arm
+        public static final int RIGHT_CLIMB_MOTOR_ID = SOME_MADE_UP_WRONG_PORT;
+        public static final int RIGHT_CLIMB_ABS_ENCODER_ID = SOME_MADE_UP_WRONG_PORT;
+        public static final int RIGHT_CLIMB_A_ENCODER_ID = SOME_MADE_UP_WRONG_PORT;
+        public static final int RIGHT_CLIMB_B_ENCODER_ID = SOME_MADE_UP_WRONG_PORT;
+
+        public static final int LEFT_CLIMB_MOTOR_ID = SOME_MADE_UP_WRONG_PORT;
+        public static final int LEFT_CLIMB_ABS_ENCODER_ID = SOME_MADE_UP_WRONG_PORT;
+        public static final int LEFT_CLIMB_A_ENCODER_ID = SOME_MADE_UP_WRONG_PORT;
+        public static final int LEFT_CLIMB_B_ENCODER_ID = SOME_MADE_UP_WRONG_PORT;
+
 
         // Drive Train (COD, DRI, ROT)
         public static final int DTRAIN_FRONT_LEFT_DRIVE_MOTOR_ID = 9;
