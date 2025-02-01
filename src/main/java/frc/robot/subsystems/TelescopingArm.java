@@ -127,13 +127,13 @@ public class TelescopingArm extends SubsystemBase {
     // Silly method, remove after we set the ports.
     private boolean portsAreNotSet() {
         if (Constants.PortConstants.RIGHT_CLIMB_MOTOR_ID       == Constants.SOME_MADE_UP_WRONG_PORT) return true;
-        if (Constants.PortConstants.RIGHT_CLIMB_ABS_ENCODER_ID == Constants.SOME_MADE_UP_WRONG_PORT) return true;
-        if (Constants.PortConstants.RIGHT_CLIMB_A_ENCODER_ID   == Constants.SOME_MADE_UP_WRONG_PORT) return true;
-        if (Constants.PortConstants.RIGHT_CLIMB_B_ENCODER_ID   == Constants.SOME_MADE_UP_WRONG_PORT) return true;
         if (Constants.PortConstants.LEFT_CLIMB_MOTOR_ID        == Constants.SOME_MADE_UP_WRONG_PORT) return true;
+        if (Constants.PortConstants.RIGHT_CLIMB_ABS_ENCODER_ID == Constants.SOME_MADE_UP_WRONG_PORT) return true;
         if (Constants.PortConstants.LEFT_CLIMB_ABS_ENCODER_ID  == Constants.SOME_MADE_UP_WRONG_PORT) return true;
-        if (Constants.PortConstants.LEFT_CLIMB_A_ENCODER_ID    == Constants.SOME_MADE_UP_WRONG_PORT) return true;
-        if (Constants.PortConstants.LEFT_CLIMB_B_ENCODER_ID    == Constants.SOME_MADE_UP_WRONG_PORT) return true;
+        // if (Constants.PortConstants.RIGHT_CLIMB_A_ENCODER_ID   == Constants.SOME_MADE_UP_WRONG_PORT) return true;
+        // if (Constants.PortConstants.RIGHT_CLIMB_B_ENCODER_ID   == Constants.SOME_MADE_UP_WRONG_PORT) return true;
+        // if (Constants.PortConstants.LEFT_CLIMB_A_ENCODER_ID    == Constants.SOME_MADE_UP_WRONG_PORT) return true;
+        // if (Constants.PortConstants.LEFT_CLIMB_B_ENCODER_ID    == Constants.SOME_MADE_UP_WRONG_PORT) return true;
         return false;
     }
 }

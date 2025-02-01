@@ -98,13 +98,13 @@ public final class Constants {
         // CAN IDs
 
         // (2025) Telescoping Arm
-        public static final int RIGHT_CLIMB_MOTOR_ID = SOME_MADE_UP_WRONG_PORT;
-        public static final int RIGHT_CLIMB_ABS_ENCODER_ID = SOME_MADE_UP_WRONG_PORT;
+        public static final int RIGHT_CLIMB_MOTOR_ID = 17;
+        public static final int RIGHT_CLIMB_ABS_ENCODER_ID = 1;
         public static final int RIGHT_CLIMB_A_ENCODER_ID = SOME_MADE_UP_WRONG_PORT;
         public static final int RIGHT_CLIMB_B_ENCODER_ID = SOME_MADE_UP_WRONG_PORT;
 
-        public static final int LEFT_CLIMB_MOTOR_ID = SOME_MADE_UP_WRONG_PORT;
-        public static final int LEFT_CLIMB_ABS_ENCODER_ID = SOME_MADE_UP_WRONG_PORT;
+        public static final int LEFT_CLIMB_MOTOR_ID = 21;
+        public static final int LEFT_CLIMB_ABS_ENCODER_ID = 0;
         public static final int LEFT_CLIMB_A_ENCODER_ID = SOME_MADE_UP_WRONG_PORT;
         public static final int LEFT_CLIMB_B_ENCODER_ID = SOME_MADE_UP_WRONG_PORT;
 
