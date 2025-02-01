@@ -244,7 +244,7 @@ public class DriveTrainSubsystem extends SubsystemBase {
         if (Flags.DriveTrain.ENABLE_ANGULAR_VELOCITY_COMPENSATION_TELEOP && Robot.INSTANCE.isTeleop()) {
             // TODO: WE SET THIS TO 0.1 AT START. COULD JUST BE MAKING SKEW WORSE GOING IN OPPOSITE DIRECTION
             // TODO: WE NEED TO TUNE THE CON STANT TO MAKE GOOD !
-            chassisSpeeds = angularVelocitySkewCorrection(chassisSpeeds, 0.1);
+            chassisSpeeds = angularVelocitySkewCorrection(chassisSpeeds, 0.3);
         }
 
         SwerveModuleState[] swerveModuleStates = kinematics.toSwerveModuleStates(chassisSpeeds);
@@ -259,7 +259,7 @@ public class DriveTrainSubsystem extends SubsystemBase {
         targetSwerveStatePublisher.set(optimizedTargetStates);
     }
 
-    @SuppressWarnings("unused")
+    // @SuppressWarnings("unused")
     private double applyLockHeadingMode(double forwardSpeed, double sidewaysSpeed, double rotSpeed) {
         double speed = Math.sqrt(Math.pow(forwardSpeed, 2) + Math.pow(sidewaysSpeed, 2));
         boolean isMoving = speed > LOCK_HEADING_THRESHOLD;
@@ -273,7 +273,9 @@ public class DriveTrainSubsystem extends SubsystemBase {
                 // locked heading mode is ON! move back towards previous orientation.
                 double headingError = lockedHeading.getRadians() - RobotGyro.getRotation2d().getRadians();
                 double unboundedRotSpeed = 1.0 * headingError; // 1.0 is changeable constant (like kP)
-                rotSpeed = MathUtil.clamp(unboundedRotSpeed, -0.3, 0.3);
+                if(unboundedRotSpeed >= 0.005) {
+                    rotSpeed = MathUtil.clamp(unboundedRotSpeed, -0.3, 0.3);
+                }
             } else {
                 // if we JUST STOPPED turning, we store the current orientation so we can move back towards it later
                 lockedHeadingMode = true;

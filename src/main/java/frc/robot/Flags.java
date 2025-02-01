@@ -83,9 +83,9 @@ public final class Flags {
          */
         public static final boolean ENABLE_LOCKED_HEADING_MODE = false;
 
-        public static final boolean ENABLE_COSINE_COMPENSATOR = true;
+        public static final boolean ENABLE_COSINE_COMPENSATOR = false;
 
-        public static final boolean ENABLE_ANGULAR_VELOCITY_COMPENSATION_TELEOP = true;
+        public static final boolean ENABLE_ANGULAR_VELOCITY_COMPENSATION_TELEOP = false;
 
         // True if the auton selection GUI in Shuffleboard is active and we're choosing autons from it
         public static final boolean ENABLE_AUTON_CHOOSER = false;
