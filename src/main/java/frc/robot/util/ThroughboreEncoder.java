@@ -7,6 +7,15 @@ import edu.wpi.first.wpilibj.Encoder;
 
 /**
  * Note: The subsystem using this class MUST call ThroughboreEncoder.periodic() once per frame.
+ * 
+ * original comments when this code was written:
+ * new ThroughboreEncoder is pushed to main. some concerns:
+ *   - there's a reversed argument to Encoder that we weren't using before, despite having a reversed argument in the ThroughboreEncoder constructor that never got used anywhere. we now pass `reversed` to the RelativeEncoder
+ *   - i made absoluteOffset be only used for the AbsoluteEncoder, not the RelativeEncoder, i think this is right
+ *   - i'm not sure how the telescoping arm works, but if the motor keeps spinning when we get to the top without actually moving the thing up, that's gonna confuse the ThroughboreEncoder a lot
+ *   - i made it return Rotations2ds instead of `double`s, so we need to be careful not to use auto-wrapping operations (like .plus() or .minus()) on the Rotation2d returned by the AbsoluteEncoders to turn the output relative
+ *   - we need to call ThroughboreEncoder.periodic() every frame now
+ *   - i made an `ThroughboreEncoderInputs` class to prepare for the `AdvantageKit`ing
  */
 public class ThroughboreEncoder {
     // Preemptively refactoring for AdvantageKit 
