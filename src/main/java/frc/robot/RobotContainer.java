@@ -36,8 +36,7 @@ public class RobotContainer {
     private final PowerHandler powerHandler = new PowerHandler();
     // private final AprilTagHandler aprilTagHandler = new AprilTagHandler();
 
-    //private final SendableChooser<Command> autonChooser;
-    // private SwerveSubsystem driveTrain = new SwerveSubsystem(new File(Filesystem.getDeployDirectory(), "swerve"));
+    // private final SendableChooser<Command> autonChooser;
 
     private final DriveTrainSubsystem driveTrain;
 
@@ -51,18 +50,20 @@ public class RobotContainer {
         // RobotGyro.poke();
         // ColorSensor.poke();
 
-        if (Flags.DriveTrain.IS_ATTACHED) {
-            //this.autonChooser = AutoBuilder.buildAutoChooser();
-            //SmartDashboard.putData("choose your auto", this.autonChooser);
-        } else {
-            //this.autonChooser = null;
-        }
+        // if (Flags.DriveTrain.IS_ATTACHED && Flags.DriveTrain.ENABLE_AUTON_CHOOSER) {
+        //     this.autonChooser = AutoBuilder.buildAutoChooser();
+        //     SmartDashboard.putData("choose your auto", this.autonChooser);
+        // } else {
+        //     this.autonChooser = null;
+        // }
 
         NetworkTablesUtil.getConnections();
     }
 
     private void configureBindings() {
         // TODO: bindings need to be re-implemented if still in use for YAGSL drive
+        // These old bindings are only for the nintendo pro controller, which we no longer use.
+
         // if (Flags.DriveTrain.IS_ATTACHED) {
         //     ControlHandler.get(this.nintendoProController, ControllerConstants.ZERO_SWERVE_MODULES).onTrue(this.driveTrain.rotateToAbsoluteZeroCommand());
         // }
@@ -86,22 +87,21 @@ public class RobotContainer {
     }
 
     public void onTeleopInit() {
-        // this.getAutonomousCommand().cancel();
+        if (this.getAutonomousCommand() != null) {
+            this.getAutonomousCommand().cancel();
+        }
 
         if (Flags.DriveTrain.IS_ATTACHED) {
-            // RobotGyro.setGyroAngle(this.driveTrain.getPose().getRotation().getDegrees());
             if (Flags.DriveTrain.USE_TEST_DRIVE_COMMAND) {
-                System.out.println("TEST DRIVE COMMAND DISABLED IN YAGSL BUILD");
                 this.driveTrain.setDefaultCommand(new TestDriveCommand(this.driveTrain, this.primaryController));
             } else {
-                this.driveTrain.setDefaultCommand(
-                        new ManualDriveCommand(this.driveTrain, this.primaryController)
-                );
+                this.driveTrain.setDefaultCommand(new ManualDriveCommand(this.driveTrain, this.primaryController));
             }
         }
     }
 
     public Command getAutonomousCommand() {
+        // This method will return an actual auton path once we implement it & switch in the comment.
         return new InstantCommand(); //this.autonChooser.getSelected();
     }
 
@@ -110,6 +110,6 @@ public class RobotContainer {
     }
 
     public void onRobotPeriodic() {
-        // COLOR_SENSOR_PUB.setBoolean(ColorSensor.isNoteColor());
+
     }
 }

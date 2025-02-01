@@ -9,6 +9,7 @@ import frc.robot.util.Util;
 
 public class ManualDriveCommand extends Command {
     public static final double MAX_SPEED_METERS_PER_SEC = Flags.DriveTrain.LOWER_MAX_SPEED ? 1.5 : 3;
+    public static final double MAX_ROT_SPEED_ANGULAR = 3;
     private final DriveTrainSubsystem driveTrain;
     private final AbstractController joystick;
     // private final AprilTagHandler aprilTagHandler;
@@ -36,8 +37,9 @@ public class ManualDriveCommand extends Command {
     private double flipFactor() {
         if (Util.onBlueTeam()) {
             return 1;
+        } else {
+            return -1;
         }
-        return -1;
     }
 
     @Override
@@ -45,13 +47,16 @@ public class ManualDriveCommand extends Command {
         // System.out.println("vert: " + this.joystick.getRightVerticalMovement() + ", hor: " + this.joystick.getRightHorizontalMovement());
         // this.driveTrain.drive(this.joystick.getVerticalMovement());
         double flip = flipFactor();
-        double ySpeed = Util.squareKeepSign(this.ySpeedLimiter.calculate(-this.joystick.getLeftVerticalMovement() * flip)) * MAX_SPEED_METERS_PER_SEC;
+        double ySpeed = Util.squareKeepSign(this.ySpeedLimiter.calculate(-this.joystick.getLeftVerticalMovement()  * flip)) * MAX_SPEED_METERS_PER_SEC;
         double xSpeed = Util.squareKeepSign(this.xSpeedLimiter.calculate(this.joystick.getLeftHorizontalMovement() * flip)) * MAX_SPEED_METERS_PER_SEC;
         // System.out.println("xSpeed = " + xSpeed);
         // System.out.println("ySpeed = " + ySpeed);
 
-        double rotSpeed = -this.joystick.getRightHorizontalMovement() * 3.0;
-        // System.out.println("rotSpeed = " + rotSpeed);
+        double rotSpeed = -this.joystick.getRightHorizontalMovement() * MAX_ROT_SPEED_ANGULAR;
+
+
+        // System.out.println("forward speed: " + ySpeed + ", x speed: " + xSpeed);
+        // System.out.println("y: " + RobotMathUtil.roundNearestHundredth(this.joystick.getLeftVerticalMovement()) + ", x: " + RobotMathUtil.roundNearestHundredth(this.joystick.getLeftHorizontalMovement()));
 
         this.driveTrain.drive(xSpeed, ySpeed, rotSpeed, true);
     }
@@ -62,24 +67,6 @@ public class ManualDriveCommand extends Command {
      * @return A Rotation2d representing the angle to the speaker. The gyroscope value should equal this value when the robot is facing the speaker.
      * //
      */
-    // private Optional<Rotation2d> directionToSubwooferTarget() {
-    //     int tagId = Util.getTargetTagId();
-    //     Pose2d targetPose2d = Util.getTagPose(tagId).toPose2d();
-
-    //     // i love Optional<T> :3
-    //     return aprilTagHandler
-    //             .averageAutoAimPose(tagId)
-    //             .map((robotPose) -> // now we know where to aim, compare our current location with our target
-    //                 Math.atan2(
-    //                         targetPose2d.getY() - robotPose.getY(),
-    //                         targetPose2d.getX() - robotPose.getX()
-    //                 ) // trust me bro
-    //             )
-    //             // filter to decrease noise.
-    //             .map(filter::calculate)
-    //             .map(Rotation2d::new);
-    // }
-
     // Called once the command ends or is interrupted.
     @Override
     public void end(boolean interrupted) {

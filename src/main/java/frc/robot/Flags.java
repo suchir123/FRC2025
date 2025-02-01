@@ -8,6 +8,14 @@ package frc.robot;
  */
 public final class Flags {
     /**
+     * Flags relating to printing/information useful for debugging.
+     */
+    public static class Debug {
+        public static final boolean CLEAR_PDP_STICKY_FAULTS = true;
+        public static final boolean PRINT_PDP_STICKY_FAULTS = false;
+    }
+
+    /**
      * Flags relating to the Operator console (i.e. relating to the Driver Station laptop).
      */
     public static class Operator {
@@ -78,5 +86,8 @@ public final class Flags {
         public static final boolean ENABLE_COSINE_COMPENSATOR = false;
 
         public static final boolean ENABLE_ANGULAR_VELOCITY_COMPENSATION_TELEOP = false;
+
+        // True if the auton selection GUI in Shuffleboard is active and we're choosing autons from it
+        public static final boolean ENABLE_AUTON_CHOOSER = false;
     }
 }

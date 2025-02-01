@@ -43,12 +43,12 @@ public final class RobotGyro {
      * @return The robot's current rotation as a {@link Rotation2d}
      */
     public static Rotation2d getRotation2d() {
-        // TODO: who knows if this is supposed to be negative or not
+        // TODO: who knows if this is supposed to be negative or not -- TEST!
         return new Rotation2d(-Math.toRadians(gyro.getAngle(IMUAxis.kZ) + angleAdjust));
     }
 
     /**
-     * Get the robot's current yaw value.
+     * Get the robot's current yaw value. (Currently unused)
      *
      * @return The robot's current yaw value.
      */

@@ -156,13 +156,6 @@ public class SwerveModule {
                 // TODO: tune closed loop error constant
                 .allowedClosedLoopError(0.1);
 
-        // driveConfig.closedLoop.velocityFF(1d/473);
-        //this.drivePIDController.setP(0.22);
-        //this.drivePIDController.setI(0);
-        //this.drivePIDController.setD(0.2);
-        //this.drivePIDController.setFF(0.3);
-        //this.drivePIDController.setOutputRange(-1, 1);
-
         //this.driveMotor.enableVoltageCompensation(10);
         //this.turnMotor.enableVoltageCompensation(10);
         this.turnPIDController = this.turnMotor.getClosedLoopController();
@@ -178,16 +171,6 @@ public class SwerveModule {
                 .pidf(0.55, 0, 0.3, 0) //Do not use ff because it will cause the motors to spin in the wrong direction :)
                 .outputRange(-1, 1);// used to be 0.55 0 0.3
         // TODO: add some more config for MAXMOTION
-
-        /*
-        this.turnPIDController.setPositionPIDWppingEnabled(true);
-        this.turnPIDController.setPositionPIDWrappingMinInput(-Math.PI);
-        this.turnPIDController.setPositionPIDWrappingMaxInput(Math.PI);
-        this.turnPIDController.setP(0.3);
-        this.turnPIDController.setI(0);
-        this.turnPIDController.setD(0);
-        this.turnPIDController.setFF(0);
-        this.turnPIDController.setOutputRange(-1, 1);*/
 
         driveMotor.configure(driveConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
         turnMotor.configure(turnConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
@@ -249,6 +232,7 @@ public class SwerveModule {
         /* If the error is close to 0.25 rotations, then we're 90 degrees, so movement doesn't help us at all */
         cosineScalar = desiredState.angle.minus(this.getAbsoluteModuleState().angle).getCos();
         /* Make sure we don't invert our drive, even though we shouldn't ever target over 90 degrees anyway */
+        // Are we optimizing target angles??
         if (cosineScalar < 0.0) {
             cosineScalar = 1;
         }
@@ -496,7 +480,9 @@ public class SwerveModule {
             drivePIDController.setReference(optimizedDesiredState.speedMetersPerSecond, ControlType.kMAXMotionVelocityControl);
         }
 
-        double vel = driveEncoder.getVelocity(), tar = optimizedDesiredState.speedMetersPerSecond;
+        // TODO: add flag for the print statements and stuff here turning on
+        double vel = driveEncoder.getVelocity();
+        double tar = optimizedDesiredState.speedMetersPerSecond;
         double ratio = 0;
         if (Math.abs(tar) > 0.01) {
             ratio = vel / tar;
@@ -516,6 +502,7 @@ public class SwerveModule {
         if (Flags.DriveTrain.ENABLED && Flags.DriveTrain.ENABLE_TURN_MOTORS && Flags.DriveTrain.TURN_PID_CONTROL) {
             turnPIDController.setReference(optimizedDesiredState.angle.getRadians(), ControlType.kPosition);
         }
+
         rotationPublisher.setDouble(this.getTurnRelativePosition());
         // System.out.println("target: " + nearestHundredth(bringAngleWithinUnitCircle(optimizedDesiredState.angle.getDegrees())) + ", rel: " + nearestHundredth(bringAngleWithinUnitCircle(this.getTurnRelativePosition() * 180 / Math.PI)) + ", abs: " + nearestHundredth(bringAngleWithinUnitCircle(this.getTurnAbsEncoderPosition() * 180 / Math.PI)));
     }
