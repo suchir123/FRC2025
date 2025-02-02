@@ -1,4 +1,4 @@
-package frc.robot.commands;
+package frc.robot.commands.testers;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.controllers.AbstractController;
@@ -23,7 +23,7 @@ public class TestDriveCommand extends Command {
 
     @Override
     public void execute() {
-        this.driveTrain.directDriveSpeed(-this.joystick.getLeftVerticalMovement());
+        this.driveTrain.directDriveSpeed(this.joystick.getLeftVerticalMovement());
         this.driveTrain.directTurnSpeed(this.joystick.getRightHorizontalMovement());
 
         for (SwerveModule module : this.driveTrain.swerveModules) {

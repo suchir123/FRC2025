@@ -1,6 +1,7 @@
 package frc.robot.util;
 
 import edu.wpi.first.wpilibj.CounterBase.EncodingType;
+import frc.robot.subsystems.ElevatorSubsystem;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.Encoder;
@@ -24,20 +25,33 @@ public class ThroughboreEncoder {
         public double relativeEncoderDistance = 0;
     }
 
+    private final boolean relativeEncoderDisabled;
     private final DutyCycleEncoder absoluteEncoder;
     private final Encoder relativeEncoder;
     private final boolean reversed;
 
+    private final boolean countRotations;
     private int countFullRotations = 0;
     private final double absoluteOffset;
 
     private final ThroughboreEncoderInputs inputs = new ThroughboreEncoderInputs();
+    public String name = "";
 
-    public ThroughboreEncoder(int encoderAbsPort, int encoderAPort, int encoderBPort, double absoluteOffset, boolean reversed) {
+    private ThroughboreEncoder(int encoderAbsPort, int encoderAPort, int encoderBPort, double absoluteOffset, boolean reverseAbsolute, boolean disableRelativeEncoder, boolean reverseRelative, boolean countRotations) {
         this.absoluteEncoder = new DutyCycleEncoder(encoderAbsPort, 1.0, 0.0);
-        this.relativeEncoder = new Encoder(encoderAPort, encoderBPort, reversed, EncodingType.k4X);
+        //this.absoluteEncoder.setAssumedFrequency(975.6); // from the rev docs
+        //this.absoluteEncoder.setDutyCycleRange(1.0/1024, 1023.0/1024);
 
-        this.reversed = reversed;
+        this.countRotations = countRotations;
+
+        if(disableRelativeEncoder) {
+            this.relativeEncoder = null;
+        } else {
+            this.relativeEncoder = new Encoder(encoderAPort, encoderBPort, reverseRelative, EncodingType.k4X);
+        }
+        this.relativeEncoderDisabled = disableRelativeEncoder;
+
+        this.reversed = reverseAbsolute;
         this.absoluteOffset = absoluteOffset;
 
         if (!this.absoluteEncoder.isConnected()) {
@@ -45,8 +59,12 @@ public class ThroughboreEncoder {
         }
     }
 
-    public ThroughboreEncoder(int encoderAbsPort, int encoderAPort, int encoderBPort) {
-        this(encoderAbsPort, encoderAPort, encoderBPort, 0.0, false);
+    public ThroughboreEncoder(int encoderAbsPort, int encoderAPort, int encoderBPort, double absoluteOffset, boolean reverseAbsolute, boolean reverseRelative, boolean countRotations) {
+        this(encoderAbsPort, encoderAPort, encoderBPort, absoluteOffset, reverseAbsolute, false, reverseRelative, countRotations);
+    }
+
+    public ThroughboreEncoder(int encoderAbsPort, double absoluteOffset, boolean reversed) {
+        this(encoderAbsPort, -1, -1, absoluteOffset, reversed, true, false, false);
     }
 
     /*
@@ -62,11 +80,15 @@ public class ThroughboreEncoder {
      * Note: the returned value is a Rotation2d that can have an interior value greater than 360 degrees.
      * This can lead to unwanted behaviour because Rotation methods like add() will also wrap 0-360.
      */
-    public Rotation2d getAbsoluteDistance() {
+    public Rotation2d getTotalDistance() {
         return Rotation2d.fromRotations(this.countFullRotations + this.inputs.absoluteEncoderDistance + this.absoluteOffset);
     }
 
-    private double getReversedAbsoluteEncoderValue() {
+    public Rotation2d getAbsolutePosition() {
+        return Rotation2d.fromRotations(this.inputs.absoluteEncoderDistance + this.absoluteOffset);
+    }
+
+    private double getReversibleAbsoluteEncoderValue() {
         if (this.reversed) {
             return 1.0 - this.absoluteEncoder.get();
         } else {
@@ -80,16 +102,40 @@ public class ThroughboreEncoder {
     }
 
     private void updateInputs() {
-        double currentAbsoluteEncoderDistance = this.getReversedAbsoluteEncoderValue();
+        double currentAbsoluteEncoderDistance = this.getReversibleAbsoluteEncoderValue();
         double changeFromLastOutput = currentAbsoluteEncoderDistance - this.inputs.absoluteEncoderDistance;
-        if (changeFromLastOutput <= -0.5) {
-            // We just rolled over from a very high value to a low one, finishing a rotation.
-            this.countFullRotations += 1;
-        } else if (changeFromLastOutput >= 0.5) {
-            // We just rolled under from a low value back to a very high one, undoing a full rotation.
-            this.countFullRotations -= 1;
+        // System.out.println(name + " at: " + countFullRotations + " & " + currentAbsoluteEncoderDistance);
+
+        if(countRotations) {
+            final double movementThresh = 0.15;
+            final double rateThresh = 700;
+            double rate = this.relativeEncoder.getRate();
+            // System.out.println(name + rate);
+            boolean majorEvent = Math.abs(changeFromLastOutput) > 0.2;
+            if(majorEvent) {
+                System.out.println(name + " switch from: " + this.inputs.absoluteEncoderDistance + " to " + currentAbsoluteEncoderDistance + " and rate " + rate + ", we are at: " + countFullRotations + " & " + currentAbsoluteEncoderDistance);
+            }
+            if (changeFromLastOutput <= -movementThresh && rate > rateThresh) {
+                // We just rolled over from a very high value to a low one, finishing a rotation.
+                this.countFullRotations++;
+                System.out.println(name + " adding a rotation");
+            } else if (changeFromLastOutput >= movementThresh && rate < -rateThresh) {
+                // We just rolled under from a low value back to a very high one, undoing a full rotation.
+                this.countFullRotations--;
+                System.out.println(name + " removing a rotation");
+            } else if(majorEvent) {
+                System.out.println(name + " had major event but no change, please inspect");
+            }
+
+            
+            ElevatorSubsystem.leftHeightAbsRotPub.setDouble(rate);
+            ElevatorSubsystem.rightHeightAbsRotPub.setDouble(rate);
         }
+
+
         this.inputs.absoluteEncoderDistance = currentAbsoluteEncoderDistance;
-        this.inputs.relativeEncoderDistance = this.relativeEncoder.get();
+        if(!this.relativeEncoderDisabled) {
+            this.inputs.relativeEncoderDistance = this.relativeEncoder.get();
+        }
     }
 }

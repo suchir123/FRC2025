@@ -5,9 +5,10 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandPS5Controller;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants.OperatorConstants;
+import frc.robot.commands.ElevatorControlCommand;
 import frc.robot.commands.ManualDriveCommand;
-import frc.robot.commands.TestDriveCommand;
-import frc.robot.commands.TestElevatorCommand;
+import frc.robot.commands.testers.TestDriveCommand;
+import frc.robot.commands.testers.TestElevatorCommand;
 import frc.robot.controllers.AbstractController;
 import frc.robot.controllers.NintendoProController;
 import frc.robot.controllers.PS5Controller;
@@ -16,7 +17,7 @@ import frc.robot.subsystems.staticsubsystems.LimeLight;
 import frc.robot.subsystems.swerve.DriveTrainSubsystem;
 import frc.robot.util.NetworkTablesUtil;
 import frc.robot.util.Util;
-import frc.robot.subsystems.TelescopingArm;
+import frc.robot.subsystems.ElevatorSubsystem;
 
 public class RobotContainer {
     //private static final GenericPublisher COLOR_SENSOR_PUB = NetworkTablesUtil.getPublisher("robot", "color_sensor_sees_note", NetworkTableType.kBoolean);
@@ -37,11 +38,11 @@ public class RobotContainer {
     // private final SendableChooser<Command> autonChooser;
 
     private final DriveTrainSubsystem driveTrain;
-    private final TelescopingArm telescopingArm;
+    private final ElevatorSubsystem telescopingArm;
 
     public RobotContainer() {
         this.driveTrain = Util.createIfFlagElseNull(DriveTrainSubsystem::new, Flags.DriveTrain.IS_ATTACHED);
-        this.telescopingArm = Util.createIfFlagElseNull(TelescopingArm::new, Flags.TelescopingArm.IS_ATTACHED);
+        this.telescopingArm = Util.createIfFlagElseNull(ElevatorSubsystem::new, Flags.TelescopingArm.IS_ATTACHED);
 
         configureBindings();
 
@@ -97,6 +98,8 @@ public class RobotContainer {
                 // NOTE: this command uses the joystick, so it is MUTUALLY EXCLUSIVE with other commands
                 // Therefore, we immediately return so we don't run two commands using the same joysticks, because that would be weird.
                 return;
+            } else {
+                this.telescopingArm.setDefaultCommand(new ElevatorControlCommand(this.telescopingArm, this.primaryController));
             }
         }
         if (Flags.DriveTrain.IS_ATTACHED) {
@@ -114,7 +117,7 @@ public class RobotContainer {
     }
 
     public void onTeleopPeriodic() {
-        this.powerHandler.updateNT();
+        // this.powerHandler.updateNT();
     }
 
     public void onRobotPeriodic() {

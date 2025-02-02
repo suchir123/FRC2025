@@ -29,7 +29,7 @@ public class PS5Controller extends AbstractController {
 
     @Override
     public double getRightVerticalMovement() {
-        return deadzone(controller.getRightY());
+        return -deadzone(controller.getRightY());
     }
 
     @Override
@@ -39,7 +39,7 @@ public class PS5Controller extends AbstractController {
 
     @Override
     public double getLeftVerticalMovement() {
-        return deadzone(controller.getLeftY());
+        return -deadzone(controller.getLeftY());
     }
 
     @Override

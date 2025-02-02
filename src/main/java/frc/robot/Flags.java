@@ -25,7 +25,7 @@ public final class Flags {
     public static class TelescopingArm {
         public static final boolean IS_ATTACHED = true;
         public static final boolean ENABLED = true;
-        public static final boolean USE_TEST_ELEVATOR_COMMAND = true;
+        public static final boolean USE_TEST_ELEVATOR_COMMAND = false;
     }
 
     /**
@@ -35,7 +35,7 @@ public final class Flags {
         /**
          * Whether the drive train is physically attached and existing. If false, no motor controllers are initialized since they are assumed to be nonexistent.
          */
-        public static final boolean IS_ATTACHED = true;
+        public static final boolean IS_ATTACHED = false;
 
         /**
          * Whether the drive train should be allowed to send power to motor controllers. If false, motors will not be set to any power and PID requests will not be sent.

@@ -1,17 +1,14 @@
-package frc.robot.commands;
+package frc.robot.commands.testers;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.controllers.AbstractController;
-import frc.robot.subsystems.TelescopingArm;
-import frc.robot.subsystems.swerve.DriveTrainSubsystem;
-import frc.robot.subsystems.swerve.SwerveModule;
-import frc.robot.util.Util;
+import frc.robot.subsystems.ElevatorSubsystem;
 
 public class TestElevatorCommand extends Command {
-    private final TelescopingArm telescopingArm;
+    private final ElevatorSubsystem telescopingArm;
     private final AbstractController joystick;
 
-    public TestElevatorCommand(TelescopingArm telescopingArm, AbstractController joystick) {
+    public TestElevatorCommand(ElevatorSubsystem telescopingArm, AbstractController joystick) {
         this.telescopingArm = telescopingArm;
         this.joystick = joystick;
 
@@ -27,13 +24,8 @@ public class TestElevatorCommand extends Command {
         double rightSpeed = this.joystick.getRightVerticalMovement();
         double leftSpeed  = this.joystick.getLeftVerticalMovement();
 
-        System.out.println("Right speed = " + rightSpeed + "\n" + 
-                           "Left speed = " + leftSpeed + "\n" + 
-                           "Right position = " + this.telescopingArm.getRightThroughboreEncoderDistance() + "\n" + 
-                           "Left position = " + this.telescopingArm.getLeftThroughboreEncoderDistance());
-
         // right is lead, left is follow.
-        // this.telescopingArm.ascendSimple(rightSpeed, leftSpeed);
+        this.telescopingArm.setRawSpeeds(rightSpeed, leftSpeed);
     }
 
     // Called once the command ends or is interrupted.

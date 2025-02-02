@@ -98,15 +98,11 @@ public final class Constants {
         // CAN IDs
 
         // (2025) Telescoping Arm
-        public static final int RIGHT_CLIMB_MOTOR_ID = 17;
+        public static final int RIGHT_ELEVATOR_MOTOR_ID = 17;
         public static final int RIGHT_CLIMB_ABS_ENCODER_ID = 1;
-        public static final int RIGHT_CLIMB_A_ENCODER_ID = SOME_MADE_UP_WRONG_PORT;
-        public static final int RIGHT_CLIMB_B_ENCODER_ID = SOME_MADE_UP_WRONG_PORT;
 
-        public static final int LEFT_CLIMB_MOTOR_ID = 21;
+        public static final int LEFT_ELEVATOR_MOTOR_ID = 21;
         public static final int LEFT_CLIMB_ABS_ENCODER_ID = 0;
-        public static final int LEFT_CLIMB_A_ENCODER_ID = SOME_MADE_UP_WRONG_PORT;
-        public static final int LEFT_CLIMB_B_ENCODER_ID = SOME_MADE_UP_WRONG_PORT;
 
 
         // Drive Train (COD, DRI, ROT)
@@ -124,25 +120,6 @@ public final class Constants {
         public static final int DTRAIN_FRONT_RIGHT_CANCODER_ID = 3;
         public static final int DTRAIN_BACK_LEFT_CANCODER_ID = 6;
         public static final int DTRAIN_BACK_RIGHT_CANCODER_ID = 1;
-
-        // Intake (INT)
-        public static final int INTAKE_TOP_MOTOR_ID = 13;
-        public static final int INTAKE_BOTTOM_MOTOR_ID = 14;
-        public static final int INTAKE_PIVOT_MOTOR_ID = 23;
-
-        // Conveyor (CON)
-        public static final int CONVEYOR_TO_SHOOTER_MOTOR_ID = 22;
-        public static final int CONVEYOR_LEFT_MOTOR_ID = 18;
-        public static final int CONVEYOR_RIGHT_MOTOR_ID = 15;
-
-        // Shooter (SHO)
-        public static final int SHOOTER_LEFT_MOTOR_ID = 21;
-        public static final int SHOOTER_RIGHT_MOTOR_ID = 16;
-        public static final int SHOOTER_PIVOT_MOTOR_ID = 17;
-
-        // Climber (CLI)
-        public static final int CLIMBER_LEFT_MOTOR_ID = 20;
-        public static final int CLIMBER_RIGHT_MOTOR_ID = 19;
 
         // DIO Ports
 
