@@ -27,22 +27,16 @@ public class ThroughboreEncoder {
     private final DutyCycleEncoder absoluteEncoder;
     private final Encoder relativeEncoder;
     private final boolean reversed;
-    private final boolean withoutRelativeEncoder;
 
     private int countFullRotations = 0;
     private final double absoluteOffset;
 
     private final ThroughboreEncoderInputs inputs = new ThroughboreEncoderInputs();
 
-    public ThroughboreEncoder(int encoderAbsPort, int encoderAPort, int encoderBPort, double absoluteOffset, boolean reversed, boolean withoutRelativeEncoder) {
+    public ThroughboreEncoder(int encoderAbsPort, int encoderAPort, int encoderBPort, double absoluteOffset, boolean reversed) {
         this.absoluteEncoder = new DutyCycleEncoder(encoderAbsPort, 1.0, 0.0);
-        if (withoutRelativeEncoder) {
-            this.relativeEncoder = null;
-        } else {
-            this.relativeEncoder = new Encoder(encoderAPort, encoderBPort, reversed, EncodingType.k4X);
-        }
+        this.relativeEncoder = new Encoder(encoderAPort, encoderBPort, reversed, EncodingType.k4X);
 
-        this.withoutRelativeEncoder = withoutRelativeEncoder;
         this.reversed = reversed;
         this.absoluteOffset = absoluteOffset;
 
@@ -52,7 +46,7 @@ public class ThroughboreEncoder {
     }
 
     public ThroughboreEncoder(int encoderAbsPort, int encoderAPort, int encoderBPort) {
-        this(encoderAbsPort, encoderAPort, encoderBPort, 0.0, false, false);
+        this(encoderAbsPort, encoderAPort, encoderBPort, 0.0, false);
     }
 
     /*
@@ -60,10 +54,6 @@ public class ThroughboreEncoder {
      * Does not use the absolute offset passed in.
      */
     public Rotation2d getRelativeEncoderValue() {
-        if (withoutRelativeEncoder) {
-            throw new UnsupportedOperationException("You called ThroughboreEncoder::getRelativeEncoderValue on me, but"
-                + " I was instantiated with withoutRelativeEncoder=true, so I don't have one.");
-        }
         return Rotation2d.fromRotations(this.inputs.relativeEncoderDistance);
     }
 
@@ -100,8 +90,6 @@ public class ThroughboreEncoder {
             this.countFullRotations -= 1;
         }
         this.inputs.absoluteEncoderDistance = currentAbsoluteEncoderDistance;
-        if (!this.withoutRelativeEncoder) {
-            this.inputs.relativeEncoderDistance = this.relativeEncoder.get();
-        }
+        this.inputs.relativeEncoderDistance = this.relativeEncoder.get();
     }
 }
