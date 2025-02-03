@@ -4,7 +4,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandPS5Controller;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 
 /**
- * A wrapper around {@link CommandPS5Controller}. Our left joystick is not working right now though, so I'm just going to use the right side one for now.
+ * A wrapper around {@link CommandPS5Controller}.
  */
 public class PS5Controller extends AbstractController {
     public static final double IGNORE_DELTA = 0.08;
@@ -29,7 +29,7 @@ public class PS5Controller extends AbstractController {
 
     @Override
     public double getRightVerticalMovement() {
-        return deadzone(controller.getRightY());
+        return -deadzone(controller.getRightY());
     }
 
     @Override
@@ -39,7 +39,7 @@ public class PS5Controller extends AbstractController {
 
     @Override
     public double getLeftVerticalMovement() {
-        return deadzone(controller.getLeftY());
+        return -deadzone(controller.getLeftY());
     }
 
     @Override

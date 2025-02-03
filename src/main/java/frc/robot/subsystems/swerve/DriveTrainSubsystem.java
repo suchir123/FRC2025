@@ -45,8 +45,9 @@ import static edu.wpi.first.units.Units.RadiansPerSecond;
  * Represents a swerve drive style drivetrain.
  */
 public class DriveTrainSubsystem extends SubsystemBase {
-    public static final double MAX_SPEED = 3.0; // 3 meters per second
-    public static final double MAX_ANGULAR_SPEED = Math.PI; // 1/2 rotation per second
+    // public static final double MAX_SPEED = 3.0; // 3 meters per second
+    // public static final double MAX_ANGULAR_SPEED = Math.PI; // 1/2 rotation per second
+    final double LOCK_HEADING_THRESHOLD = 0.1; // TODO: test if when rotate without translating
     private static final double SMART_OPTIMIZATION_THRESH_M_PER_SEC = 2;
 
     private static final boolean INVERT_DRIVE_MOTORS = true;
@@ -140,17 +141,6 @@ public class DriveTrainSubsystem extends SubsystemBase {
     }
 
     /**
-     * Resets the robot's pose to the pose against the front (i.e. edge parallel to the y-axis) of the subwoofer of our alliance side.
-     */
-    public void resetPoseToMidSubwoofer() {
-        if (Util.onBlueTeam()) {
-            this.setPose(new Pose2d(1.35, 5.50, new Rotation2d()));
-        } else {
-            // this.setPose(GeometryUtil.flipFieldPose(new Pose2d(1.35, 5.50, new Rotation2d())));
-        }
-    }
-
-    /**
      * Get the absolute positions of all swerve modules, using the CANCoder's *relative* mode for the module heading. Arranged as FL, FR, BL, BR
      *
      * @return The position of all swerve modules, with module heading determined by the CANCoder's relative mode.
@@ -217,7 +207,8 @@ public class DriveTrainSubsystem extends SubsystemBase {
                 }
             }
             return true;
-        }).withTimeout(1).andThen(() -> { // or it takes more than one second
+        // TODO: test! This timeout is kind of low and could cause rotateToAbsoluteZero to be unreliable
+        }).withTimeout(1.0).andThen(() -> { // or it takes more than one second
             for (SwerveModule module : swerveModules) { // then we want to set all of them to the absolutely-absolute value (not zero, since we might not actually be at zero)
                 module.resetEncodersToAbsoluteValue();
             }
@@ -237,25 +228,11 @@ public class DriveTrainSubsystem extends SubsystemBase {
      * @param fieldRelative Whether the provided x and y speeds are relative to the field.
      */
     public void drive(double forwardSpeed, double sidewaysSpeed, double rotSpeed, boolean fieldRelative) {
-        if (!Flags.DriveTrain.ENABLED) return;
-        SwerveModuleState[] swerveModuleStates;
-
-        if (Flags.DriveTrain.ENABLE_LOCKED_HEADING_MODE) {
-            // As soon as the robot isn't rotating (the driver's thumb isn't on the rotation joystick anymore),
-            // we set lockedHeadingMode to true and store the current heading so we can keep moving at it.
-            boolean robotIsTurning = Math.abs(rotSpeed) > 0.01;
-            if (robotIsTurning) {
-                lockedHeadingMode = false;
-            } else {
-                if (!lockedHeadingMode) {
-                    lockedHeadingMode = true;
-                    lockedHeading = RobotGyro.getRotation2d();
-                }
-                double headingError = lockedHeading.getRadians() - RobotGyro.getRotation2d().getRadians();
-                double unboundedRotSpeed = 1 * headingError; // 1 is changeable constant
-                rotSpeed = MathUtil.clamp(unboundedRotSpeed, -0.3, 0.3); // TODO: tune unboundedRotSpeed & rotSpeed
-            }
+        if (!Flags.DriveTrain.ENABLED) {
+            return;
         }
+        
+        rotSpeed = applyLockHeadingMode(forwardSpeed, sidewaysSpeed, rotSpeed);
 
         ChassisSpeeds chassisSpeeds;
         if (fieldRelative) {
@@ -267,18 +244,45 @@ public class DriveTrainSubsystem extends SubsystemBase {
         if (Flags.DriveTrain.ENABLE_ANGULAR_VELOCITY_COMPENSATION_TELEOP && Robot.INSTANCE.isTeleop()) {
             // TODO: WE SET THIS TO 0.1 AT START. COULD JUST BE MAKING SKEW WORSE GOING IN OPPOSITE DIRECTION
             // TODO: WE NEED TO TUNE THE CON STANT TO MAKE GOOD !
-            chassisSpeeds = angularVelocitySkewCorrection(chassisSpeeds, 0.1);
+            chassisSpeeds = angularVelocitySkewCorrection(chassisSpeeds, 0.3);
         }
 
-        swerveModuleStates = kinematics.toSwerveModuleStates(chassisSpeeds);
+        SwerveModuleState[] swerveModuleStates = kinematics.toSwerveModuleStates(chassisSpeeds);
 
         SwerveDriveKinematics.desaturateWheelSpeeds(swerveModuleStates, ManualDriveCommand.MAX_SPEED_METERS_PER_SEC);
-        frontLeft.setDesiredState(swerveModuleStates[0], 0);
+        frontLeft .setDesiredState(swerveModuleStates[0], 0);
         frontRight.setDesiredState(swerveModuleStates[1], 1);
-        backLeft.setDesiredState(swerveModuleStates[2], 2);
-        backRight.setDesiredState(swerveModuleStates[3], 3);
+        backLeft  .setDesiredState(swerveModuleStates[2], 2);
+        backRight .setDesiredState(swerveModuleStates[3], 3);
 
+        // TODO: This is publishing a newly instantiated list UNRELATED to anything
         targetSwerveStatePublisher.set(optimizedTargetStates);
+    }
+
+    // @SuppressWarnings("unused")
+    private double applyLockHeadingMode(double forwardSpeed, double sidewaysSpeed, double rotSpeed) {
+        double speed = Math.sqrt(Math.pow(forwardSpeed, 2) + Math.pow(sidewaysSpeed, 2));
+        boolean isMoving = speed > LOCK_HEADING_THRESHOLD;
+        if (Flags.DriveTrain.ENABLE_LOCKED_HEADING_MODE && isMoving) {
+            // As soon as the robot isn't rotating (the driver's thumb isn't on the rotation joystick anymore),
+            // we set lockedHeadingMode to true and store the current heading so we can keep moving at it.
+            boolean robotIsTurning = Math.abs(rotSpeed) > 0.01;
+            if (robotIsTurning) {
+                lockedHeadingMode = false;
+            } else if (lockedHeadingMode) {
+                // locked heading mode is ON! move back towards previous orientation.
+                double headingError = lockedHeading.getRadians() - RobotGyro.getRotation2d().getRadians();
+                double unboundedRotSpeed = 1.0 * headingError; // 1.0 is changeable constant (like kP)
+                if(unboundedRotSpeed >= 0.005) {
+                    rotSpeed = MathUtil.clamp(unboundedRotSpeed, -0.3, 0.3);
+                }
+            } else {
+                // if we JUST STOPPED turning, we store the current orientation so we can move back towards it later
+                lockedHeadingMode = true;
+                lockedHeading = RobotGyro.getRotation2d();
+            }
+        }
+        return rotSpeed;
     }
 
     public ChassisSpeeds angularVelocitySkewCorrection(ChassisSpeeds robotRelativeVelocity, double angularVelocityCoefficient) {
@@ -361,13 +365,13 @@ public class DriveTrainSubsystem extends SubsystemBase {
         questNavPublisher.set(QuestNav.INSTANCE.getPose());
 
         //noinspection StatementWithEmptyBody
-        for (SwerveModule module : swerveModules) {
+        // for (SwerveModule module : swerveModules) {
             // System.out.println(module.getName() + " rel vel: " + RobotMathUtil.roundNearestHundredth(module.getRelativeTurnVelocity()) + ", abs vel: " + RobotMathUtil.roundNearestHundredth(module.getTurningAbsEncoderVelocityConverted()));
             // System.out.println(module.getName() + " " + module.getDriveRotations());
             // System.out.println(module.getName() + " " + module.getPosition());
 
             // System.out.println(module.getName() + " " + TroyMathUtil.roundNearestHundredth(module.getTurningEncoderPositionConverted()));
-        }
+        // }
 
         this.updateOdometry();
         // this.updateOdometryWithJetsonVision();
@@ -414,7 +418,7 @@ public class DriveTrainSubsystem extends SubsystemBase {
     /**
      * Updates the field relative position of the robot using vision measurements.
      */
-    public void updateOdometryWithJetsonVision() {
+    // public void updateOdometryWithJetsonVision() {
         // ArrayList<AprilTagHandler.RobotPoseAndTagDistance> tags = aprilTagHandler.getJetsonAprilTagPoses();
         // double timestamp = Timer.getFPGATimestamp() - 0.5;
         // Pose2d robotPose = this.getPose();
@@ -444,10 +448,5 @@ public class DriveTrainSubsystem extends SubsystemBase {
         //     }
         //     // System.out.println("psoe: " + estimatedPose);
         // }
-    }
-
-    public void updateOdometryWithLimelightVision() {
-        double[] vals = NetworkTablesUtil.getTable("limelight").getEntry("botpose_wpiblue").getDoubleArray(new double[]{});
-
-    }
+    // }
 }

@@ -9,6 +9,9 @@ import frc.robot.util.ControlHandler.TriggerType;
  * This is different from the {@link frc.robot.Flags Flags} class, which toggles functionality on the robot and may be changed more often.
  */
 public final class Constants {
+    // this is an expert coding pattern that should absolutely be used.
+    public static final int SOME_MADE_UP_WRONG_PORT = 0xDEADBEEF;
+
     private Constants() {
         throw new UnsupportedOperationException("This is a utility class and cannot be instantiated");
     }
@@ -49,29 +52,29 @@ public final class Constants {
         public static class ControllerConstants2 { //for secondary control scheme
         
 
-               public static final TriggerType CORAL_SHOOTER_SPIT_CORAL     = TriggerType.RIGHT_BUTTON; //Circle
+            public static final TriggerType CORAL_SHOOTER_SPIT_CORAL     = TriggerType.RIGHT_BUTTON; //Circle
 
-            /*
-             * public static final TriggerType RESET_GRYO;
-             * public static final TriggerType BACKUP_REVERSE_CLIMB;
-             * public static final TriggerType BACKUP_CLIMB;
-             */
+         /*
+          * public static final TriggerType RESET_GRYO;
+          * public static final TriggerType BACKUP_REVERSE_CLIMB;
+          * public static final TriggerType BACKUP_CLIMB;
+          */
 
-            public static final TriggerType BACKUP_INTAKE                = TriggerType.RIGHT_SHOULDER_TRIGGER; //R2
+         public static final TriggerType BACKUP_INTAKE                = TriggerType.RIGHT_SHOULDER_TRIGGER; //R2
 
-            //Ball/algae cmds
-            public static final TriggerType BALL_PROCESSOR               = TriggerType.LEFT_SHOULDER_BUTTON;  //L1
-            public static final TriggerType BALL_BARGE                   = TriggerType.LEFT_SHOULDER_TRIGGER; //L2
+         //Ball/algae cmds
+         public static final TriggerType BALL_PROCESSOR               = TriggerType.LEFT_SHOULDER_BUTTON;  //L1
+         public static final TriggerType BALL_BARGE                   = TriggerType.LEFT_SHOULDER_TRIGGER; //L2
 
 
-            
-        }      //Coral shooter 
-            public static final TriggerType CORAL_SHOOTER_LVL_FOUR       = TriggerType.RIGHT_SHOULDER_BUTTON; //R1
-            public static final TriggerType CORAL_SHOOTER_LVL_THREE      = TriggerType.UPPER_BUTTON; //Triangle
-            public static final TriggerType CORAL_SHOOTER_LVL_TWO        = TriggerType.LEFT_BUTTON;  //Square
-            public static final TriggerType CORAL_SHOOTER_LVL_ONE        = TriggerType.LOWER_BUTTON; // X 
-   
-    }
+         
+     }      //Coral shooter 
+         public static final TriggerType CORAL_SHOOTER_LVL_FOUR       = TriggerType.RIGHT_SHOULDER_BUTTON; //R1
+         public static final TriggerType CORAL_SHOOTER_LVL_THREE      = TriggerType.UPPER_BUTTON; //Triangle
+         public static final TriggerType CORAL_SHOOTER_LVL_TWO        = TriggerType.LEFT_BUTTON;  //Square
+         public static final TriggerType CORAL_SHOOTER_LVL_ONE        = TriggerType.LOWER_BUTTON; // X 
+
+ }
 
     /**
      * Key: RIO = RoboRio, COD = CANCoder, DRI = Drive Motor, ROT = Rotation Motor, INT = Intake, CON = Conveyor, SHO = Shooter, CLI = Climber
@@ -121,6 +124,14 @@ public final class Constants {
     public static class PortConstants {
         // CAN IDs
 
+        // (2025) Telescoping Arm
+        public static final int RIGHT_ELEVATOR_MOTOR_ID = 17;
+        public static final int RIGHT_CLIMB_ABS_ENCODER_ID = 1;
+
+        public static final int LEFT_ELEVATOR_MOTOR_ID = 21;
+        public static final int LEFT_CLIMB_ABS_ENCODER_ID = 0;
+
+
         // Drive Train (COD, DRI, ROT)
         public static final int DTRAIN_FRONT_LEFT_DRIVE_MOTOR_ID = 9;
         public static final int DTRAIN_FRONT_RIGHT_DRIVE_MOTOR_ID = 11;
@@ -136,25 +147,6 @@ public final class Constants {
         public static final int DTRAIN_FRONT_RIGHT_CANCODER_ID = 3;
         public static final int DTRAIN_BACK_LEFT_CANCODER_ID = 6;
         public static final int DTRAIN_BACK_RIGHT_CANCODER_ID = 1;
-
-        // Intake (INT)
-        public static final int INTAKE_TOP_MOTOR_ID = 13;
-        public static final int INTAKE_BOTTOM_MOTOR_ID = 14;
-        public static final int INTAKE_PIVOT_MOTOR_ID = 23;
-
-        // Conveyor (CON)
-        public static final int CONVEYOR_TO_SHOOTER_MOTOR_ID = 22;
-        public static final int CONVEYOR_LEFT_MOTOR_ID = 18;
-        public static final int CONVEYOR_RIGHT_MOTOR_ID = 15;
-
-        // Shooter (SHO)
-        public static final int SHOOTER_LEFT_MOTOR_ID = 21;
-        public static final int SHOOTER_RIGHT_MOTOR_ID = 16;
-        public static final int SHOOTER_PIVOT_MOTOR_ID = 17;
-
-        // Climber (CLI)
-        public static final int CLIMBER_LEFT_MOTOR_ID = 20;
-        public static final int CLIMBER_RIGHT_MOTOR_ID = 19;
 
         // DIO Ports
 

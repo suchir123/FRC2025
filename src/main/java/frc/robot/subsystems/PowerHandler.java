@@ -3,6 +3,7 @@ package frc.robot.subsystems;
 import edu.wpi.first.networktables.DoublePublisher;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import frc.robot.util.NetworkTablesUtil;
+import frc.robot.Flags;
 
 import java.lang.reflect.Field;
 
@@ -15,15 +16,34 @@ public class PowerHandler {
     public PowerHandler() {
         this.pdp = new PowerDistribution();
 
-        this.pdp.clearStickyFaults();
+        if (Flags.Debug.PRINT_PDP_STICKY_FAULTS) {
+            this.printStickyFaults();
+        }
+        if (Flags.Debug.CLEAR_PDP_STICKY_FAULTS) {
+            this.pdp.clearStickyFaults();
+        }
+    }
 
+    public void printStickyFaults() {
+        // Use reflection to print the name of each erroring (true) field of the 
+        // pdp sticky faults bitfield.
         var f = pdp.getStickyFaults();
-        System.out.println("PDP FAULTS: ");
+        boolean anyFaultPresent = false;
         try {
             for (Field field : f.getClass().getDeclaredFields()) {
-                // System.out.println(field.getName() + ": " + field.getBoolean(f));
+                boolean isFaulting = field.getBoolean(f);
+                if (isFaulting) {
+                    if (anyFaultPresent == false) {
+                        anyFaultPresent = true;
+                        System.out.println("ERROR! BAD THING! PDP STICKY FAULTS ARE PRESENT!");
+                        System.out.println("Faults are:");
+                    }
+                    System.out.println(field.getName());
+                }
             }
-        } catch (Exception ignored) {
+        } catch (Exception exception) {
+            System.out.println("Error during printing PDP faults:");
+            System.out.println(exception);
         }
     }
 
@@ -40,7 +60,7 @@ public class PowerHandler {
     }
 
     public void updateNT() {
-        // voltagePublisher.set(this.getVoltage());
-        // currentPublisher.set(this.getTotalCurrent());
+        voltagePublisher.set(this.getVoltage());
+        currentPublisher.set(this.getTotalCurrent());
     }
 }
