@@ -49,12 +49,7 @@ public final class Constants {
         public static class ControllerConstants2 { //for secondary control scheme
         
 
-            //Coral shooter 
-            public static final TriggerType CORAL_SHOOTER_LVL_FOUR       = TriggerType.RIGHT_SHOULDER_BUTTON; //R1
-            public static final TriggerType CORAL_SHOOTER_LVL_THREE      = TriggerType.UPPER_BUTTON; //Triangle
-            public static final TriggerType CORAL_SHOOTER_LVL_TWO        = TriggerType.LEFT_BUTTON;  //Square
-            public static final TriggerType CORAL_SHOOTER_LVL_ONE        = TriggerType.LOWER_BUTTON; // X 
-            public static final TriggerType CORAL_SHOOTER_SPIT_CORAL     = TriggerType.RIGHT_BUTTON; //Circle
+               public static final TriggerType CORAL_SHOOTER_SPIT_CORAL     = TriggerType.RIGHT_BUTTON; //Circle
 
             /*
              * public static final TriggerType RESET_GRYO;
@@ -70,7 +65,12 @@ public final class Constants {
 
 
             
-        }
+        }      //Coral shooter 
+            public static final TriggerType CORAL_SHOOTER_LVL_FOUR       = TriggerType.RIGHT_SHOULDER_BUTTON; //R1
+            public static final TriggerType CORAL_SHOOTER_LVL_THREE      = TriggerType.UPPER_BUTTON; //Triangle
+            public static final TriggerType CORAL_SHOOTER_LVL_TWO        = TriggerType.LEFT_BUTTON;  //Square
+            public static final TriggerType CORAL_SHOOTER_LVL_ONE        = TriggerType.LOWER_BUTTON; // X 
+   
     }
 
     /**
