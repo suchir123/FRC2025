@@ -15,7 +15,6 @@ import edu.wpi.first.networktables.GenericPublisher;
 import edu.wpi.first.networktables.NetworkTableType;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
-import frc.robot.Robot;
 import frc.robot.util.NetworkTablesUtil;
 import frc.robot.util.ThroughboreEncoder;
 
@@ -50,13 +49,13 @@ public class ElevatorSubsystem extends SubsystemBase {
     public static final GenericPublisher rightHeightAbsRotPub = NetworkTablesUtil.getPublisher("robot", "rightElevAR", NetworkTableType.kDouble);
 
     public ElevatorSubsystem() {
-        rightMotor = new SparkMax(Constants.PortConstants.RIGHT_ELEVATOR_MOTOR_ID, MotorType.kBrushless);
-        leftMotor = new SparkMax(Constants.PortConstants.LEFT_ELEVATOR_MOTOR_ID, MotorType.kBrushless);
+        rightMotor = new SparkMax(Constants.PortConstants.CAN.RIGHT_ELEVATOR_MOTOR_ID, MotorType.kBrushless);
+        leftMotor = new SparkMax(Constants.PortConstants.CAN.LEFT_ELEVATOR_MOTOR_ID, MotorType.kBrushless);
         rightMotorEncoder = rightMotor.getEncoder();
         leftMotorEncoder = leftMotor.getEncoder();
 
-        rightThroughboreEncoder = new ThroughboreEncoder(Constants.PortConstants.RIGHT_CLIMB_ABS_ENCODER_ID, 5, 4, Rotation2d.fromDegrees(9.40).getRotations(), false, true, true); // 742.5 deg = 50 cm up
-        leftThroughboreEncoder = new ThroughboreEncoder(Constants.PortConstants.LEFT_CLIMB_ABS_ENCODER_ID, 2, 3, -Rotation2d.fromDegrees(124.5).getRotations(), true, false, true); // 742.5 deg = 50 cm up
+        rightThroughboreEncoder = new ThroughboreEncoder(Constants.PortConstants.DIO.RIGHT_CLIMB_ABS_ENCODER_ABS_PORT, 5, 4, Rotation2d.fromDegrees(9.40).getRotations(), false, true, true); // 742.5 deg = 50 cm up
+        leftThroughboreEncoder = new ThroughboreEncoder(Constants.PortConstants.DIO.LEFT_CLIMB_ABS_ENCODER_ABS_PORT, 2, 3, -Rotation2d.fromDegrees(124.5).getRotations(), true, false, true); // 742.5 deg = 50 cm up
 
         this.rightPIDController = this.rightMotor.getClosedLoopController();
         this.leftPIDController = this.leftMotor.getClosedLoopController();

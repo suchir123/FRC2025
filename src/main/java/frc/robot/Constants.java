@@ -8,9 +8,6 @@ import frc.robot.util.ControlHandler.TriggerType;
  * This is different from the {@link frc.robot.Flags Flags} class, which toggles functionality on the robot and may be changed more often.
  */
 public final class Constants {
-    // this is an expert coding pattern that should absolutely be used.
-    public static final int SOME_MADE_UP_WRONG_PORT = 0xDEADBEEF;
-
     private Constants() {
         throw new UnsupportedOperationException("This is a utility class and cannot be instantiated");
     }
@@ -49,96 +46,74 @@ public final class Constants {
         }
     }
 
-    /**
-     * Key: RIO = RoboRio, COD = CANCoder, DRI = Drive Motor, ROT = Rotation Motor, INT = Intake, CON = Conveyor, SHO = Shooter, CLI = Climber
-     * <pre>
-     * CAN IDs USED:
-     * 0  (RIO)
-     * 1  (COD)
-     * 2  (ROT)
-     * 3  (COD)
-     * 4  (DRI)
-     * 5  (ROT)
-     * 6  (COD)
-     * 7  (DRI)
-     * 8  (ROT)
-     * 9  (DRI)
-     * 10 (ROT)
-     * 11 (DRI)
-     * 12 (COD)
-     * 13 (INT)
-     * 14 (INT)
-     * 15 (CON)
-     * 16 (SHO)
-     * 17 (SHO)
-     * 18 (CON)
-     * 19 (CLI)
-     * 20 (CLI)
-     * 21 (SHO)
-     * 22 (CON)
-     * 23 (INT)
-     *
-     * </pre>
-     * <pre>
-     * DIOs USED:
-     * 0 (SHO)
-     * 1 (SHO)
-     * 2 (SHO)
-     * 3 (INT)
-     * 4 (INT)
-     * 5 (INT)
-     *
-     * </pre>
-     * <pre>
-     * PWMs USED:
-     * 0 (SHO)
-     * 1 (SHO)
-     */
     public static class PortConstants {
-        // CAN IDs
+        /**
+         * Key: RIO = RoboRio, COD = CANCoder, DRI = Drive Motor, ROT = Rotation Motor, ELE = Elevator, CLI = Climber
+         * <pre>
+         * CAN IDs USED:
+         * 0  (RIO)
+         *
+         * 1  (COD)
+         * 2  (ROT)
+         * 3  (COD)
+         * 4  (DRI)
+         * 5  (ROT)
+         * 6  (COD)
+         * 7  (DRI)
+         * 8  (ROT)
+         * 9  (DRI)
+         * 10 (ROT)
+         * 11 (DRI)
+         * 12 (COD)
+         *
+         * 17 (ELE)
+         *
+         * 21 (ELE)
+         */
+        public static class CAN {
+            // Drive Train (COD, DRI, ROT)
+            public static final int DTRAIN_FRONT_LEFT_DRIVE_MOTOR_ID = 9;
+            public static final int DTRAIN_FRONT_RIGHT_DRIVE_MOTOR_ID = 11;
+            public static final int DTRAIN_BACK_LEFT_DRIVE_MOTOR_ID = 7;
+            public static final int DTRAIN_BACK_RIGHT_DRIVE_MOTOR_ID = 4;
+            public static final int DTRAIN_FRONT_LEFT_ROTATION_MOTOR_ID = 8;
+            public static final int DTRAIN_FRONT_RIGHT_ROTATION_MOTOR_ID = 2;
+            public static final int DTRAIN_BACK_LEFT_ROTATION_MOTOR_ID = 5;
+            public static final int DTRAIN_BACK_RIGHT_ROTATION_MOTOR_ID = 10;
+            public static final int DTRAIN_FRONT_LEFT_CANCODER_ID = 12;
+            public static final int DTRAIN_FRONT_RIGHT_CANCODER_ID = 3;
+            public static final int DTRAIN_BACK_LEFT_CANCODER_ID = 6;
+            public static final int DTRAIN_BACK_RIGHT_CANCODER_ID = 1;
 
-        // (2025) Telescoping Arm
-        public static final int RIGHT_ELEVATOR_MOTOR_ID = 17;
-        public static final int RIGHT_CLIMB_ABS_ENCODER_ID = 1;
+            // (2025) Elevators (ELE)
+            public static final int RIGHT_ELEVATOR_MOTOR_ID = 17;
+            public static final int LEFT_ELEVATOR_MOTOR_ID = 21;
+        }
 
-        public static final int LEFT_ELEVATOR_MOTOR_ID = 21;
-        public static final int LEFT_CLIMB_ABS_ENCODER_ID = 0;
+        public static class PWM {
 
+        }
 
-        // Drive Train (COD, DRI, ROT)
-        public static final int DTRAIN_FRONT_LEFT_DRIVE_MOTOR_ID = 9;
-        public static final int DTRAIN_FRONT_RIGHT_DRIVE_MOTOR_ID = 11;
-        public static final int DTRAIN_BACK_LEFT_DRIVE_MOTOR_ID = 7;
-        public static final int DTRAIN_BACK_RIGHT_DRIVE_MOTOR_ID = 4;
+        /**
+         * ELE = Elevator, CLI = Climber
+         * <pre>
+         * DIOs USED:
+         * 0 (ELE)
+         * 1 (ELE)
+         * 2 (ELE)
+         * 3 (ELE)
+         * 4 (ELE)
+         * 5 (ELE)
+         */
+        public static class DIO {
+            public static final int RIGHT_CLIMB_ABS_ENCODER_ABS_PORT = 1;
+            public static final int RIGHT_CLIMB_ABS_ENCODER_A_PORT = 5;
+            public static final int RIGHT_CLIMB_ABS_ENCODER_B_PORT = 4;
 
-        public static final int DTRAIN_FRONT_LEFT_ROTATION_MOTOR_ID = 8;
-        public static final int DTRAIN_FRONT_RIGHT_ROTATION_MOTOR_ID = 2;
-        public static final int DTRAIN_BACK_LEFT_ROTATION_MOTOR_ID = 5;
-        public static final int DTRAIN_BACK_RIGHT_ROTATION_MOTOR_ID = 10;
-
-        public static final int DTRAIN_FRONT_LEFT_CANCODER_ID = 12;
-        public static final int DTRAIN_FRONT_RIGHT_CANCODER_ID = 3;
-        public static final int DTRAIN_BACK_LEFT_CANCODER_ID = 6;
-        public static final int DTRAIN_BACK_RIGHT_CANCODER_ID = 1;
-
-        // DIO Ports
-
-        // Intake (INT)
-        public static final int INTAKE_ABSOLUTE_ENCODER_ABS_PORT = 3;
-        public static final int INTAKE_ABSOLUTE_ENCODER_A_PORT = 4;
-        public static final int INTAKE_ABSOLUTE_ENCODER_B_PORT = 5;
-
-        // Shooter (SHO)
-        public static final int SHOOTER_ABSOLUTE_ENCODER_ABS_PORT = 0;
-        public static final int SHOOTER_ABSOLUTE_ENCODER_A_PORT = 1;
-        public static final int SHOOTER_ABSOLUTE_ENCODER_B_PORT = 2;
-
-
-        // PWM Ports
-
-        // Sho)
-        public static final int SHOOTER_LEFT_SERVO_PORT = 1;
-        public static final int SHOOTER_RIGHT_SERVO_PORT = 0;
+            public static final int LEFT_CLIMB_ABS_ENCODER_ABS_PORT = 0;
+            public static final int LEFT_CLIMB_ABS_ENCODER_A_PORT = 2;
+            public static final int LEFT_CLIMB_ABS_ENCODER_B_PORT = 3;
+        }
     }
 
     public static class DriveConstants {
