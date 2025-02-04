@@ -1,5 +1,6 @@
 package frc.robot.subsystems;
 
+import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.SparkBase;
 import com.revrobotics.spark.SparkClosedLoopController;
@@ -13,6 +14,7 @@ import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.networktables.GenericPublisher;
 import edu.wpi.first.networktables.NetworkTableType;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Robot;
@@ -20,6 +22,12 @@ import frc.robot.util.NetworkTablesUtil;
 import frc.robot.util.ThroughboreEncoder;
 
 public class ElevatorSubsystem extends SubsystemBase {
+    private static final double MIN_HEIGHT = 0.0;
+    private static final double MAX_HEIGHT = 1.0; //not the final value, will test later
+
+    private final DigitalInput toplimitswitch = new DigitalInput(0);
+    private final DigitalInput bottomlimitswitch = new DigitalInput(1);
+
     private final SparkMax rightMotor;
     private final SparkMax leftMotor;
 
@@ -31,8 +39,6 @@ public class ElevatorSubsystem extends SubsystemBase {
 
     private final SparkClosedLoopController rightPIDController;
     private final SparkClosedLoopController leftPIDController;
-
-    private final Rotation2d MAX_HEIGHT = Rotation2d.fromRotations(10.0);
 
     private final static double ABSOLUTE_DEGREES_PER_RELATIVE_DEGREES = 1426.64 / 8254.24;
     private final static double ROTATIONS_PER_METER_ASCENDED = Rotation2d.fromDegrees(742.5).getRotations() / 0.5;
@@ -132,8 +138,10 @@ public class ElevatorSubsystem extends SubsystemBase {
     }
 
     public void setTargetHeight(double heightMeters) {
-        this.rightPIDController.setReference(heightMeters, SparkBase.ControlType.kPosition);
-        this.leftPIDController.setReference(heightMeters, SparkBase.ControlType.kPosition);
+        if ((heightMeters < MAX_HEIGHT) && (heightMeters > MIN_HEIGHT)) {
+            this.rightPIDController.setReference(heightMeters, SparkBase.ControlType.kPosition);
+            this.leftPIDController.setReference(heightMeters, SparkBase.ControlType.kPosition);
+        }
     }
 
     public void setRawSpeeds(double rightSpeed, double leftSpeed) {
@@ -163,5 +171,20 @@ public class ElevatorSubsystem extends SubsystemBase {
 
     public double getRightRelativePosition() {
         return this.rightMotorEncoder.getPosition();
+    }
+/** 
+ * A function to make sure that elevators go up at the same rate. If the elevators are stopped, we should be pushing Encoder values to minimize inaccuracy.
+ */
+    private boolean shouldPushEncoderValues() { 
+        return true;
+    } 
+
+    public void resetEncoders() {
+        if ((rightMotorEncoder.getVelocity() > 0) && (leftMotorEncoder.getVelocity() > 0)) {
+            // limit switches
+        }
+        // if ((rightThroughboreEncoder.getAbsolutePosition()) && (leftThroughboreEncoder.getAbsolutePosition())) {
+            // limit switches
+        // }
     }
 }
