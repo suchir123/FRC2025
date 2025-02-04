@@ -1,17 +1,17 @@
 package frc.robot.controllers;
 
-import edu.wpi.first.wpilibj2.command.button.CommandPS5Controller;
+import edu.wpi.first.wpilibj2.command.button.CommandPS4Controller;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 
 /**
- * A wrapper around {@link CommandPS5Controller}.
+ * A wrapper around {@link CommandPS4Controller}.
  */
-public class PS5Controller extends AbstractController {
-    public static final double IGNORE_DELTA = 0.08;
+public class PS4Controller extends AbstractController {
+    public static final double IGNORE_DELTA = 0.1;
 
-    private final CommandPS5Controller controller;
+    private final CommandPS4Controller controller;
 
-    public PS5Controller(CommandPS5Controller controller) {
+    public PS4Controller(CommandPS4Controller controller) {
         this.controller = controller;
     }
 
