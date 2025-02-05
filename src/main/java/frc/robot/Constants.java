@@ -130,7 +130,10 @@ public final class Constants {
 
         public static final int LEFT_ELEVATOR_MOTOR_ID = 21;
         public static final int LEFT_CLIMB_ABS_ENCODER_ID = 0;
-
+        
+        // (2025) Climber
+        public static final int CLIMBER_MOTOR_ID = 124512351;
+        public static final int CLIMBER_ABS_ENCODER_ID = 12341234;
 
         // Drive Train (COD, DRI, ROT)
         public static final int DTRAIN_FRONT_LEFT_DRIVE_MOTOR_ID = 9;
