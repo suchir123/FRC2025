@@ -66,7 +66,7 @@ public final class Constants {
          public static final TriggerType BALL_PROCESSOR               = TriggerType.LEFT_SHOULDER_BUTTON;  //L1
          public static final TriggerType BALL_BARGE                   = TriggerType.LEFT_SHOULDER_TRIGGER; //L2
 
-
+        //Comment so that i can push :)
          
      }      //Coral shooter 
          public static final TriggerType CORAL_SHOOTER_LVL_FOUR       = TriggerType.RIGHT_SHOULDER_BUTTON; //R1
@@ -149,6 +149,9 @@ public final class Constants {
         public static final int DTRAIN_BACK_RIGHT_CANCODER_ID = 1;
 
         // DIO Ports
+
+        public static final int LEFT_ELEVATOR_LIMIT = 14234234;
+        public static final int RIGHT_ELEVATOR_LIMIT = 15123521;
 
         // Intake (INT)
         public static final int INTAKE_ABSOLUTE_ENCODER_ABS_PORT = 3;
