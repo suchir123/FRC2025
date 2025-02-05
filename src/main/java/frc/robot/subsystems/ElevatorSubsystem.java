@@ -149,7 +149,7 @@ public class ElevatorSubsystem extends SubsystemBase {
     }
 
     public void setTargetHeight(double heightMeters) {
-        if(heightMeters <= MAX_HEIGHT || heightMeters >= MIN_HEIGHT){
+        if(heightMeters <= MAX_HEIGHT && heightMeters >= MIN_HEIGHT){
             this.rightPIDController.setReference(heightMeters, SparkBase.ControlType.kPosition);
             this.leftPIDController.setReference(heightMeters, SparkBase.ControlType.kPosition);
         }
