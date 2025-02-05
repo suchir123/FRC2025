@@ -37,7 +37,6 @@ import frc.robot.commands.ManualDriveCommand;
 import frc.robot.subsystems.staticsubsystems.RobotGyro;
 import frc.robot.util.NetworkTablesUtil;
 import frc.robot.util.QuestNav;
-import frc.robot.util.Util;
 
 import static edu.wpi.first.units.Units.RadiansPerSecond;
 
@@ -59,33 +58,33 @@ public class DriveTrainSubsystem extends SubsystemBase {
     public static final Translation2d cameraLocation = backRightLocation.plus(new Translation2d(0.075, 0.205));
     static SwerveModuleState[] optimizedTargetStates = new SwerveModuleState[4]; // for debugging purposes
     private final SwerveModule frontLeft = new SwerveModule(
-            PortConstants.DTRAIN_FRONT_LEFT_DRIVE_MOTOR_ID,
-            PortConstants.DTRAIN_FRONT_LEFT_ROTATION_MOTOR_ID,
-            PortConstants.DTRAIN_FRONT_LEFT_CANCODER_ID,
+            PortConstants.CAN.DTRAIN_FRONT_LEFT_DRIVE_MOTOR_ID,
+            PortConstants.CAN.DTRAIN_FRONT_LEFT_ROTATION_MOTOR_ID,
+            PortConstants.CAN.DTRAIN_FRONT_LEFT_CANCODER_ID,
             "fL_12",
             INVERT_DRIVE_MOTORS,
             true
     );
     private final SwerveModule frontRight = new SwerveModule(
-            PortConstants.DTRAIN_FRONT_RIGHT_DRIVE_MOTOR_ID,
-            PortConstants.DTRAIN_FRONT_RIGHT_ROTATION_MOTOR_ID,
-            PortConstants.DTRAIN_FRONT_RIGHT_CANCODER_ID,
+            PortConstants.CAN.DTRAIN_FRONT_RIGHT_DRIVE_MOTOR_ID,
+            PortConstants.CAN.DTRAIN_FRONT_RIGHT_ROTATION_MOTOR_ID,
+            PortConstants.CAN.DTRAIN_FRONT_RIGHT_CANCODER_ID,
             "fR_03",
             INVERT_DRIVE_MOTORS,
             true
     );
     private final SwerveModule backLeft = new SwerveModule(
-            PortConstants.DTRAIN_BACK_LEFT_DRIVE_MOTOR_ID,
-            PortConstants.DTRAIN_BACK_LEFT_ROTATION_MOTOR_ID,
-            PortConstants.DTRAIN_BACK_LEFT_CANCODER_ID,
+            PortConstants.CAN.DTRAIN_BACK_LEFT_DRIVE_MOTOR_ID,
+            PortConstants.CAN.DTRAIN_BACK_LEFT_ROTATION_MOTOR_ID,
+            PortConstants.CAN.DTRAIN_BACK_LEFT_CANCODER_ID,
             "bL_06",
             INVERT_DRIVE_MOTORS,
             true
     );
     private final SwerveModule backRight = new SwerveModule(
-            PortConstants.DTRAIN_BACK_RIGHT_DRIVE_MOTOR_ID,
-            PortConstants.DTRAIN_BACK_RIGHT_ROTATION_MOTOR_ID,
-            PortConstants.DTRAIN_BACK_RIGHT_CANCODER_ID,
+            PortConstants.CAN.DTRAIN_BACK_RIGHT_DRIVE_MOTOR_ID,
+            PortConstants.CAN.DTRAIN_BACK_RIGHT_ROTATION_MOTOR_ID,
+            PortConstants.CAN.DTRAIN_BACK_RIGHT_CANCODER_ID,
             "bR_01",
             INVERT_DRIVE_MOTORS,
             true
