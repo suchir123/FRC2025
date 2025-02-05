@@ -47,7 +47,7 @@ import static edu.wpi.first.units.Units.RadiansPerSecond;
 public class DriveTrainSubsystem extends SubsystemBase {
     // public static final double MAX_SPEED = 3.0; // 3 meters per second
     // public static final double MAX_ANGULAR_SPEED = Math.PI; // 1/2 rotation per second
-    final double LOCK_HEADING_THRESHOLD = 0.1; // TODO: test if when rotate without translating does the robot turn in a "reasonable" manner
+    final double LOCK_HEADING_THRESHOLD = 0.1; // TODO: test if when rotate without translating
     private static final double SMART_OPTIMIZATION_THRESH_M_PER_SEC = 2;
 
     private static final boolean INVERT_DRIVE_MOTORS = true;

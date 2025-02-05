@@ -1,5 +1,6 @@
 package frc.robot;
 
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.util.ControlHandler.TriggerType;
 
 /**
@@ -27,17 +28,17 @@ public final class Constants {
         // Should this be here? especially with our new controller system, we could potentially refactor or re-abstract this using another class (maybe even for multiple driver preferences?)
         public static class ControllerConstants {
             // Nintendo pro 2ndary controller
-            public static final TriggerType ZERO_GYRO = TriggerType.LEFT_BUTTON;
-            public static final TriggerType ZERO_SWERVE_MODULES = TriggerType.UPPER_BUTTON;
-            public static final TriggerType RESET_POSE_ESTIMATOR = TriggerType.RIGHT_BUTTON;
-            public static final TriggerType RESET_RING_HANDLING_STATE = TriggerType.LOWER_BUTTON;
+            public static final TriggerType CLIMB  = TriggerType.LEFT_BUTTON;
+            public static final TriggerType SPIT_ALGAE = TriggerType.UPPER_BUTTON; 
+            public static final TriggerType INTAKE    = TriggerType.RIGHT_BUTTON; //sets tower at right height and turns on wheel
+            public static final TriggerType BALL_INTAKE = TriggerType.LOWER_BUTTON; //Turns on both upper and lower
 
-            public static final TriggerType SHOOTER_IDLE_RPM_TOGGLE = TriggerType.RIGHT_SHOULDER_BUTTON;
-            public static final TriggerType INTAKE_POS_TOGGLE = TriggerType.LEFT_SHOULDER_BUTTON;
+            public static final TriggerType MANUAL_HEIGHT_UP   = TriggerType.RIGHT_SHOULDER_BUTTON;
+            public static final TriggerType MANUAL_HEIGHT_DOWN = TriggerType.LEFT_SHOULDER_BUTTON;
 
-            public static final TriggerType TOGGLE_FLAP = TriggerType.LEFT_SHOULDER_TRIGGER;
-            public static final TriggerType WIGGLE_FLAP = TriggerType.RIGHT_SHOULDER_TRIGGER;
-
+            public static final TriggerType ROTATE_INTAKE_ALGAE = TriggerType.LEFT_SHOULDER_TRIGGER;
+            public static final TriggerType ROTATE_INTAKE_CORAL = TriggerType.RIGHT_SHOULDER_TRIGGER;
+            
             // PS5 primary controller
             public static final TriggerType INTAKE_RUN = TriggerType.RIGHT_BUTTON;
             public static final TriggerType INTAKE_REVERSE = TriggerType.LOWER_BUTTON;
@@ -47,7 +48,33 @@ public final class Constants {
 
             public static final TriggerType AUTO_AIM_FOR_SHOOT = TriggerType.RIGHT_SHOULDER_BUTTON;
         }
-    }
+
+        public static class ControllerConstants2 { //for secondary control scheme
+        
+
+            public static final TriggerType CORAL_SHOOTER_SPIT_CORAL     = TriggerType.RIGHT_BUTTON; //Circle
+
+         /*
+          * public static final TriggerType RESET_GRYO;
+          * public static final TriggerType BACKUP_REVERSE_CLIMB;
+          * public static final TriggerType BACKUP_CLIMB;
+          */
+
+         public static final TriggerType BACKUP_INTAKE                = TriggerType.RIGHT_SHOULDER_TRIGGER; //R2
+
+         //Ball/algae cmds
+         public static final TriggerType BALL_PROCESSOR               = TriggerType.LEFT_SHOULDER_BUTTON;  //L1
+         public static final TriggerType BALL_BARGE                   = TriggerType.LEFT_SHOULDER_TRIGGER; //L2
+
+        //Comment so that i can push :)
+         
+     }      //Coral shooter 
+         public static final TriggerType CORAL_SHOOTER_LVL_FOUR       = TriggerType.RIGHT_SHOULDER_BUTTON; //R1
+         public static final TriggerType CORAL_SHOOTER_LVL_THREE      = TriggerType.UPPER_BUTTON; //Triangle
+         public static final TriggerType CORAL_SHOOTER_LVL_TWO        = TriggerType.LEFT_BUTTON;  //Square
+         public static final TriggerType CORAL_SHOOTER_LVL_ONE        = TriggerType.LOWER_BUTTON; // X 
+
+ }
 
     /**
      * Key: RIO = RoboRio, COD = CANCoder, DRI = Drive Motor, ROT = Rotation Motor, INT = Intake, CON = Conveyor, SHO = Shooter, CLI = Climber
@@ -122,6 +149,9 @@ public final class Constants {
         public static final int DTRAIN_BACK_RIGHT_CANCODER_ID = 1;
 
         // DIO Ports
+
+        public static final int LEFT_ELEVATOR_LIMIT = 14234234;
+        public static final int RIGHT_ELEVATOR_LIMIT = 15123521;
 
         // Intake (INT)
         public static final int INTAKE_ABSOLUTE_ENCODER_ABS_PORT = 3;
