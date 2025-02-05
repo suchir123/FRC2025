@@ -33,8 +33,8 @@ public class ElevatorSubsystem extends SubsystemBase {
     private final ThroughboreEncoder rightThroughboreEncoder;
     private final ThroughboreEncoder leftThroughboreEncoder;
 
-    private final DigitalInput leftLimitSwitch = new DigitalInput(Constants.PortConstants.LEFT_ELEVATOR_LIMIT); // dont forgor active low
-    private final DigitalInput rightLimitSwitch = new DigitalInput(Constants.PortConstants.RIGHT_ELEVATOR_LIMIT);
+    private final DigitalInput leftLimitSwitch = new DigitalInput(Constants.PortConstants.DIO.LEFT_ELEVATOR_LIMIT); // dont forgor active low
+    private final DigitalInput rightLimitSwitch = new DigitalInput(Constants.PortConstants.DIO.RIGHT_ELEVATOR_LIMIT);
 
     private final SparkClosedLoopController rightPIDController;
     private final SparkClosedLoopController leftPIDController;
@@ -55,13 +55,13 @@ public class ElevatorSubsystem extends SubsystemBase {
     public static final GenericPublisher rightHeightAbsRotPub = NetworkTablesUtil.getPublisher("robot", "rightElevAR", NetworkTableType.kDouble);
 
     public ElevatorSubsystem() {
-        rightMotor = new SparkMax(Constants.PortConstants.RIGHT_ELEVATOR_MOTOR_ID, MotorType.kBrushless);
-        leftMotor = new SparkMax(Constants.PortConstants.LEFT_ELEVATOR_MOTOR_ID, MotorType.kBrushless);
+        rightMotor = new SparkMax(Constants.PortConstants.CAN.RIGHT_ELEVATOR_MOTOR_ID, MotorType.kBrushless);
+        leftMotor = new SparkMax(Constants.PortConstants.CAN.LEFT_ELEVATOR_MOTOR_ID, MotorType.kBrushless);
         rightMotorEncoder = rightMotor.getEncoder();
         leftMotorEncoder = leftMotor.getEncoder();
 
-        rightThroughboreEncoder = new ThroughboreEncoder(Constants.PortConstants.RIGHT_CLIMB_ABS_ENCODER_ID, 5, 4, Rotation2d.fromDegrees(9.40).getRotations(), false, true, true); // 742.5 deg = 50 cm up
-        leftThroughboreEncoder = new ThroughboreEncoder(Constants.PortConstants.LEFT_CLIMB_ABS_ENCODER_ID, 2, 3, -Rotation2d.fromDegrees(124.5).getRotations(), true, false, true); // 742.5 deg = 50 cm up
+        rightThroughboreEncoder = new ThroughboreEncoder(Constants.PortConstants.DIO.RIGHT_CLIMB_ABS_ENCODER_ABS_PORT, 5, 4, Rotation2d.fromDegrees(9.40).getRotations(), false, true, true); // 742.5 deg = 50 cm up
+        leftThroughboreEncoder = new ThroughboreEncoder(Constants.PortConstants.DIO.LEFT_CLIMB_ABS_ENCODER_ABS_PORT, 2, 3, -Rotation2d.fromDegrees(124.5).getRotations(), true, false, true); // 742.5 deg = 50 cm up
 
         this.rightPIDController = this.rightMotor.getClosedLoopController();
         this.leftPIDController = this.leftMotor.getClosedLoopController();
