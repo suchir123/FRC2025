@@ -28,6 +28,18 @@ public final class Flags {
         public static final boolean USE_TEST_ELEVATOR_COMMAND = false;
     }
 
+    public static class Climber {
+        public static final boolean IS_ATTACHED = true;
+        public static final boolean ENABLED = true;
+        public static final boolean USE_TEST_CLIMBER_COMMAND = false;
+    }
+
+    public static class CoralIntake {
+        public static final boolean IS_ATTACHED = true;
+        public static final boolean ENABLED = true;
+        public static final boolean USE_TEST_CORAL_COMMAND = false;
+    }
+
     /**
      * Flags relating to the drive train.
      */
