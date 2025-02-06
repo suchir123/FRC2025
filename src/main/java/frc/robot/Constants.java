@@ -132,8 +132,12 @@ public final class Constants {
         public static final int LEFT_CLIMB_ABS_ENCODER_ID = 0;
         
         // (2025) Climber
-        public static final int CLIMBER_MOTOR_ID = 124512351;
-        public static final int CLIMBER_ABS_ENCODER_ID = 12341234;
+        public static final int CLIMBER_MOTOR_ID = -1;
+        public static final int CLIMBER_ABS_ENCODER_ID = -1;
+
+        // (2025) ALGAE MACHINE
+        public static final int ALGAE_MOTOR_ID = -1;
+        public static final int ALGAE_ABS_ENCODER_ID = -1;
 
         // Drive Train (COD, DRI, ROT)
         public static final int DTRAIN_FRONT_LEFT_DRIVE_MOTOR_ID = 9;
@@ -153,8 +157,8 @@ public final class Constants {
 
         // DIO Ports
 
-        public static final int LEFT_ELEVATOR_LIMIT = 14234234;
-        public static final int RIGHT_ELEVATOR_LIMIT = 15123521;
+        public static final int LEFT_ELEVATOR_LIMIT = -1;
+        public static final int RIGHT_ELEVATOR_LIMIT = -1;
 
         // Intake (INT)
         public static final int INTAKE_ABSOLUTE_ENCODER_ABS_PORT = 3;
