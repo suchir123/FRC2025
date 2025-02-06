@@ -136,8 +136,8 @@ public final class Constants {
         public static final int CLIMBER_ABS_ENCODER_ID = -1;
 
         // (2025) ALGAE MACHINE
-        public static final int ALGAE_MOTOR_ID = -1;
-        public static final int ALGAE_ABS_ENCODER_ID = -1;
+        public static final int CORAL_MOTOR_ID = -1;
+        public static final int CORAL_ABS_ENCODER_ID = -1;
 
         // Drive Train (COD, DRI, ROT)
         public static final int DTRAIN_FRONT_LEFT_DRIVE_MOTOR_ID = 9;

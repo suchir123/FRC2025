@@ -13,29 +13,29 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import frc.robot.Constants;
 import frc.robot.util.ThroughboreEncoder;
 
-public class AlgaeIntakeSubsystem extends SubsystemBase{
+public class CoralIntakeSubsystem extends SubsystemBase{
     private final ThroughboreEncoder throughboreEncoder;
 
-    private final SparkMax algaeIntakeMotor;
+    private final SparkMax coralIntakeMotor;
 
     private final SparkClosedLoopController pidController;
 
-    public AlgaeIntakeSubsystem(){
-        algaeIntakeMotor = new SparkMax(Constants.PortConstants.ALGAE_MOTOR_ID, MotorType.kBrushless);
-        throughboreEncoder = new ThroughboreEncoder(Constants.PortConstants.ALGAE_ABS_ENCODER_ID, 0, false);
-        pidController = algaeIntakeMotor.getClosedLoopController();
+    public CoralIntakeSubsystem(){
+        coralIntakeMotor = new SparkMax(Constants.PortConstants.CORAL_MOTOR_ID, MotorType.kBrushless);
+        throughboreEncoder = new ThroughboreEncoder(Constants.PortConstants.CORAL_ABS_ENCODER_ID, 0, false);
+        pidController = coralIntakeMotor.getClosedLoopController();
 
-        SparkMaxConfig algaeMotorConfig = new SparkMaxConfig();
+        SparkMaxConfig coralMotorConfig = new SparkMaxConfig();
 
-        algaeMotorConfig
+        coralMotorConfig
                 .inverted(false)
                 .idleMode(SparkBaseConfig.IdleMode.kBrake)
                 .voltageCompensation(12);
-        algaeMotorConfig.closedLoop
+        coralMotorConfig.closedLoop
                 .pidf(1, 0, 0, 0)
                 .outputRange(-0.6, 0.6);
 
-        algaeIntakeMotor.configure(algaeMotorConfig, SparkBase.ResetMode.kResetSafeParameters, SparkBase.PersistMode.kPersistParameters);
+        coralIntakeMotor.configure(coralMotorConfig, SparkBase.ResetMode.kResetSafeParameters, SparkBase.PersistMode.kPersistParameters);
         throughboreEncoder.name = "climber";
     }
 
@@ -49,7 +49,7 @@ public class AlgaeIntakeSubsystem extends SubsystemBase{
     }
 
     public void setRawSpeed(double speed) {
-        algaeIntakeMotor.set(speed);
+        coralIntakeMotor.set(speed);
     }
 
     public Rotation2d getThroughboreEncoderDistance() {
