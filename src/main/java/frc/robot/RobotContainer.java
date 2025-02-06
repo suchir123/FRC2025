@@ -12,6 +12,8 @@ import frc.robot.commands.testers.TestElevatorCommand;
 import frc.robot.controllers.AbstractController;
 import frc.robot.controllers.NintendoProController;
 import frc.robot.controllers.PS5Controller;
+import frc.robot.subsystems.ClimberSubsystem;
+import frc.robot.subsystems.CoralIntakeSubsystem;
 import frc.robot.subsystems.PowerHandler;
 import frc.robot.subsystems.staticsubsystems.LimeLight;
 import frc.robot.subsystems.swerve.DriveTrainSubsystem;
@@ -39,10 +41,14 @@ public class RobotContainer {
 
     private final DriveTrainSubsystem driveTrain;
     private final ElevatorSubsystem telescopingArm;
+    private final ClimberSubsystem climber;
+    private final CoralIntakeSubsystem coralIntake;
 
     public RobotContainer() {
         this.driveTrain = Util.createIfFlagElseNull(DriveTrainSubsystem::new, Flags.DriveTrain.IS_ATTACHED);
         this.telescopingArm = Util.createIfFlagElseNull(ElevatorSubsystem::new, Flags.TelescopingArm.IS_ATTACHED);
+        this.climber = Util.createIfFlagElseNull(ClimberSubsystem::new, Flags.Climber.IS_ATTACHED);
+        this.coralIntake = Util.createIfFlagElseNull(CoralIntakeSubsystem::new, Flags.CoralIntake.IS_ATTACHED);
 
         configureBindings();
 
@@ -109,6 +115,22 @@ public class RobotContainer {
                 this.driveTrain.setDefaultCommand(new ManualDriveCommand(this.driveTrain, this.primaryController));
             }
         }
+        /* // put another slash to undestroy this
+        if (Flags.Climber.IS_ATTACHED) {
+            if (Flags.Climber.USE_TEST_CLIMBER_COMMAND) {
+                this.climber.setDefaultCommand(new TestClimberCommand(this.climber, this.primaryController));
+            } else {
+                this.climber.setDefaultCommand(new ManualClimberCommand(this.climber, this.primaryController));
+            }
+        }
+        if (Flags.CoralIntake.IS_ATTACHED) {
+            if (Flags.CoralIntake.USE_TEST_CORAL_COMMAND) {
+                this.coralIntake.setDefaultCommand(new TestCoralIntakeCommand(this.coralIntake, this.primaryController));
+            } else {
+                this.coralIntake.setDefaultCommand(new ManualCoralIntakeCommand(this.coralIntake, this.primaryController));
+            }
+        }
+        // */
     }
 
     public Command getAutonomousCommand() {

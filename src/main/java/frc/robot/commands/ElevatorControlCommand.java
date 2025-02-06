@@ -32,16 +32,16 @@ public class ElevatorControlCommand extends Command {
     @Override
     public void execute() {
         // System.out.println("sentir");
-        uB.onTrue(new InstantCommand(() -> this.elevator.setTargetHeight(1)));
+        uB.onTrue(new InstantCommand(() -> this.elevator.setTargetHeight(1.024)));
         leftB.onTrue(new InstantCommand(() -> {
-            this.elevator.setTargetHeight(0.5);
+            this.elevator.setTargetHeight(0.05); // there is like no point in doing this
             // System.out.println("up");
         }));
         lowB.onTrue(new InstantCommand(() -> {
             this.elevator.setTargetHeight(0);
             // System.out.println("down");
         }));
-        rB.onTrue(new InstantCommand(() -> this.elevator.setTargetHeight(0.2424)));
+        rB.onTrue(new InstantCommand(() -> this.elevator.setTargetHeight(0.409)));
     }
 
     // Called once the command ends or is interrupted.
@@ -55,4 +55,8 @@ public class ElevatorControlCommand extends Command {
     public boolean isFinished() {
         return false;
     }
-}
+}// at 0 alga is about 0.79 m above floor
+// level 1 0.790 meter
+// level 2 1.194 meter
+// level 3 1.809 meter (also dont forget is like vertical pipe)
+//
