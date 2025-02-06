@@ -44,6 +44,10 @@ public class ClimberSubsystem extends SubsystemBase{
         throughboreEncoder.periodic();
     }
 
+    public void setTarget(double target) {
+        pidController.setReference(target, SparkBase.ControlType.kPosition);
+    }
+
     public void setRawSpeed(double speed) {
         climbMotor.set(speed);
     }
