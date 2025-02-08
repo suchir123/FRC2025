@@ -16,10 +16,14 @@ import frc.robot.util.ThroughboreEncoder;
 public class AlgaeIntakeSubsystem extends SubsystemBase{ // This subsystem needing much more feature only has 1 neo currently
 
     private final SparkMax algaeIntakeMotor;
+    private final Servo    algaeLeftServo;
+    private final Servo    algaeRightServo;
 
     public AlgaeIntakeSubsystem(){
         algaeIntakeMotor = new SparkMax(Constants.PortConstants.CAN.ALGAE_MOTOR_ID, MotorType.kBrushless);
-
+        algaeLeftServo = new Servo(PortConstants.ALGAE_LEFT_SERVO_PORT)
+        algaeRightServo = new Servo(PortConstants.ALGAE_RIGHT_SERVO_PORT)
+        
         SparkMaxConfig algaeMotorConfig = new SparkMaxConfig();
 
         algaeMotorConfig
@@ -39,5 +43,11 @@ public class AlgaeIntakeSubsystem extends SubsystemBase{ // This subsystem needi
 
     public void setRawSpeed(double speed) {
         algaeIntakeMotor.set(speed);
+    }
+
+    public void flapToAngle(double degreesL, double degreesR) {
+        // System.out.println("left: " + this.leftServo.getAngle() + ", right: " + this.rightServo.getAngle());
+        this.algaeLeftServo.setAngle(degreesL);
+        this.algaeRightServo.setAngle(degreesR);
     }
 }
