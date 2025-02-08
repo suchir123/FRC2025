@@ -128,7 +128,8 @@ public final class Constants {
         }
 
         public static class PWM {
-
+            public static final int ALGAE_LEFT_SERVO_PORT = -1;
+            public static final int ALGAE_RIGHT_SERVO_PORT = -1;
         }
 
         /**
