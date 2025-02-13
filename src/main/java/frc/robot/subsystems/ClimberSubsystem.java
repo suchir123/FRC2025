@@ -11,6 +11,7 @@ import com.revrobotics.spark.SparkLowLevel.MotorType;
 import edu.wpi.first.math.geometry.Rotation2d;
 
 import frc.robot.Constants;
+import frc.robot.subsystems.staticsubsystems.RobotGyro;
 import frc.robot.util.ThroughboreEncoder;
 
 public class ClimberSubsystem extends SubsystemBase{
@@ -54,5 +55,14 @@ public class ClimberSubsystem extends SubsystemBase{
 
     public Rotation2d getThroughboreEncoderDistance() {
         return throughboreEncoder.getTotalDistance();
+    }
+
+    public Rotation2d getAbsolutePosition() {
+        return this.throughboreEncoder.getAbsolutePosition();
+    }
+
+    private Rotation2d getRobotAngle()
+    {
+        return Rotation2d.fromDegrees(RobotGyro.getGyroAngleDegreesPitch());
     }
 }

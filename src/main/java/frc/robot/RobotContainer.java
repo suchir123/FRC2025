@@ -5,6 +5,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandPS5Controller;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants.OperatorConstants;
+import frc.robot.commands.ClimbCommand;
 import frc.robot.commands.ElevatorControlCommand;
 import frc.robot.commands.ManualDriveCommand;
 import frc.robot.commands.testers.TestDriveCommand;
@@ -96,6 +97,15 @@ public class RobotContainer {
     public void onTeleopInit() {
         if (this.getAutonomousCommand() != null) {
             this.getAutonomousCommand().cancel();
+        }
+
+        if (Flags.Climber.IS_ATTACHED) {
+            if (Flags.Climber.USE_TEST_CLIMBER_COMMAND) {
+                this.climber.setDefaultCommand(new ClimbCommand(this.climber));
+                // NOTE: currently SKIPS OTHER COMMANDS!
+                // AUTOMATICALLY CLIMBS!
+                return;
+            }
         }
 
         if (Flags.TelescopingArm.IS_ATTACHED) {

@@ -24,8 +24,8 @@ public class AlgaeIntakeSubsystem extends SubsystemBase{ // This subsystem needi
     public AlgaeIntakeSubsystem(){
         algaeIntakeMotor = new SparkMax(Constants.PortConstants.CAN.ALGAE_MOTOR_ID, MotorType.kBrushless);
         // leaving these undefined seems better than adding them with bad values
-        algaeLeftServo = new Servo(PortConstants.ALGAE_LEFT_SERVO_PORT);
-        algaeRightServo = new Servo(PortConstants.ALGAE_RIGHT_SERVO_PORT);
+        algaeLeftServo = new Servo(PortConstants.PWM.ALGAE_LEFT_SERVO_PORT);
+        algaeRightServo = new Servo(PortConstants.PWM.ALGAE_RIGHT_SERVO_PORT);
         
         SparkMaxConfig algaeMotorConfig = new SparkMaxConfig();
 
