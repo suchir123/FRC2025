@@ -9,6 +9,13 @@ import frc.robot.subsystems.ClimberSubsystem;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.staticsubsystems.RobotGyro;
 
+/*
+ * Idea: This command will lift at a predetermined power for a predetermined amount
+ * of time, and then another command will balance it, assuming that the robot has 
+ * already climbed.
+ * 
+ * Other command left as exercise to reader.
+ */
 public class ClimbCommand extends Command {
     private final ClimberSubsystem climber;
     private Timer timer;
@@ -30,8 +37,6 @@ public class ClimbCommand extends Command {
     public void initialize() {
         this.timer.restart();
     }
-    
-    // Initial timed climb -> PID controlled final part
 
     @Override
     public void execute() {
