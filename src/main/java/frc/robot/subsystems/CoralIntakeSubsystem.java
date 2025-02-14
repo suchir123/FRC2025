@@ -22,7 +22,7 @@ public class CoralIntakeSubsystem extends SubsystemBase{
 
     public CoralIntakeSubsystem(){
         coralIntakeMotor = new SparkMax(Constants.PortConstants.CAN.CORAL_MOTOR_ID, MotorType.kBrushless);
-        throughboreEncoder = new ThroughboreEncoder(Constants.PortConstants.CAN.CORAL_ABS_ENCODER_ID, 0, false);
+        throughboreEncoder = new ThroughboreEncoder(Constants.PortConstants.DIO.CORAL_ABSOLUTE_ENCODER_ABS_ID, 0, false);
         pidController = coralIntakeMotor.getClosedLoopController();
 
         SparkMaxConfig coralMotorConfig = new SparkMaxConfig();

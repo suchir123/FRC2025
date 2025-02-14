@@ -1,5 +1,6 @@
 package frc.robot.commands;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.Timer;
@@ -18,16 +19,18 @@ import frc.robot.subsystems.staticsubsystems.RobotGyro;
  * This command left as exercise to reader.
  */
 public class BalanceClimberCommand extends Command {
+    private static final double MAX_ADJUSTMENT_SPEED = 0.02;
     private final ClimberSubsystem climber;
-    private Timer timer;
-    private static double BALANCE_CLIMBER_COMMAND_DURATION = 3.0;
-    private PIDController pidController;
+    private final Timer timer;
+    private static final double BALANCE_CLIMBER_COMMAND_DURATION = 3.0;
+    private final PIDController pidController;
 
     public BalanceClimberCommand(ClimberSubsystem climber) {
         this.climber = climber;
         this.timer = new Timer();
-        
+
         // initialize PID controller here with found values
+        this.pidController = new PIDController(0.01, 0, 0);        
 
         addRequirements(climber);
     }
@@ -41,6 +44,9 @@ public class BalanceClimberCommand extends Command {
     @Override
     public void execute() {
         // move based on whichever axis we found
+        double correction = MathUtil.clamp(pidController.calculate(RobotGyro.getGyroAngleByAxis(ClimberSubsystem.ROBOT_TILT_AXIS), 0), -MAX_ADJUSTMENT_SPEED, MAX_ADJUSTMENT_SPEED);
+
+        // climber.setRawSpeed(correction);
     }
 
     // Called once the command ends or is interrupted.

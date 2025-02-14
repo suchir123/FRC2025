@@ -60,8 +60,8 @@ public class ElevatorSubsystem extends SubsystemBase {
         rightMotorEncoder = rightMotor.getEncoder();
         leftMotorEncoder = leftMotor.getEncoder();
 
-        rightThroughboreEncoder = new ThroughboreEncoder(Constants.PortConstants.DIO.RIGHT_CLIMB_ABS_ENCODER_ABS_PORT, 5, 4, Rotation2d.fromDegrees(9.40).getRotations(), false, true, true); // 742.5 deg = 50 cm up
-        leftThroughboreEncoder = new ThroughboreEncoder(Constants.PortConstants.DIO.LEFT_CLIMB_ABS_ENCODER_ABS_PORT, 2, 3, -Rotation2d.fromDegrees(124.5).getRotations(), true, false, true); // 742.5 deg = 50 cm up
+        rightThroughboreEncoder = new ThroughboreEncoder(Constants.PortConstants.DIO.RIGHT_ELEVATOR_ABS_ENCODER_ABS_PORT, 5, 4, Rotation2d.fromDegrees(9.40).getRotations(), false, true, true); // 742.5 deg = 50 cm up
+        leftThroughboreEncoder = new ThroughboreEncoder(Constants.PortConstants.DIO.LEFT_ELEVATOR_ABS_ENCODER_ABS_PORT, 2, 3, -Rotation2d.fromDegrees(124.5).getRotations(), true, false, true); // 742.5 deg = 50 cm up
 
         this.rightPIDController = this.rightMotor.getClosedLoopController();
         this.leftPIDController = this.leftMotor.getClosedLoopController();

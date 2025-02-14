@@ -5,9 +5,11 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandPS5Controller;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants.OperatorConstants;
+import frc.robot.commands.BalanceClimberCommand;
 import frc.robot.commands.ClimbCommand;
 import frc.robot.commands.ElevatorControlCommand;
 import frc.robot.commands.ManualDriveCommand;
+import frc.robot.commands.testers.TestClimberCommand;
 import frc.robot.commands.testers.TestDriveCommand;
 import frc.robot.commands.testers.TestElevatorCommand;
 import frc.robot.controllers.AbstractController;
@@ -18,6 +20,7 @@ import frc.robot.subsystems.CoralIntakeSubsystem;
 import frc.robot.subsystems.PowerHandler;
 import frc.robot.subsystems.staticsubsystems.LimeLight;
 import frc.robot.subsystems.swerve.DriveTrainSubsystem;
+import frc.robot.util.ControlHandler;
 import frc.robot.util.NetworkTablesUtil;
 import frc.robot.util.Util;
 import frc.robot.subsystems.ElevatorSubsystem;
@@ -47,7 +50,7 @@ public class RobotContainer {
 
     public RobotContainer() {
         this.driveTrain = Util.createIfFlagElseNull(DriveTrainSubsystem::new, Flags.DriveTrain.IS_ATTACHED);
-        this.telescopingArm = Util.createIfFlagElseNull(ElevatorSubsystem::new, Flags.TelescopingArm.IS_ATTACHED);
+        this.telescopingArm = Util.createIfFlagElseNull(ElevatorSubsystem::new, Flags.Elevator.IS_ATTACHED);
         this.climber = Util.createIfFlagElseNull(ClimberSubsystem::new, Flags.Climber.IS_ATTACHED);
         this.coralIntake = Util.createIfFlagElseNull(CoralIntakeSubsystem::new, Flags.CoralIntake.IS_ATTACHED);
 
@@ -99,17 +102,8 @@ public class RobotContainer {
             this.getAutonomousCommand().cancel();
         }
 
-        if (Flags.Climber.IS_ATTACHED) {
-            if (Flags.Climber.USE_TEST_CLIMBER_COMMAND) {
-                this.climber.setDefaultCommand(new ClimbCommand(this.climber));
-                // NOTE: currently SKIPS OTHER COMMANDS!
-                // AUTOMATICALLY CLIMBS!
-                return;
-            }
-        }
-
-        if (Flags.TelescopingArm.IS_ATTACHED) {
-            if (Flags.TelescopingArm.USE_TEST_ELEVATOR_COMMAND) {
+        if (Flags.Elevator.IS_ATTACHED) {
+            if (Flags.Elevator.USE_TEST_ELEVATOR_COMMAND) {
                 this.telescopingArm.setDefaultCommand(new TestElevatorCommand(this.telescopingArm, this.primaryController));
                 // NOTE: this command uses the joystick, so it is MUTUALLY EXCLUSIVE with other commands
                 // Therefore, we immediately return so we don't run two commands using the same joysticks, because that would be weird.
@@ -125,6 +119,16 @@ public class RobotContainer {
                 this.driveTrain.setDefaultCommand(new ManualDriveCommand(this.driveTrain, this.primaryController));
             }
         }
+
+        if(Flags.Climber.IS_ATTACHED) {
+            if(Flags.Climber.USE_TEST_CLIMBER_COMMAND) {
+                this.climber.setDefaultCommand(new TestClimberCommand(climber, this.primaryController));
+            } else {
+                Command autoClimb = new ClimbCommand(climber).andThen(new BalanceClimberCommand(climber));
+                ControlHandler.get(this.primaryController, Constants.OperatorConstants.SecondaryControllerConstants.AUTO_CLIMB).whileTrue(autoClimb);
+            }
+        }
+
         /* // put another slash to undestroy this
         if (Flags.Climber.IS_ATTACHED) {
             if (Flags.Climber.USE_TEST_CLIMBER_COMMAND) {
