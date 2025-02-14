@@ -22,7 +22,7 @@ public final class Flags {
         public static final boolean NINTENDO_SWITCH_CONTROLLER_AS_PRIMARY = false;
     }
 
-    public static class TelescopingArm {
+    public static class Elevator {
         public static final boolean IS_ATTACHED = true;
         public static final boolean ENABLED = true;
         public static final boolean USE_TEST_ELEVATOR_COMMAND = false;

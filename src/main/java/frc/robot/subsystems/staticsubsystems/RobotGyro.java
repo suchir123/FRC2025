@@ -65,6 +65,10 @@ public final class RobotGyro {
         return gyro.getXComplementaryAngle() + angleAdjust;
     }
 
+    public static double getGyroAngleByAxis(IMUAxis axis) {
+        return gyro.getAngle(axis);
+    }
+
     /**
      * Get the robot's current pitch value.
      *

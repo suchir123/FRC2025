@@ -9,12 +9,15 @@ import com.revrobotics.spark.config.SparkMaxConfig;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import edu.wpi.first.math.geometry.Rotation2d;
-
+import edu.wpi.first.wpilibj.ADIS16470_IMU;
+import edu.wpi.first.wpilibj.ADIS16470_IMU.IMUAxis;
 import frc.robot.Constants;
 import frc.robot.subsystems.staticsubsystems.RobotGyro;
 import frc.robot.util.ThroughboreEncoder;
 
-public class ClimberSubsystem extends SubsystemBase{
+public class ClimberSubsystem extends SubsystemBase {
+    public static final ADIS16470_IMU.IMUAxis ROBOT_TILT_AXIS = IMUAxis.kYaw;
+
     private final ThroughboreEncoder throughboreEncoder;
     
     private final SparkMax climbMotor;
@@ -23,7 +26,7 @@ public class ClimberSubsystem extends SubsystemBase{
 
     public ClimberSubsystem(){
         climbMotor = new SparkMax(Constants.PortConstants.CAN.CLIMBER_MOTOR_ID, MotorType.kBrushless);
-        throughboreEncoder = new ThroughboreEncoder(Constants.PortConstants.CAN.CLIMBER_ABS_ENCODER_ID, 0, false);
+        throughboreEncoder = new ThroughboreEncoder(Constants.PortConstants.DIO.CLIMBER_ABSOLUTE_ENCODER_ABS_PORT, 0, false);
         pidController = climbMotor.getClosedLoopController();
 
         SparkMaxConfig climbMotorConfig = new SparkMaxConfig();
@@ -59,10 +62,5 @@ public class ClimberSubsystem extends SubsystemBase{
 
     public Rotation2d getAbsolutePosition() {
         return this.throughboreEncoder.getAbsolutePosition();
-    }
-
-    private Rotation2d getRobotAngle()
-    {
-        return Rotation2d.fromDegrees(RobotGyro.getGyroAngleDegreesPitch());
     }
 }
