@@ -3,13 +3,13 @@ package frc.robot.subsystems;
 import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.SparkBase;
-import com.revrobotics.spark.SparkClosedLoopController;
-import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
+import com.revrobotics.spark.SparkClosedLoopController;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
-import com.revrobotics.spark.config.SparkMaxConfig;
+import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
+import com.revrobotics.spark.config.SparkMaxConfig;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.networktables.GenericPublisher;
 import edu.wpi.first.networktables.NetworkTableType;
@@ -20,42 +20,33 @@ import frc.robot.Flags;
 import frc.robot.util.NetworkTablesUtil;
 
 public class ElevatorSubsystem extends SubsystemBase {
+    // Guaranteed not to send values
+    public static final double MAX_SPEED = 0.15;
+    public static final GenericPublisher leftHeightAbsRotPub = NetworkTablesUtil.getPublisher("robot", "leftElevAR", NetworkTableType.kDouble);
+    public static final GenericPublisher rightHeightAbsRotPub = NetworkTablesUtil.getPublisher("robot", "rightElevAR", NetworkTableType.kDouble);
     private static final double MAX_HEIGHT = 2;
     private static final double MIN_HEIGHT = 0.0;
     private static final double MAX_OUTPUT_ELEVATOR_PIDS = 0.8;
-
-    private final SparkMax rightMotor;
-    private final SparkMax leftMotor;
-
-    private final RelativeEncoder rightMotorEncoder;
-    private final RelativeEncoder leftMotorEncoder;
-
-    private final AbsoluteEncoder rightAbsoluteEncoder;
-    private final AbsoluteEncoder leftAbsoluteEncoder;
-
-    //private final ThroughboreEncoder rightThroughboreEncoder;
-    //private final ThroughboreEncoder leftThroughboreEncoder;
-
-    private final DigitalInput leftLimitSwitch = new DigitalInput(Constants.PortConstants.DIO.LEFT_ELEVATOR_LIMIT);
-    private final DigitalInput rightLimitSwitch = new DigitalInput(Constants.PortConstants.DIO.RIGHT_ELEVATOR_LIMIT);
-
-    private final SparkClosedLoopController rightPIDController;
-    private final SparkClosedLoopController leftPIDController;
-
     private final static double ABSOLUTE_DEGREES_PER_RELATIVE_DEGREES = 1426.64 / 8254.24;
     private final static double ROTATIONS_PER_METER_ASCENDED = Rotation2d.fromDegrees(742.5).getRotations() / 0.5;
     private final static double METERS_ASCENDED_PER_ROTATION = 1 / ROTATIONS_PER_METER_ASCENDED;
 
-    // Guaranteed not to send values 
-    public static final double MAX_SPEED = 0.15;
-
+    //private final ThroughboreEncoder rightThroughboreEncoder;
+    //private final ThroughboreEncoder leftThroughboreEncoder;
     private static final GenericPublisher leftHeightAbsPub = NetworkTablesUtil.getPublisher("robot", "leftElevAbsH", NetworkTableType.kDouble);
     private static final GenericPublisher rightHeightAbsPub = NetworkTablesUtil.getPublisher("robot", "rightElevAbsH", NetworkTableType.kDouble);
     private static final GenericPublisher leftHeightRelPub = NetworkTablesUtil.getPublisher("robot", "leftElevRelH", NetworkTableType.kDouble);
     private static final GenericPublisher rightHeightRelPub = NetworkTablesUtil.getPublisher("robot", "rightElevRelH", NetworkTableType.kDouble);
-
-    public static final GenericPublisher leftHeightAbsRotPub = NetworkTablesUtil.getPublisher("robot", "leftElevAR", NetworkTableType.kDouble);
-    public static final GenericPublisher rightHeightAbsRotPub = NetworkTablesUtil.getPublisher("robot", "rightElevAR", NetworkTableType.kDouble);
+    private final SparkMax rightMotor;
+    private final SparkMax leftMotor;
+    private final RelativeEncoder rightMotorEncoder;
+    private final RelativeEncoder leftMotorEncoder;
+    private final AbsoluteEncoder rightAbsoluteEncoder;
+    private final AbsoluteEncoder leftAbsoluteEncoder;
+    private final DigitalInput leftLimitSwitch = new DigitalInput(Constants.PortConstants.DIO.LEFT_ELEVATOR_LIMIT);
+    private final DigitalInput rightLimitSwitch = new DigitalInput(Constants.PortConstants.DIO.RIGHT_ELEVATOR_LIMIT);
+    private final SparkClosedLoopController rightPIDController;
+    private final SparkClosedLoopController leftPIDController;
 
     public ElevatorSubsystem() {
         rightMotor = new SparkMax(Constants.PortConstants.CAN.RIGHT_ELEVATOR_MOTOR_ID, MotorType.kBrushless);
@@ -76,33 +67,33 @@ public class ElevatorSubsystem extends SubsystemBase {
         SparkMaxConfig leftConfig = new SparkMaxConfig();
 
         leftConfig
-            .inverted(true)
-            .smartCurrentLimit(60)
-            .idleMode(IdleMode.kBrake)
-            .voltageCompensation(12);
+                .inverted(true)
+                .smartCurrentLimit(60)
+                .idleMode(IdleMode.kBrake)
+                .voltageCompensation(12);
 
         leftConfig.encoder
-            .positionConversionFactor(360d * ABSOLUTE_DEGREES_PER_RELATIVE_DEGREES / 762.183 * METERS_ASCENDED_PER_ROTATION)
-            .velocityConversionFactor(360d * ABSOLUTE_DEGREES_PER_RELATIVE_DEGREES / 60d / 762.183 * METERS_ASCENDED_PER_ROTATION);
+                .positionConversionFactor(360d * ABSOLUTE_DEGREES_PER_RELATIVE_DEGREES / 762.183 * METERS_ASCENDED_PER_ROTATION)
+                .velocityConversionFactor(360d * ABSOLUTE_DEGREES_PER_RELATIVE_DEGREES / 60d / 762.183 * METERS_ASCENDED_PER_ROTATION);
 
         leftConfig.closedLoop
-            .pidf(1.3, 0, 0, 0.2)
-            .outputRange(-MAX_OUTPUT_ELEVATOR_PIDS, MAX_OUTPUT_ELEVATOR_PIDS);
+                .pidf(1.3, 0, 0, 0.2)
+                .outputRange(-MAX_OUTPUT_ELEVATOR_PIDS, MAX_OUTPUT_ELEVATOR_PIDS);
 
-        
+
         rightConfig
-            .inverted(false)
-            .smartCurrentLimit(60)
-            .idleMode(IdleMode.kBrake)
-            .voltageCompensation(12);
+                .inverted(false)
+                .smartCurrentLimit(60)
+                .idleMode(IdleMode.kBrake)
+                .voltageCompensation(12);
 
         rightConfig.encoder
-            .positionConversionFactor(360d * ABSOLUTE_DEGREES_PER_RELATIVE_DEGREES / 762.183 * METERS_ASCENDED_PER_ROTATION)
-            .velocityConversionFactor(360d * ABSOLUTE_DEGREES_PER_RELATIVE_DEGREES / 60d / 762.183 * METERS_ASCENDED_PER_ROTATION);
+                .positionConversionFactor(360d * ABSOLUTE_DEGREES_PER_RELATIVE_DEGREES / 762.183 * METERS_ASCENDED_PER_ROTATION)
+                .velocityConversionFactor(360d * ABSOLUTE_DEGREES_PER_RELATIVE_DEGREES / 60d / 762.183 * METERS_ASCENDED_PER_ROTATION);
 
         rightConfig.closedLoop
-            .pidf(1.3, 0, 0, 0.2)
-            .outputRange(-MAX_OUTPUT_ELEVATOR_PIDS, MAX_OUTPUT_ELEVATOR_PIDS);
+                .pidf(1.3, 0, 0, 0.2)
+                .outputRange(-MAX_OUTPUT_ELEVATOR_PIDS, MAX_OUTPUT_ELEVATOR_PIDS);
 
         leftMotor.configure(leftConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
         rightMotor.configure(rightConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
@@ -157,8 +148,8 @@ public class ElevatorSubsystem extends SubsystemBase {
     }
 
     public void setTargetHeight(double heightMeters) {
-        if(Flags.Elevator.ENABLED) {
-            if(heightMeters <= MAX_HEIGHT && heightMeters >= MIN_HEIGHT) {
+        if (Flags.Elevator.ENABLED) {
+            if (heightMeters <= MAX_HEIGHT && heightMeters >= MIN_HEIGHT) {
                 this.rightPIDController.setReference(heightMeters, SparkBase.ControlType.kPosition);
                 this.leftPIDController.setReference(heightMeters, SparkBase.ControlType.kPosition);
             }
@@ -171,7 +162,7 @@ public class ElevatorSubsystem extends SubsystemBase {
     }
 
     public void setRawSpeeds(double rightSpeed, double leftSpeed) {
-        if(Flags.Elevator.ENABLED) {
+        if (Flags.Elevator.ENABLED) {
             this.rightMotor.set(rightSpeed);
             this.leftMotor.set(leftSpeed);
         }

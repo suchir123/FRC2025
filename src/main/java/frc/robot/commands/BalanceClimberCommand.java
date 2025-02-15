@@ -2,27 +2,23 @@ package frc.robot.commands;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.Flags;
-import frc.robot.controllers.AbstractController;
 import frc.robot.subsystems.ClimberSubsystem;
-import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.staticsubsystems.RobotGyro;
 
 /*
  * Idea: Other command will lift at a predetermined power for a predetermined amount
- * of time, and then this command will balance it, assuming that the robot has 
+ * of time, and then this command will balance it, assuming that the robot has
  * already climbed. (with timeout duration so it doesn't get stuck in a loop)
- * 
+ *
  * This command left as exercise to reader.
  */
 public class BalanceClimberCommand extends Command {
     private static final double MAX_ADJUSTMENT_SPEED = 0.02;
+    private static final double BALANCE_CLIMBER_COMMAND_DURATION = 3.0;
     private final ClimberSubsystem climber;
     private final Timer timer;
-    private static final double BALANCE_CLIMBER_COMMAND_DURATION = 3.0;
     private final PIDController pidController;
 
     public BalanceClimberCommand(ClimberSubsystem climber) {
@@ -30,7 +26,7 @@ public class BalanceClimberCommand extends Command {
         this.timer = new Timer();
 
         // initialize PID controller here with found values
-        this.pidController = new PIDController(0.01, 0, 0);        
+        this.pidController = new PIDController(0.01, 0, 0);
 
         addRequirements(climber);
     }

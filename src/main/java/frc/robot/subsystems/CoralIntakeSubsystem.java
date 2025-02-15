@@ -3,15 +3,14 @@ package frc.robot.subsystems;
 
 import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.spark.SparkBase;
+import com.revrobotics.spark.SparkClosedLoopController;
+import com.revrobotics.spark.SparkLowLevel.MotorType;
+import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.ClosedLoopConfig;
 import com.revrobotics.spark.config.SparkBaseConfig;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import com.revrobotics.spark.SparkClosedLoopController;
 import com.revrobotics.spark.config.SparkMaxConfig;
-import com.revrobotics.spark.SparkMax;
-import com.revrobotics.spark.SparkLowLevel.MotorType;
 import edu.wpi.first.math.geometry.Rotation2d;
-
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Flags;
 
@@ -51,13 +50,13 @@ public class CoralIntakeSubsystem extends SubsystemBase {
     }
 
     public void setPivotTargetAngle(double target) {
-        if(Flags.CoralIntake.ENABLED) {
+        if (Flags.CoralIntake.ENABLED) {
             pidController.setReference(target, SparkBase.ControlType.kPosition);
         }
     }
 
     public void setRawSpeed(double speed) {
-        if(Flags.CoralIntake.ENABLED) {
+        if (Flags.CoralIntake.ENABLED) {
             coralPivotMotor.set(speed);
         }
     }

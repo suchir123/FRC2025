@@ -2,17 +2,17 @@ package frc.robot.subsystems;
 
 
 import com.revrobotics.spark.SparkBase;
-import com.revrobotics.spark.config.SparkBaseConfig;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import com.revrobotics.spark.config.SparkMaxConfig;
-import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
+import com.revrobotics.spark.SparkMax;
+import com.revrobotics.spark.config.SparkBaseConfig;
+import com.revrobotics.spark.config.SparkMaxConfig;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
 public class AlgaeReefRemoverSubsystem extends SubsystemBase {
     private final SparkMax algaeRemoverMotor;
 
-    public AlgaeReefRemoverSubsystem(){
+    public AlgaeReefRemoverSubsystem() {
         algaeRemoverMotor = new SparkMax(Constants.PortConstants.CAN.ALGAE_REMOVER_MOTOR_ID, MotorType.kBrushless);
 
         SparkMaxConfig algaeMotorConfig = new SparkMaxConfig();

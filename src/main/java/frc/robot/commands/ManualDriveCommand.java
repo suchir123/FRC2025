@@ -47,7 +47,7 @@ public class ManualDriveCommand extends Command {
         // System.out.println("vert: " + this.joystick.getRightVerticalMovement() + ", hor: " + this.joystick.getRightHorizontalMovement());
         // this.driveTrain.drive(this.joystick.getVerticalMovement());
         double flip = flipFactor();
-        double ySpeed = Util.squareKeepSign(this.ySpeedLimiter.calculate(this.joystick.getLeftVerticalMovement()  * flip)) * MAX_SPEED_METERS_PER_SEC;
+        double ySpeed = Util.squareKeepSign(this.ySpeedLimiter.calculate(this.joystick.getLeftVerticalMovement() * flip)) * MAX_SPEED_METERS_PER_SEC;
         double xSpeed = Util.squareKeepSign(this.xSpeedLimiter.calculate(this.joystick.getLeftHorizontalMovement() * flip)) * MAX_SPEED_METERS_PER_SEC;
         // System.out.println("xSpeed = " + xSpeed);
         // System.out.println("ySpeed = " + ySpeed);

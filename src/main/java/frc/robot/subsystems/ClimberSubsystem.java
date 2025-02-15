@@ -2,30 +2,29 @@ package frc.robot.subsystems;
 
 
 import com.revrobotics.spark.SparkBase;
-import com.revrobotics.spark.config.SparkBaseConfig;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import com.revrobotics.spark.SparkClosedLoopController;
-import com.revrobotics.spark.config.SparkMaxConfig;
-import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
+import com.revrobotics.spark.SparkMax;
+import com.revrobotics.spark.config.SparkBaseConfig;
+import com.revrobotics.spark.config.SparkMaxConfig;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.ADIS16470_IMU;
 import edu.wpi.first.wpilibj.ADIS16470_IMU.IMUAxis;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Flags;
-import frc.robot.subsystems.staticsubsystems.RobotGyro;
 import frc.robot.util.ThroughboreEncoder;
 
 public class ClimberSubsystem extends SubsystemBase {
     public static final ADIS16470_IMU.IMUAxis ROBOT_TILT_AXIS = IMUAxis.kYaw;
 
     private final ThroughboreEncoder throughboreEncoder;
-    
+
     private final SparkMax climbMotor;
 
     private final SparkClosedLoopController pidController;
 
-    public ClimberSubsystem(){
+    public ClimberSubsystem() {
         climbMotor = new SparkMax(Constants.PortConstants.CAN.CLIMBER_MOTOR_ID, MotorType.kBrushless);
         throughboreEncoder = new ThroughboreEncoder(Constants.PortConstants.DIO.CLIMBER_ABSOLUTE_ENCODER_ABS_PORT, 0, false);
         pidController = climbMotor.getClosedLoopController();
@@ -50,13 +49,13 @@ public class ClimberSubsystem extends SubsystemBase {
     }
 
     public void setTarget(double target) {
-        if(Flags.Climber.ENABLED) {
+        if (Flags.Climber.ENABLED) {
             pidController.setReference(target, SparkBase.ControlType.kPosition);
         }
     }
 
     public void setRawSpeed(double speed) {
-        if(Flags.Climber.ENABLED) {
+        if (Flags.Climber.ENABLED) {
             climbMotor.set(speed);
         }
     }

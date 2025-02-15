@@ -7,7 +7,6 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.BalanceClimberCommand;
 import frc.robot.commands.ClimbCommand;
-import frc.robot.commands.ElevatorControlCommand;
 import frc.robot.commands.ManualDriveCommand;
 import frc.robot.commands.testers.*;
 import frc.robot.controllers.AbstractController;
@@ -15,13 +14,13 @@ import frc.robot.controllers.NintendoProController;
 import frc.robot.controllers.PS5Controller;
 import frc.robot.subsystems.ClimberSubsystem;
 import frc.robot.subsystems.CoralIntakeSubsystem;
+import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.PowerHandler;
 import frc.robot.subsystems.staticsubsystems.LimeLight;
 import frc.robot.subsystems.swerve.DriveTrainSubsystem;
 import frc.robot.util.ControlHandler;
 import frc.robot.util.NetworkTablesUtil;
 import frc.robot.util.Util;
-import frc.robot.subsystems.ElevatorSubsystem;
 
 public class RobotContainer {
     //private static final GenericPublisher COLOR_SENSOR_PUB = NetworkTablesUtil.getPublisher("robot", "color_sensor_sees_note", NetworkTableType.kBoolean);
@@ -102,7 +101,7 @@ public class RobotContainer {
         if (Flags.Elevator.IS_ATTACHED) {
             if (Flags.Elevator.USE_TEST_ELEVATOR_COMMAND) {
                 this.elevators.setDefaultCommand(new TestElevatorCommand(this.elevators, this.primaryController));
-            } else if(Flags.Elevator.USE_TEST_PID_COMMAND) {
+            } else if (Flags.Elevator.USE_TEST_PID_COMMAND) {
                 this.elevators.setDefaultCommand(new TestElevatorPIDCommand(this.elevators, this.primaryController));
             }
         }
@@ -114,8 +113,8 @@ public class RobotContainer {
             }
         }
 
-        if(Flags.Climber.IS_ATTACHED) {
-            if(Flags.Climber.USE_TEST_CLIMBER_COMMAND) {
+        if (Flags.Climber.IS_ATTACHED) {
+            if (Flags.Climber.USE_TEST_CLIMBER_COMMAND) {
                 this.climber.setDefaultCommand(new TestClimberCommand(climber, this.primaryController));
             } else {
                 Command autoClimb = new ClimbCommand(climber).andThen(new BalanceClimberCommand(climber));
@@ -123,8 +122,8 @@ public class RobotContainer {
             }
         }
 
-        if(Flags.CoralIntake.IS_ATTACHED) {
-            if(Flags.CoralIntake.USE_TEST_CORAL_COMMAND) {
+        if (Flags.CoralIntake.IS_ATTACHED) {
+            if (Flags.CoralIntake.USE_TEST_CORAL_COMMAND) {
                 this.coralIntake.setDefaultCommand(new TestCoralIntakeCommand(coralIntake, this.primaryController));
             }
         }

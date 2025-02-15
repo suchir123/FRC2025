@@ -3,26 +3,23 @@ package frc.robot.commands;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.Flags;
-import frc.robot.controllers.AbstractController;
 import frc.robot.subsystems.ClimberSubsystem;
-import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.staticsubsystems.RobotGyro;
 
 /*
  * Idea: This command will lift at a predetermined power for a predetermined amount
- * of time, and then another command will balance it, assuming that the robot has 
+ * of time, and then another command will balance it, assuming that the robot has
  * already climbed.
- * 
+ *
  * Other command left as exercise to reader.
  */
 public class ClimbCommand extends Command {
-    private final ClimberSubsystem climber;
-    private Timer timer;
-    private Rotation2d currentPosition;
     private static double CLIMB_COMMAND_DURATION = 3.0;
     private static double CLIMB_COMMAND_END_ANGLE = 60.0;
     private static double SPEED = 0.2;
+    private final ClimberSubsystem climber;
+    private Timer timer;
+    private Rotation2d currentPosition;
 
     public ClimbCommand(ClimberSubsystem climber) {
         this.climber = climber;
@@ -41,16 +38,16 @@ public class ClimbCommand extends Command {
     @Override
     public void execute() {
         double pitch = RobotGyro.getGyroAngleDegreesPitch();
-        double roll  = RobotGyro.getGyroAngleDegreesRoll();
-        double yaw   = RobotGyro.getGyroAngleDegreesYaw();
+        double roll = RobotGyro.getGyroAngleDegreesRoll();
+        double yaw = RobotGyro.getGyroAngleDegreesYaw();
         Rotation2d position = this.climber.getAbsolutePosition();
 
         System.out.println(
-            "pitch = " + pitch + 
-            "\nroll = " + roll + 
-            "\nyaw = " + yaw + 
-            "\nposition = " + position + 
-            "\ntime = " + timer.get());
+                "pitch = " + pitch +
+                        "\nroll = " + roll +
+                        "\nyaw = " + yaw +
+                        "\nposition = " + position +
+                        "\ntime = " + timer.get());
 
         if (false) {
             this.climber.setRawSpeed(SPEED);
