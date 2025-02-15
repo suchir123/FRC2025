@@ -1,53 +1,68 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.button.Trigger;
-import frc.robot.controllers.AbstractController;
+import frc.robot.subsystems.AlgaeReefRemoverSubsystem;
+import frc.robot.subsystems.CoralIntakeSubsystem;
 import frc.robot.subsystems.ElevatorSubsystem;
 
 public class ElevatorControlCommand extends Command {
-    private final ElevatorSubsystem elevator;
-    private final AbstractController controller;
-
-    private final Trigger uB, leftB, lowB, rB;
-    
-    public ElevatorControlCommand(ElevatorSubsystem elevator, AbstractController c) {
-        this.elevator = elevator;
-        this.controller = c;
-
-        uB = c.upperButton();
-        leftB = c.leftButton();
-        lowB = c.lowerButton();
-        rB = c.rightButton();
-
-        addRequirements(elevator);
+    public enum CoralIntakeState {
+        STOPPED,
+        INTAKE,
+        OUTTAKE
     }
 
+    public record ElevatorState(double height, double pivotAngle, CoralIntakeState coralIntakeState, boolean runAlgaeRemover) {
+    }
+
+    private final ElevatorSubsystem elevator;
+    private final CoralIntakeSubsystem coralIntake;
+    private final AlgaeReefRemoverSubsystem algaeRemover;
+
+    private final ElevatorState targetState;
+    
+    public ElevatorControlCommand(ElevatorSubsystem elevator, CoralIntakeSubsystem coralIntake, AlgaeReefRemoverSubsystem algaeRemover, ElevatorState targetState) {
+        this.elevator = elevator;
+        this.coralIntake = coralIntake;
+        this.algaeRemover = algaeRemover;
+
+        this.targetState = targetState;
+
+        addRequirements(elevator, coralIntake, algaeRemover);
+    }
 
     @Override
     public void initialize() {
+        this.elevator.setTargetHeight(this.targetState.height());
+        this.coralIntake.setPivotTargetAngle(this.targetState.pivotAngle());
+        if(this.targetState.runAlgaeRemover()) {
+            this.algaeRemover.setRawSpeed(0.2);
+        }
+        switch(this.targetState.coralIntakeState()) {
+            case STOPPED:
+                this.coralIntake.setRawSpeed(0);
+                break;
+            case INTAKE:
+                this.coralIntake.setRawSpeed(0.2);
+                break;
+            case OUTTAKE:
+                this.coralIntake.setRawSpeed(-0.2);
+                break;
+            default:
+                System.out.println("ElevatorControlCommand.ElevatorState has invalid entries that aren't accounted for");
+        }
     }
 
     @Override
     public void execute() {
-        // System.out.println("sentir");
-        uB.onTrue(new InstantCommand(() -> this.elevator.setTargetHeight(1.024)));
-        leftB.onTrue(new InstantCommand(() -> {
-            this.elevator.setTargetHeight(0.05); // there is like no point in doing this
-            // System.out.println("up");
-        }));
-        lowB.onTrue(new InstantCommand(() -> {
-            this.elevator.setTargetHeight(0);
-            // System.out.println("down");
-        }));
-        rB.onTrue(new InstantCommand(() -> this.elevator.setTargetHeight(0.409)));
+        
     }
 
     // Called once the command ends or is interrupted.
     @Override
     public void end(boolean interrupted) {
-
+        this.algaeRemover.setRawSpeed(0);
+        this.coralIntake.setRawSpeed(0);
     }
 
     // Returns true when the command should end.

@@ -12,6 +12,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.ADIS16470_IMU;
 import edu.wpi.first.wpilibj.ADIS16470_IMU.IMUAxis;
 import frc.robot.Constants;
+import frc.robot.Flags;
 import frc.robot.subsystems.staticsubsystems.RobotGyro;
 import frc.robot.util.ThroughboreEncoder;
 
@@ -49,11 +50,15 @@ public class ClimberSubsystem extends SubsystemBase {
     }
 
     public void setTarget(double target) {
-        pidController.setReference(target, SparkBase.ControlType.kPosition);
+        if(Flags.Climber.ENABLED) {
+            pidController.setReference(target, SparkBase.ControlType.kPosition);
+        }
     }
 
     public void setRawSpeed(double speed) {
-        climbMotor.set(speed);
+        if(Flags.Climber.ENABLED) {
+            climbMotor.set(speed);
+        }
     }
 
     public Rotation2d getThroughboreEncoderDistance() {

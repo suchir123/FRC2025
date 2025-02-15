@@ -1,7 +1,9 @@
 package frc.robot.subsystems;
 
 
+import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.spark.SparkBase;
+import com.revrobotics.spark.config.ClosedLoopConfig;
 import com.revrobotics.spark.config.SparkBaseConfig;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import com.revrobotics.spark.SparkClosedLoopController;
@@ -11,48 +13,56 @@ import com.revrobotics.spark.SparkLowLevel.MotorType;
 import edu.wpi.first.math.geometry.Rotation2d;
 
 import frc.robot.Constants;
-import frc.robot.util.ThroughboreEncoder;
+import frc.robot.Flags;
 
-public class CoralIntakeSubsystem extends SubsystemBase{
-    private final ThroughboreEncoder throughboreEncoder;
-
-    private final SparkMax coralIntakeMotor;
+public class CoralIntakeSubsystem extends SubsystemBase {
+    private final SparkMax coralPivotMotor;
+    private final AbsoluteEncoder coralPivotAbsoluteEncoder;
 
     private final SparkClosedLoopController pidController;
 
-    public CoralIntakeSubsystem(){
-        coralIntakeMotor = new SparkMax(Constants.PortConstants.CAN.CORAL_MOTOR_ID, MotorType.kBrushless);
-        throughboreEncoder = new ThroughboreEncoder(Constants.PortConstants.DIO.CORAL_ABSOLUTE_ENCODER_ABS_ID, 0, false);
-        pidController = coralIntakeMotor.getClosedLoopController();
+    public CoralIntakeSubsystem() {
+        coralPivotMotor = new SparkMax(Constants.PortConstants.CAN.CORAL_PIVOT_MOTOR_ID, MotorType.kBrushless);
+        coralPivotAbsoluteEncoder = coralPivotMotor.getAbsoluteEncoder();
+        // throughboreEncoder = new ThroughboreEncoder(Constants.PortConstants.DIO.CORAL_ABSOLUTE_ENCODER_ABS_ID, 0, false);
+        pidController = coralPivotMotor.getClosedLoopController();
 
-        SparkMaxConfig coralMotorConfig = new SparkMaxConfig();
+        SparkMaxConfig coralPivotMotorConfig = new SparkMaxConfig();
 
-        coralMotorConfig
+        coralPivotMotorConfig
                 .inverted(false)
                 .idleMode(SparkBaseConfig.IdleMode.kBrake)
                 .voltageCompensation(12);
-        coralMotorConfig.closedLoop
+        coralPivotMotorConfig.closedLoop
+                .feedbackSensor(ClosedLoopConfig.FeedbackSensor.kAbsoluteEncoder)
                 .pidf(1, 0, 0, 0)
                 .outputRange(-0.6, 0.6);
+        coralPivotMotorConfig.absoluteEncoder
+                .setSparkMaxDataPortConfig()
+                .zeroOffset(0);
 
-        coralIntakeMotor.configure(coralMotorConfig, SparkBase.ResetMode.kResetSafeParameters, SparkBase.PersistMode.kPersistParameters);
-        throughboreEncoder.name = "climber";
+        coralPivotMotor.configure(coralPivotMotorConfig, SparkBase.ResetMode.kResetSafeParameters, SparkBase.PersistMode.kPersistParameters);
+        // throughboreEncoder.name = "climber";
     }
 
     @Override
     public void periodic() {
-        throughboreEncoder.periodic();
+        // throughboreEncoder.periodic();
     }
 
-    public void setTarget(double target) {
-        pidController.setReference(target, SparkBase.ControlType.kPosition);
+    public void setPivotTargetAngle(double target) {
+        if(Flags.CoralIntake.ENABLED) {
+            pidController.setReference(target, SparkBase.ControlType.kPosition);
+        }
     }
 
     public void setRawSpeed(double speed) {
-        coralIntakeMotor.set(speed);
+        if(Flags.CoralIntake.ENABLED) {
+            coralPivotMotor.set(speed);
+        }
     }
 
     public Rotation2d getThroughboreEncoderDistance() {
-        return throughboreEncoder.getTotalDistance();
+        return new Rotation2d();// throughboreEncoder.getTotalDistance();
     }
 }

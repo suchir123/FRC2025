@@ -9,9 +9,7 @@ import frc.robot.commands.BalanceClimberCommand;
 import frc.robot.commands.ClimbCommand;
 import frc.robot.commands.ElevatorControlCommand;
 import frc.robot.commands.ManualDriveCommand;
-import frc.robot.commands.testers.TestClimberCommand;
-import frc.robot.commands.testers.TestDriveCommand;
-import frc.robot.commands.testers.TestElevatorCommand;
+import frc.robot.commands.testers.*;
 import frc.robot.controllers.AbstractController;
 import frc.robot.controllers.NintendoProController;
 import frc.robot.controllers.PS5Controller;
@@ -44,13 +42,13 @@ public class RobotContainer {
     // private final SendableChooser<Command> autonChooser;
 
     private final DriveTrainSubsystem driveTrain;
-    private final ElevatorSubsystem telescopingArm;
+    private final ElevatorSubsystem elevators;
     private final ClimberSubsystem climber;
     private final CoralIntakeSubsystem coralIntake;
 
     public RobotContainer() {
         this.driveTrain = Util.createIfFlagElseNull(DriveTrainSubsystem::new, Flags.DriveTrain.IS_ATTACHED);
-        this.telescopingArm = Util.createIfFlagElseNull(ElevatorSubsystem::new, Flags.Elevator.IS_ATTACHED);
+        this.elevators = Util.createIfFlagElseNull(ElevatorSubsystem::new, Flags.Elevator.IS_ATTACHED);
         this.climber = Util.createIfFlagElseNull(ClimberSubsystem::new, Flags.Climber.IS_ATTACHED);
         this.coralIntake = Util.createIfFlagElseNull(CoralIntakeSubsystem::new, Flags.CoralIntake.IS_ATTACHED);
 
@@ -87,7 +85,6 @@ public class RobotContainer {
         //     // TODO: implement heading lock mode on YAGSL drive
         //     //this.driveTrain.setHeadingLockMode(false);
         // }));
-
         // if(Flags.DriveTrain.IS_ATTACHED) {
         //     ControlHandler.get(this.nintendoProController, ControllerConstants.RESET_POSE_ESTIMATOR).onTrue(new InstantCommand(this.driveTrain::resetPoseToMidSubwoofer));
         // }
@@ -104,12 +101,9 @@ public class RobotContainer {
 
         if (Flags.Elevator.IS_ATTACHED) {
             if (Flags.Elevator.USE_TEST_ELEVATOR_COMMAND) {
-                this.telescopingArm.setDefaultCommand(new TestElevatorCommand(this.telescopingArm, this.primaryController));
-                // NOTE: this command uses the joystick, so it is MUTUALLY EXCLUSIVE with other commands
-                // Therefore, we immediately return so we don't run two commands using the same joysticks, because that would be weird.
-                return;
-            } else {
-                this.telescopingArm.setDefaultCommand(new ElevatorControlCommand(this.telescopingArm, this.primaryController));
+                this.elevators.setDefaultCommand(new TestElevatorCommand(this.elevators, this.primaryController));
+            } else if(Flags.Elevator.USE_TEST_PID_COMMAND) {
+                this.elevators.setDefaultCommand(new TestElevatorPIDCommand(this.elevators, this.primaryController));
             }
         }
         if (Flags.DriveTrain.IS_ATTACHED) {
@@ -126,6 +120,12 @@ public class RobotContainer {
             } else {
                 Command autoClimb = new ClimbCommand(climber).andThen(new BalanceClimberCommand(climber));
                 ControlHandler.get(this.primaryController, Constants.OperatorConstants.SecondaryControllerConstants.AUTO_CLIMB).whileTrue(autoClimb);
+            }
+        }
+
+        if(Flags.CoralIntake.IS_ATTACHED) {
+            if(Flags.CoralIntake.USE_TEST_CORAL_COMMAND) {
+                this.coralIntake.setDefaultCommand(new TestCoralIntakeCommand(coralIntake, this.primaryController));
             }
         }
 

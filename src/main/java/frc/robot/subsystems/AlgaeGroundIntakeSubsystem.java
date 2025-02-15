@@ -4,25 +4,20 @@ package frc.robot.subsystems;
 import com.revrobotics.spark.SparkBase;
 import com.revrobotics.spark.config.SparkBaseConfig;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import com.revrobotics.spark.SparkClosedLoopController;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.Servo;
 import frc.robot.Constants;
 import frc.robot.Constants.PortConstants;
-import frc.robot.util.ThroughboreEncoder;
 
-public class AlgaeIntakeSubsystem extends SubsystemBase{ // This subsystem needing much more feature only has 1 neo currently
-    // public class 
-
+public class AlgaeGroundIntakeSubsystem extends SubsystemBase {
     private final SparkMax algaeIntakeMotor;
     private final Servo    algaeLeftServo;
     private final Servo    algaeRightServo;
 
-    public AlgaeIntakeSubsystem(){
-        algaeIntakeMotor = new SparkMax(Constants.PortConstants.CAN.ALGAE_MOTOR_ID, MotorType.kBrushless);
+    public AlgaeGroundIntakeSubsystem() {
+        algaeIntakeMotor = new SparkMax(Constants.PortConstants.CAN.ALGAE_REMOVER_MOTOR_ID, MotorType.kBrushless);
         // leaving these undefined seems better than adding them with bad values
         algaeLeftServo = new Servo(PortConstants.PWM.ALGAE_LEFT_SERVO_PORT);
         algaeRightServo = new Servo(PortConstants.PWM.ALGAE_RIGHT_SERVO_PORT);
@@ -32,10 +27,8 @@ public class AlgaeIntakeSubsystem extends SubsystemBase{ // This subsystem needi
         algaeMotorConfig
                 .inverted(false)
                 .idleMode(SparkBaseConfig.IdleMode.kCoast)
+                .smartCurrentLimit(20)
                 .voltageCompensation(12);
-//        algaeMotorConfig.closedLoop
-//                .pidf(1, 0, 0, 0)
-//                .outputRange(-0.6, 0.6);
 
         algaeIntakeMotor.configure(algaeMotorConfig, SparkBase.ResetMode.kResetSafeParameters, SparkBase.PersistMode.kPersistParameters);
     }

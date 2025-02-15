@@ -1,5 +1,6 @@
 package frc.robot.subsystems;
 
+import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.SparkBase;
 import com.revrobotics.spark.SparkClosedLoopController;
@@ -9,20 +10,19 @@ import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
-import frc.robot.Robot;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.networktables.GenericPublisher;
 import edu.wpi.first.networktables.NetworkTableType;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.Flags;
 import frc.robot.util.NetworkTablesUtil;
-import frc.robot.util.ThroughboreEncoder;
 
 public class ElevatorSubsystem extends SubsystemBase {
-
-    private static final double MAX_HEIGHT = 1.0;
+    private static final double MAX_HEIGHT = 2;
     private static final double MIN_HEIGHT = 0.0;
+    private static final double MAX_OUTPUT_ELEVATOR_PIDS = 0.8;
 
     private final SparkMax rightMotor;
     private final SparkMax leftMotor;
@@ -30,10 +30,13 @@ public class ElevatorSubsystem extends SubsystemBase {
     private final RelativeEncoder rightMotorEncoder;
     private final RelativeEncoder leftMotorEncoder;
 
-    private final ThroughboreEncoder rightThroughboreEncoder;
-    private final ThroughboreEncoder leftThroughboreEncoder;
+    private final AbsoluteEncoder rightAbsoluteEncoder;
+    private final AbsoluteEncoder leftAbsoluteEncoder;
 
-    private final DigitalInput leftLimitSwitch = new DigitalInput(Constants.PortConstants.DIO.LEFT_ELEVATOR_LIMIT); // dont forgor active low
+    //private final ThroughboreEncoder rightThroughboreEncoder;
+    //private final ThroughboreEncoder leftThroughboreEncoder;
+
+    private final DigitalInput leftLimitSwitch = new DigitalInput(Constants.PortConstants.DIO.LEFT_ELEVATOR_LIMIT);
     private final DigitalInput rightLimitSwitch = new DigitalInput(Constants.PortConstants.DIO.RIGHT_ELEVATOR_LIMIT);
 
     private final SparkClosedLoopController rightPIDController;
@@ -59,9 +62,11 @@ public class ElevatorSubsystem extends SubsystemBase {
         leftMotor = new SparkMax(Constants.PortConstants.CAN.LEFT_ELEVATOR_MOTOR_ID, MotorType.kBrushless);
         rightMotorEncoder = rightMotor.getEncoder();
         leftMotorEncoder = leftMotor.getEncoder();
+        rightAbsoluteEncoder = rightMotor.getAbsoluteEncoder();
+        leftAbsoluteEncoder = leftMotor.getAbsoluteEncoder();
 
-        rightThroughboreEncoder = new ThroughboreEncoder(Constants.PortConstants.DIO.RIGHT_ELEVATOR_ABS_ENCODER_ABS_PORT, 5, 4, Rotation2d.fromDegrees(9.40).getRotations(), false, true, true); // 742.5 deg = 50 cm up
-        leftThroughboreEncoder = new ThroughboreEncoder(Constants.PortConstants.DIO.LEFT_ELEVATOR_ABS_ENCODER_ABS_PORT, 2, 3, -Rotation2d.fromDegrees(124.5).getRotations(), true, false, true); // 742.5 deg = 50 cm up
+        // rightThroughboreEncoder = new ThroughboreEncoder(Constants.PortConstants.DIO.RIGHT_ELEVATOR_ABS_ENCODER_ABS_PORT, 5, 4, Rotation2d.fromDegrees(9.40).getRotations(), false, true, true); // 742.5 deg = 50 cm up
+        // leftThroughboreEncoder = new ThroughboreEncoder(Constants.PortConstants.DIO.LEFT_ELEVATOR_ABS_ENCODER_ABS_PORT, 2, 3, -Rotation2d.fromDegrees(124.5).getRotations(), true, false, true); // 742.5 deg = 50 cm up
 
         this.rightPIDController = this.rightMotor.getClosedLoopController();
         this.leftPIDController = this.leftMotor.getClosedLoopController();
@@ -71,7 +76,8 @@ public class ElevatorSubsystem extends SubsystemBase {
         SparkMaxConfig leftConfig = new SparkMaxConfig();
 
         leftConfig
-            .inverted(false)
+            .inverted(true)
+            .smartCurrentLimit(60)
             .idleMode(IdleMode.kBrake)
             .voltageCompensation(12);
 
@@ -80,12 +86,13 @@ public class ElevatorSubsystem extends SubsystemBase {
             .velocityConversionFactor(360d * ABSOLUTE_DEGREES_PER_RELATIVE_DEGREES / 60d / 762.183 * METERS_ASCENDED_PER_ROTATION);
 
         leftConfig.closedLoop
-            .pidf(1, 0, 0, 0)
-            .outputRange(-0.6, 0.6);
+            .pidf(1.3, 0, 0, 0.2)
+            .outputRange(-MAX_OUTPUT_ELEVATOR_PIDS, MAX_OUTPUT_ELEVATOR_PIDS);
 
         
         rightConfig
-            .inverted(true)
+            .inverted(false)
+            .smartCurrentLimit(60)
             .idleMode(IdleMode.kBrake)
             .voltageCompensation(12);
 
@@ -94,8 +101,8 @@ public class ElevatorSubsystem extends SubsystemBase {
             .velocityConversionFactor(360d * ABSOLUTE_DEGREES_PER_RELATIVE_DEGREES / 60d / 762.183 * METERS_ASCENDED_PER_ROTATION);
 
         rightConfig.closedLoop
-            .pidf(1, 0, 0, 0)
-            .outputRange(-0.6, 0.6);
+            .pidf(1.3, 0, 0, 0.2)
+            .outputRange(-MAX_OUTPUT_ELEVATOR_PIDS, MAX_OUTPUT_ELEVATOR_PIDS);
 
         leftMotor.configure(leftConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
         rightMotor.configure(rightConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
@@ -103,8 +110,8 @@ public class ElevatorSubsystem extends SubsystemBase {
         rightMotorEncoder.setPosition(0);
         leftMotorEncoder.setPosition(0);
 
-        this.rightThroughboreEncoder.name = "right";
-        this.leftThroughboreEncoder.name = "left";
+        // this.rightThroughboreEncoder.name = "right";
+        // this.leftThroughboreEncoder.name = "left";
 
         //Robot.INSTANCE.addPeriodic(() -> {
         //    this.updateEncoders();
@@ -118,8 +125,8 @@ public class ElevatorSubsystem extends SubsystemBase {
     }
 
     private void updateEncoders() {
-        this.leftThroughboreEncoder.periodic();
-        this.rightThroughboreEncoder.periodic();
+        //this.leftThroughboreEncoder.periodic();
+        //this.rightThroughboreEncoder.periodic();
     }
 
     private void resetEncoders() {
@@ -129,7 +136,8 @@ public class ElevatorSubsystem extends SubsystemBase {
 
     @Override
     public void periodic() {
-        updateEncoders();
+        System.out.println("L ls: " + this.getLeftLimitSwitch() + ", R: " + this.getRightLimitSwitch());
+        // updateEncoders();
         /* <--- do not comment out the slash asterisk, just add a double slash in front
         System.out.println("Right position = " + this.getRightThroughboreEncoderDistance() + "\n" + 
                            "Left position = " + this.getLeftThroughboreEncoderDistance() + "\n" + 
@@ -138,10 +146,10 @@ public class ElevatorSubsystem extends SubsystemBase {
                            "Right position (relative)= " + this.getRightRelativePosition() + "\n" + 
                            "Left position (relative)= " + this.getLeftRelativePosition() + "\n");
         // <-- leave both of these --> */
-        resetEncodersIfLimit();
+        // resetEncodersIfLimit();
 
-        rightHeightAbsPub.setDouble(this.getRightMetersAscended());
-        leftHeightAbsPub.setDouble(this.getLeftMetersAscended());
+        // rightHeightAbsPub.setDouble(this.getRightMetersAscended());
+        // leftHeightAbsPub.setDouble(this.getLeftMetersAscended());
         rightHeightRelPub.setDouble(this.getRightRelativePosition());
         leftHeightRelPub.setDouble(this.getLeftRelativePosition());
         //leftHeightAbsRotPub.setDouble(this.leftThroughboreEncoder.getAbsolutePosition().getDegrees());
@@ -149,9 +157,11 @@ public class ElevatorSubsystem extends SubsystemBase {
     }
 
     public void setTargetHeight(double heightMeters) {
-        if(heightMeters <= MAX_HEIGHT && heightMeters >= MIN_HEIGHT){
-            this.rightPIDController.setReference(heightMeters, SparkBase.ControlType.kPosition);
-            this.leftPIDController.setReference(heightMeters, SparkBase.ControlType.kPosition);
+        if(Flags.Elevator.ENABLED) {
+            if(heightMeters <= MAX_HEIGHT && heightMeters >= MIN_HEIGHT) {
+                this.rightPIDController.setReference(heightMeters, SparkBase.ControlType.kPosition);
+                this.leftPIDController.setReference(heightMeters, SparkBase.ControlType.kPosition);
+            }
         }
     }
 
@@ -161,16 +171,18 @@ public class ElevatorSubsystem extends SubsystemBase {
     }
 
     public void setRawSpeeds(double rightSpeed, double leftSpeed) {
-        this.rightMotor.set(rightSpeed);
-        this.leftMotor.set(leftSpeed);
+        if(Flags.Elevator.ENABLED) {
+            this.rightMotor.set(rightSpeed);
+            this.leftMotor.set(leftSpeed);
+        }
     }
 
     public Rotation2d getRightThroughboreEncoderDistance() {
-        return this.rightThroughboreEncoder.getTotalDistance();
+        return new Rotation2d();//this.rightThroughboreEncoder.getTotalDistance();
     }
 
     public Rotation2d getLeftThroughboreEncoderDistance() {
-        return this.leftThroughboreEncoder.getTotalDistance();
+        return new Rotation2d();    // this.leftThroughboreEncoder.getTotalDistance();
     }
 
     public double getRightMetersAscended() {
@@ -190,10 +202,10 @@ public class ElevatorSubsystem extends SubsystemBase {
     }
 
     public boolean getLeftLimitSwitch() {
-        return !this.leftLimitSwitch.get();
+        return !this.leftLimitSwitch.get(); // active low
     }
 
     public boolean getRightLimitSwitch() {
-        return !this.rightLimitSwitch.get();
+        return !this.rightLimitSwitch.get(); // active low
     }
 }

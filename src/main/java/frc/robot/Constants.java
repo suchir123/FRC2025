@@ -101,14 +101,14 @@ public final class Constants {
             public static final int CLIMBER_MOTOR_ID = 5;
 
             // (2025) Coral Intake
-            public static final int CORAL_MOTOR_ID = 4;
+            public static final int CORAL_PIVOT_MOTOR_ID = 13;
+            public static final int CORAL_INTAKE_MOTOR_ID = 4;
 
             // (2025) Algae Intake
-            public static final int ALGAE_MOTOR_ID = 2;
+            public static final int ALGAE_REMOVER_MOTOR_ID = 2;
         }
 
         public static class PWM {
-            // We don't yet know the servo points.
             public static final int ALGAE_LEFT_SERVO_PORT = -1;
             public static final int ALGAE_RIGHT_SERVO_PORT = -1;
         }
@@ -128,8 +128,8 @@ public final class Constants {
             // Currently all unset, because we rewired the stuff. 
             public static final int RIGHT_ELEVATOR_ABS_ENCODER_ABS_PORT = -1;
 
-            public static final int LEFT_ELEVATOR_LIMIT = -1;
-            public static final int RIGHT_ELEVATOR_LIMIT = -1;
+            public static final int LEFT_ELEVATOR_LIMIT = 0;
+            public static final int RIGHT_ELEVATOR_LIMIT = 1;
 
             // Intake (INT)
             public static final int INTAKE_ABSOLUTE_ENCODER_ABS_PORT = -1;
