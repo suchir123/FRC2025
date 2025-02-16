@@ -38,7 +38,20 @@ public final class Flags {
     public static class CoralIntake {
         public static final boolean IS_ATTACHED = true;
         public static final boolean ENABLED = true;
-        public static final boolean USE_TEST_CORAL_COMMAND = true;
+        public static final boolean USE_TEST_CORAL_COMMAND = false;
+        public static final boolean USE_TEST_PID_COMMAND = false;
+    }
+
+    public static class AlgaeGroundIntake {
+        public static final boolean IS_ATTACHED = true;
+        public static final boolean ENABLED = true;
+        public static final boolean USE_TEST_ALGAE_GROUND_COMMAND = true;
+    }
+
+    public static class AlgaeReefRemover {
+        public static final boolean IS_ATTACHED = true;
+        public static final boolean ENABLED = true;
+        public static final boolean USE_TEST_ALGAE_REMOVER_COMMAND = false;
     }
 
     /**

@@ -1,5 +1,6 @@
 package frc.robot.commands;
 
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.AlgaeReefRemoverSubsystem;
 import frc.robot.subsystems.CoralIntakeSubsystem;
@@ -10,6 +11,7 @@ public class ElevatorControlCommand extends Command {
     private final CoralIntakeSubsystem coralIntake;
     private final AlgaeReefRemoverSubsystem algaeRemover;
     private final ElevatorState targetState;
+
     public ElevatorControlCommand(ElevatorSubsystem elevator, CoralIntakeSubsystem coralIntake, AlgaeReefRemoverSubsystem algaeRemover, ElevatorState targetState) {
         this.elevator = elevator;
         this.coralIntake = coralIntake;
@@ -22,20 +24,24 @@ public class ElevatorControlCommand extends Command {
 
     @Override
     public void initialize() {
-        this.elevator.setTargetHeight(this.targetState.height());
-        this.coralIntake.setPivotTargetAngle(this.targetState.pivotAngle());
-        if (this.targetState.runAlgaeRemover()) {
-            this.algaeRemover.setRawSpeed(0.2);
+        if(!this.targetState.maintain()) {
+            this.elevator.setTargetHeight(this.targetState.height());
+            this.coralIntake.setPivotTargetAngle(this.targetState.pivotAngle());
         }
+
+        if (this.targetState.runAlgaeRemover()) {
+            this.algaeRemover.setIntakeSpeed(0.2);
+        }
+
         switch (this.targetState.coralIntakeState()) {
             case STOPPED:
-                this.coralIntake.setRawSpeed(0);
+                this.coralIntake.setIntakeSpeed(0);
                 break;
             case INTAKE:
-                this.coralIntake.setRawSpeed(0.2);
+                this.coralIntake.setIntakeSpeed(0.6);
                 break;
             case OUTTAKE:
-                this.coralIntake.setRawSpeed(-0.2);
+                this.coralIntake.setIntakeSpeed(-0.6);
                 break;
             default:
                 System.out.println("ElevatorControlCommand.ElevatorState has invalid entries that aren't accounted for");
@@ -44,14 +50,14 @@ public class ElevatorControlCommand extends Command {
 
     @Override
     public void execute() {
-
+        // System.out.println("JIOJFOIJSODFJFIOSJHFISHI:FJHEIL:HJF");
     }
 
     // Called once the command ends or is interrupted.
     @Override
     public void end(boolean interrupted) {
-        this.algaeRemover.setRawSpeed(0);
-        this.coralIntake.setRawSpeed(0);
+        this.algaeRemover.setIntakeSpeed(0);
+        this.coralIntake.setIntakeSpeed(0);
     }
 
     // Returns true when the command should end.
@@ -66,7 +72,48 @@ public class ElevatorControlCommand extends Command {
         OUTTAKE
     }
 
-    public record ElevatorState(double height, double pivotAngle, CoralIntakeState coralIntakeState, boolean runAlgaeRemover) {
+    public static class ElevatorState {
+        private final double height;
+        private final Rotation2d pivotAngle;
+        private final boolean maintain;
+        private final CoralIntakeState coralIntakeState;
+        private final boolean runAlgaeRemover;
+
+        private ElevatorState(double height, Rotation2d pivotAngle, boolean maintain, CoralIntakeState coralIntakeState, boolean runAlgaeRemover) {
+            this.height = height;
+            this.pivotAngle = pivotAngle;
+            this.maintain = maintain;
+            this.coralIntakeState = coralIntakeState;
+            this.runAlgaeRemover = runAlgaeRemover;
+        }
+        
+        public ElevatorState(double height, Rotation2d pivotAngle, CoralIntakeState coralIntakeState, boolean runAlgaeRemover) {
+            this(height, pivotAngle, false, coralIntakeState, runAlgaeRemover);
+        }
+
+        public ElevatorState(CoralIntakeState coralIntakeState, boolean runAlgaeRemover) {
+            this(-1, null, true, coralIntakeState, runAlgaeRemover);
+        }
+
+        public double height() {
+            return this.height;
+        }
+
+        public Rotation2d pivotAngle() {
+            return this.pivotAngle;
+        }
+
+        public boolean maintain() {
+            return this.maintain;
+        }
+
+        public CoralIntakeState coralIntakeState() {
+            return this.coralIntakeState;
+        }
+
+        public boolean runAlgaeRemover() {
+            return this.runAlgaeRemover;
+        }
     }
 }
 

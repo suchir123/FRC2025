@@ -20,13 +20,11 @@ import frc.robot.Flags;
 import frc.robot.util.NetworkTablesUtil;
 
 public class ElevatorSubsystem extends SubsystemBase {
-    // Guaranteed not to send values
-    public static final double MAX_SPEED = 0.15;
     public static final GenericPublisher leftHeightAbsRotPub = NetworkTablesUtil.getPublisher("robot", "leftElevAR", NetworkTableType.kDouble);
     public static final GenericPublisher rightHeightAbsRotPub = NetworkTablesUtil.getPublisher("robot", "rightElevAR", NetworkTableType.kDouble);
-    private static final double MAX_HEIGHT = 2;
+    private static final double MAX_HEIGHT = 1.1;
     private static final double MIN_HEIGHT = 0.0;
-    private static final double MAX_OUTPUT_ELEVATOR_PIDS = 0.8;
+    private static final double MAX_OUTPUT_ELEVATOR_PIDS = 0.6;
     private final static double ABSOLUTE_DEGREES_PER_RELATIVE_DEGREES = 1426.64 / 8254.24;
     private final static double ROTATIONS_PER_METER_ASCENDED = Rotation2d.fromDegrees(742.5).getRotations() / 0.5;
     private final static double METERS_ASCENDED_PER_ROTATION = 1 / ROTATIONS_PER_METER_ASCENDED;
@@ -127,7 +125,7 @@ public class ElevatorSubsystem extends SubsystemBase {
 
     @Override
     public void periodic() {
-        System.out.println("L ls: " + this.getLeftLimitSwitch() + ", R: " + this.getRightLimitSwitch());
+        // System.out.println("L ls: " + this.getLeftLimitSwitch() + ", R: " + this.getRightLimitSwitch());
         // updateEncoders();
         /* <--- do not comment out the slash asterisk, just add a double slash in front
         System.out.println("Right position = " + this.getRightThroughboreEncoderDistance() + "\n" + 

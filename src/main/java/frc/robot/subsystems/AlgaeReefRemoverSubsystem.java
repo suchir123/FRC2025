@@ -30,7 +30,7 @@ public class AlgaeReefRemoverSubsystem extends SubsystemBase {
     public void periodic() {
     }
 
-    public void setRawSpeed(double speed) {
+    public void setIntakeSpeed(double speed) {
         algaeRemoverMotor.set(speed);
     }
 

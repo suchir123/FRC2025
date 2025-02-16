@@ -20,11 +20,12 @@ public final class Constants {
         public static final int RIGHT_JOYSTICK_PORT = 2;
         public static final int NINTENDO_PRO_CONTROLLER = 1;
         public static final int PS5_CONTROLLER = 3;
+        public static final int PS4_CONTROLLER = 8;
 
         // Should this be here? especially with our new controller system, we could potentially refactor or re-abstract this using another class (maybe even for multiple driver preferences?)
         public static class PrimaryControllerConstants {
             public static final TriggerType CLIMB                           = TriggerType.LEFT_BUTTON;
-            public static final TriggerType SPIT_ALGAE                      = TriggerType.UPPER_BUTTON; 
+            public static final TriggerType SPIT_ALGAE                      = TriggerType.UPPER_BUTTON;
             public static final TriggerType INTAKE                          = TriggerType.RIGHT_BUTTON; //sets tower at right height and turns on wheel
             public static final TriggerType BALL_INTAKE                     = TriggerType.LOWER_BUTTON; //Turns on both upper and lower
 
@@ -43,15 +44,15 @@ public final class Constants {
             //Ball/algae cmds
             public static final TriggerType BALL_PROCESSOR                  = TriggerType.LEFT_SHOULDER_BUTTON;  //L1
             // public static final TriggerType BALL_BARGE                      = TriggerType.LEFT_SHOULDER_TRIGGER; //L2
-            
+
             //Coral shooter
             public static final TriggerType CORAL_SHOOTER_LVL_FOUR          = TriggerType.RIGHT_SHOULDER_BUTTON; //R1
             public static final TriggerType CORAL_SHOOTER_LVL_THREE         = TriggerType.UPPER_BUTTON; //Triangle
             public static final TriggerType CORAL_SHOOTER_LVL_TWO           = TriggerType.LEFT_BUTTON;  //Square
-            public static final TriggerType CORAL_SHOOTER_LVL_ONE           = TriggerType.LOWER_BUTTON; // X 
+            public static final TriggerType ELEVATORS_ZERO                  = TriggerType.LOWER_BUTTON; // X
 
             public static final TriggerType AUTO_CLIMB                      = TriggerType.LEFT_SHOULDER_TRIGGER;
-        } 
+        }
     }
 
     public static class PortConstants {

@@ -26,16 +26,16 @@ public class TestElevatorPIDCommand extends Command {
 
     @Override
     public void initialize() {
-        uB.onTrue(new InstantCommand(() -> this.elevator.setTargetHeight(1.0)));
+        uB.onTrue(new InstantCommand(() -> this.elevator.setTargetHeight(1.1)));
         leftB.onTrue(new InstantCommand(() -> {
-            this.elevator.setTargetHeight(0.25); // there is like no point in doing this
+            this.elevator.setTargetHeight(0.5); // there is like no point in doing this
             // System.out.println("up");
         }));
         lowB.onTrue(new InstantCommand(() -> {
             this.elevator.setTargetHeight(0);
             // System.out.println("down");
         }));
-        rB.onTrue(new InstantCommand(() -> this.elevator.setTargetHeight(0.5)));
+        rB.onTrue(new InstantCommand(() -> this.elevator.setTargetHeight(1)));
     }
 
     @Override
