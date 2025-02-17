@@ -9,9 +9,9 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.BalanceClimberCommand;
 import frc.robot.commands.ClimbCommand;
-import frc.robot.commands.ElevatorControlCommand;
 import frc.robot.commands.ManualDriveCommand;
-import frc.robot.commands.ElevatorControlCommand.CoralIntakeState;
+import frc.robot.commands.elevator.ElevatorControlCommand;
+import frc.robot.commands.elevator.ElevatorStateManager;
 import frc.robot.commands.testers.*;
 import frc.robot.controllers.AbstractController;
 import frc.robot.controllers.NintendoProController;
@@ -50,6 +50,8 @@ public class RobotContainer {
     private final CoralIntakeSubsystem coralIntake;
     private final AlgaeReefRemoverSubsystem algaeReefRemover;
 
+    private final ElevatorStateManager elevatorStateManager = ElevatorStateManager.INSTANCE;
+
     public RobotContainer() {
         this.driveTrain = Util.createIfFlagElseNull(DriveTrainSubsystem::new, Flags.DriveTrain.IS_ATTACHED);
         this.elevators = Util.createIfFlagElseNull(ElevatorSubsystem::new, Flags.Elevator.IS_ATTACHED);
@@ -74,26 +76,29 @@ public class RobotContainer {
         NetworkTablesUtil.getConnections();
     }
 
-    private ElevatorControlCommand elevatorStateCommand(ElevatorControlCommand.ElevatorState elevatorState) {
-        return new ElevatorControlCommand(this.elevators, this.coralIntake, this.algaeReefRemover, elevatorState);
-    }
-
-    private ElevatorControlCommand elevatorStateCommand(double height, Rotation2d pivotAngle, ElevatorControlCommand.CoralIntakeState coralIntakeState, boolean runAlgaeRemover) {
-        return elevatorStateCommand(new ElevatorControlCommand.ElevatorState(height, pivotAngle, coralIntakeState, runAlgaeRemover));
-    }
-
-    private ElevatorControlCommand elevatorStateCommand(ElevatorControlCommand.CoralIntakeState coralIntakeState, boolean runAlgaeRemover) {
-        return elevatorStateCommand(new ElevatorControlCommand.ElevatorState(coralIntakeState, runAlgaeRemover));
-    }
-
     private void configureBindings() {
         if(Flags.Elevator.IS_ATTACHED && !Flags.Elevator.USE_TEST_ELEVATOR_COMMAND && !Flags.Elevator.USE_TEST_PID_COMMAND && !Flags.CoralIntake.USE_TEST_PID_COMMAND) {
-            ControlHandler.get(this.primaryController, OperatorConstants.SecondaryControllerConstants.ELEVATORS_ZERO).onTrue(elevatorStateCommand(0, Rotation2d.fromRotations(0.2), ElevatorControlCommand.CoralIntakeState.INTAKE, false));
-            ControlHandler.get(this.primaryController, ControlHandler.TriggerType.LEFT_SHOULDER_BUTTON).onTrue(elevatorStateCommand(ElevatorControlCommand.CoralIntakeState.STOPPED, false));
-            ControlHandler.get(this.primaryController, OperatorConstants.SecondaryControllerConstants.CORAL_SHOOTER_LVL_TWO).onTrue(elevatorStateCommand(0.5, Rotation2d.fromRotations(0.03), ElevatorControlCommand.CoralIntakeState.STOPPED, false));
-            ControlHandler.get(this.primaryController, TriggerType.RIGHT_BUTTON).onTrue(elevatorStateCommand(0, Rotation2d.fromRotations(0.45), CoralIntakeState.STOPPED, false));
-            ControlHandler.get(this.primaryController, ControlHandler.TriggerType.RIGHT_SHOULDER_BUTTON).onTrue(elevatorStateCommand(ElevatorControlCommand.CoralIntakeState.INTAKE, false));
-            ControlHandler.get(this.primaryController, TriggerType.RIGHT_SHOULDER_TRIGGER).onTrue(elevatorStateCommand(CoralIntakeState.OUTTAKE, false));
+            ControlHandler.get(this.primaryController, OperatorConstants.SecondaryControllerConstants.ELEVATORS_ZERO).onTrue(new InstantCommand(() -> elevatorStateManager
+                    .setHeight(0)
+                    .setPivotAngle(Rotation2d.fromRotations(0.2))
+                    .setCoralIntakeState(ElevatorStateManager.CoralIntakeState.INTAKE)
+                    .setRunAlgaeRemover(false)));
+            ControlHandler.get(this.primaryController, ControlHandler.TriggerType.LEFT_SHOULDER_BUTTON).onTrue(new InstantCommand(() -> elevatorStateManager
+                    .setCoralIntakeState(ElevatorStateManager.CoralIntakeState.STOPPED)));
+            ControlHandler.get(this.primaryController, OperatorConstants.SecondaryControllerConstants.CORAL_SHOOTER_LVL_TWO).onTrue(new InstantCommand(() -> elevatorStateManager
+                    .setHeight(0.5)
+                    .setPivotAngle(Rotation2d.fromRotations(0.03))
+                    .setCoralIntakeState(ElevatorStateManager.CoralIntakeState.STOPPED)
+                    .setRunAlgaeRemover(false)));
+            ControlHandler.get(this.primaryController, TriggerType.RIGHT_BUTTON).onTrue(new InstantCommand(() -> elevatorStateManager
+                    .setHeight(0)
+                    .setPivotAngle(Rotation2d.fromRotations(0.45))
+                    .setCoralIntakeState(ElevatorStateManager.CoralIntakeState.STOPPED)
+                    .setRunAlgaeRemover(false)));
+            ControlHandler.get(this.primaryController, TriggerType.RIGHT_SHOULDER_BUTTON).onTrue(new InstantCommand(() -> elevatorStateManager
+                    .setCoralIntakeState(ElevatorStateManager.CoralIntakeState.INTAKE)));
+            ControlHandler.get(this.primaryController, TriggerType.RIGHT_SHOULDER_TRIGGER).onTrue(new InstantCommand(() -> elevatorStateManager
+                    .setCoralIntakeState(ElevatorStateManager.CoralIntakeState.OUTTAKE)));
         }
 
         // TODO: bindings need to be re-implemented if still in use for YAGSL drive
@@ -156,6 +161,10 @@ public class RobotContainer {
             } else if(Flags.CoralIntake.USE_TEST_PID_COMMAND) {
                 this.coralIntake.setDefaultCommand(new TestCoralIntakePIDCommand(coralIntake));
             }
+        }
+
+        if(Flags.Elevator.IS_ATTACHED && Flags.CoralIntake.IS_ATTACHED && Flags.AlgaeReefRemover.IS_ATTACHED && !Flags.Elevator.USE_TEST_PID_COMMAND && !Flags.Elevator.USE_TEST_ELEVATOR_COMMAND && !Flags.CoralIntake.USE_TEST_PID_COMMAND && !Flags.CoralIntake.USE_TEST_CORAL_COMMAND && !Flags.AlgaeReefRemover.USE_TEST_ALGAE_REMOVER_COMMAND) {
+            this.elevators.setDefaultCommand(new ElevatorControlCommand(this.elevators, this.coralIntake, this.algaeReefRemover));
         }
 
         /* // put another slash to undestroy this
