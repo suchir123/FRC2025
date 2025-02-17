@@ -18,8 +18,8 @@ import frc.robot.Constants;
 import frc.robot.Flags;
 
 public class CoralIntakeSubsystem extends SubsystemBase {
-    private static final double BACK_LIMIT = 0.03;
-    private static final double FRONT_LIMIT = 0.55;
+    private static final double VERY_HARD_BACK_LIMIT = 0.03; // to make sure we don't roll-over the intake
+    private static final double FRONT_LIMIT = 0.75;
 
     private final SparkMax coralPivotMotor;
     private final RelativeEncoder coralPivotEncoder;
@@ -44,7 +44,7 @@ public class CoralIntakeSubsystem extends SubsystemBase {
                 .voltageCompensation(12);
         coralPivotMotorConfig.absoluteEncoder
                 .setSparkMaxDataPortConfig()
-                .zeroOffset(0.6);
+                .zeroOffset(0.8);
         coralPivotMotorConfig.encoder
                 .positionConversionFactor(1d/48)
                 .velocityConversionFactor(1d/48/60);
@@ -81,9 +81,13 @@ public class CoralIntakeSubsystem extends SubsystemBase {
         // throughboreEncoder.periodic();
     }
 
+    public Rotation2d getPivotAngle() {
+        return Rotation2d.fromRotations(this.coralPivotAbsoluteEncoder.getPosition());
+    }
+
     public void setPivotTargetAngle(Rotation2d target) {
         if (Flags.CoralIntake.ENABLED) {
-            double rot = MathUtil.clamp(target.getRotations(), BACK_LIMIT, FRONT_LIMIT);
+            double rot = MathUtil.clamp(target.getRotations(), VERY_HARD_BACK_LIMIT, FRONT_LIMIT);
             // System.out.println("i set the target angle to " + rot);
             coralPivotPIDController.setReference(rot, SparkBase.ControlType.kPosition);
         }

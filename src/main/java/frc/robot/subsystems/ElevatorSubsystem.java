@@ -22,6 +22,7 @@ import frc.robot.util.NetworkTablesUtil;
 public class ElevatorSubsystem extends SubsystemBase {
     public static final GenericPublisher leftHeightAbsRotPub = NetworkTablesUtil.getPublisher("robot", "leftElevAR", NetworkTableType.kDouble);
     public static final GenericPublisher rightHeightAbsRotPub = NetworkTablesUtil.getPublisher("robot", "rightElevAR", NetworkTableType.kDouble);
+
     private static final double MAX_HEIGHT = 1.1;
     private static final double MIN_HEIGHT = 0.0;
     private static final double MAX_OUTPUT_ELEVATOR_PIDS = 0.6;
@@ -29,8 +30,6 @@ public class ElevatorSubsystem extends SubsystemBase {
     private final static double ROTATIONS_PER_METER_ASCENDED = Rotation2d.fromDegrees(742.5).getRotations() / 0.5;
     private final static double METERS_ASCENDED_PER_ROTATION = 1 / ROTATIONS_PER_METER_ASCENDED;
 
-    //private final ThroughboreEncoder rightThroughboreEncoder;
-    //private final ThroughboreEncoder leftThroughboreEncoder;
     private static final GenericPublisher leftHeightAbsPub = NetworkTablesUtil.getPublisher("robot", "leftElevAbsH", NetworkTableType.kDouble);
     private static final GenericPublisher rightHeightAbsPub = NetworkTablesUtil.getPublisher("robot", "rightElevAbsH", NetworkTableType.kDouble);
     private static final GenericPublisher leftHeightRelPub = NetworkTablesUtil.getPublisher("robot", "leftElevRelH", NetworkTableType.kDouble);
@@ -53,9 +52,6 @@ public class ElevatorSubsystem extends SubsystemBase {
         leftMotorEncoder = leftMotor.getEncoder();
         rightAbsoluteEncoder = rightMotor.getAbsoluteEncoder();
         leftAbsoluteEncoder = leftMotor.getAbsoluteEncoder();
-
-        // rightThroughboreEncoder = new ThroughboreEncoder(Constants.PortConstants.DIO.RIGHT_ELEVATOR_ABS_ENCODER_ABS_PORT, 5, 4, Rotation2d.fromDegrees(9.40).getRotations(), false, true, true); // 742.5 deg = 50 cm up
-        // leftThroughboreEncoder = new ThroughboreEncoder(Constants.PortConstants.DIO.LEFT_ELEVATOR_ABS_ENCODER_ABS_PORT, 2, 3, -Rotation2d.fromDegrees(124.5).getRotations(), true, false, true); // 742.5 deg = 50 cm up
 
         this.rightPIDController = this.rightMotor.getClosedLoopController();
         this.leftPIDController = this.leftMotor.getClosedLoopController();
@@ -121,6 +117,13 @@ public class ElevatorSubsystem extends SubsystemBase {
     private void resetEncoders() {
         rightMotorEncoder.setPosition(0);
         leftMotorEncoder.setPosition(0);
+    }
+
+    /**
+     * @return The average of the left and right heights
+     */
+    public double getCurrentHeight() {
+        return (getLeftRelativePosition() + getRightRelativePosition()) / 2;
     }
 
     @Override
