@@ -7,13 +7,6 @@ import frc.robot.controllers.AbstractController;
 import frc.robot.subsystems.AlgaeGroundIntakeSubsystem;
 import frc.robot.util.ControlHandler;
 
-/*
- * Idea: Other command will lift at a predetermined power for a predetermined amount
- * of time, and then this command will balance it, assuming that the robot has
- * already climbed. (with timeout duration so it doesn't get stuck in a loop)
- *
- * This command left as exercise to reader.
- */
 public class AlgaeGroundIntakeCommand extends Command {
     private final AlgaeGroundIntakeSubsystem algaeGroundIntake;
     private final AbstractController primaryController;
