@@ -20,38 +20,29 @@ public final class Constants {
         public static final int RIGHT_JOYSTICK_PORT = 2;
         public static final int NINTENDO_PRO_CONTROLLER = 1;
         public static final int PS5_CONTROLLER = 3;
-        public static final int PS4_CONTROLLER = 8;
+        public static final int PS4_CONTROLLER = 4;
 
         // Should this be here? especially with our new controller system, we could potentially refactor or re-abstract this using another class (maybe even for multiple driver preferences?)
         public static class PrimaryControllerConstants {
-            public static final TriggerType CLIMB                           = TriggerType.LEFT_BUTTON;
-            public static final TriggerType SPIT_ALGAE                      = TriggerType.UPPER_BUTTON;
-            public static final TriggerType INTAKE                          = TriggerType.RIGHT_BUTTON; //sets tower at right height and turns on wheel
-            public static final TriggerType BALL_INTAKE                     = TriggerType.LOWER_BUTTON; //Turns on both upper and lower
+            public static final TriggerType ALGAE_GROUND_INTAKE                 = TriggerType.LEFT_SHOULDER_TRIGGER;
+            public static final TriggerType ALGAE_GROUND_OUTTAKE                = TriggerType.LEFT_SHOULDER_BUTTON;
+            public static final TriggerType CORAL_INTAKE_MOTOR                  = TriggerType.RIGHT_SHOULDER_TRIGGER;
+            public static final TriggerType ACTIVATE_ELEVATORS                  = TriggerType.RIGHT_SHOULDER_BUTTON;
 
-            public static final TriggerType MANUAL_HEIGHT_UP                = TriggerType.RIGHT_SHOULDER_BUTTON;
-            public static final TriggerType MANUAL_HEIGHT_DOWN              = TriggerType.LEFT_SHOULDER_BUTTON;
-
-            public static final TriggerType ROTATE_INTAKE_ALGAE             = TriggerType.LEFT_SHOULDER_TRIGGER;
-            public static final TriggerType ROTATE_INTAKE_CORAL             = TriggerType.RIGHT_SHOULDER_TRIGGER;
+            public static final TriggerType ALGAE_REMOVER                       = TriggerType.RIGHT_BUTTON;
         }
 
-        public static class SecondaryControllerConstants { //for secondary control scheme
-            public static final TriggerType CORAL_SHOOTER_SPIT_CORAL        = TriggerType.RIGHT_BUTTON; //Circle
+        public static class SecondaryControllerConstants {
+            public static final TriggerType RESET_GYRO                          = TriggerType.POV_0;
+            public static final TriggerType TOGGLE_ALGAE_GROUND_INTAKE_HEIGHT   = TriggerType.LEFT_SHOULDER_BUTTON;
 
-            public static final TriggerType BACKUP_INTAKE                   = TriggerType.RIGHT_SHOULDER_TRIGGER; //R2
+            public static final TriggerType L4                                  = TriggerType.RIGHT_SHOULDER_BUTTON;
+            public static final TriggerType L3                                  = TriggerType.UPPER_BUTTON;
+            public static final TriggerType L2                                  = TriggerType.LEFT_BUTTON;
+            public static final TriggerType L1                                  = TriggerType.LOWER_BUTTON;
+            public static final TriggerType INTAKE_STATE                        = TriggerType.RIGHT_BUTTON;
 
-            //Ball/algae cmds
-            public static final TriggerType BALL_PROCESSOR                  = TriggerType.LEFT_SHOULDER_BUTTON;  //L1
-            // public static final TriggerType BALL_BARGE                      = TriggerType.LEFT_SHOULDER_TRIGGER; //L2
-
-            //Coral shooter
-            public static final TriggerType CORAL_SHOOTER_LVL_FOUR          = TriggerType.RIGHT_SHOULDER_BUTTON; //R1
-            public static final TriggerType CORAL_SHOOTER_LVL_THREE         = TriggerType.UPPER_BUTTON; //Triangle
-            public static final TriggerType CORAL_SHOOTER_LVL_TWO           = TriggerType.LEFT_BUTTON;  //Square
-            public static final TriggerType ELEVATORS_ZERO                  = TriggerType.LOWER_BUTTON; // X
-
-            public static final TriggerType AUTO_CLIMB                      = TriggerType.LEFT_SHOULDER_TRIGGER;
+            public static final TriggerType APPLY_ALGAE_REMOVER_HEIGHT_DELTA    = TriggerType.LEFT_SHOULDER_TRIGGER;
         }
     }
 
@@ -105,13 +96,16 @@ public final class Constants {
             public static final int CORAL_PIVOT_MOTOR_ID = 13;
             public static final int CORAL_INTAKE_MOTOR_ID = 4;
 
-            // (2025) Algae Intake
+            // (2025) Algae Remover mounted on elevator
             public static final int ALGAE_REMOVER_MOTOR_ID = 2;
+
+            // (2025) Algae Ground Intake
+            public static final int ALGAE_GROUND_INTAKE_MOTOR_ID = 23;
         }
 //ivan is very smart and he is our very bestest diversity hire as the only white man in our team besides mr. reid and mr. goodman and we all love ivan because we have asianified him real good because he loves eating rice and filters his water at home instead of drinking tap water and hes real good coder ivan also cant eat wheat because hes celiac so as a white guy he cant eat white bread ivan can also use chopsticks real good when we eate food at like 12 that time he matched his photo with a frog (but he didnt want to match with the girl frog) he also has lots of good shimp photos which make him look very shrimpy with his long shrimpy nose and large shrimpy eyes
         public static class PWM {
-            public static final int ALGAE_LEFT_SERVO_PORT = -1;
-            public static final int ALGAE_RIGHT_SERVO_PORT = -1;
+            public static final int ALGAE_LEFT_SERVO_PORT = 1;
+            public static final int ALGAE_RIGHT_SERVO_PORT = 0;
         }
 
         /**
@@ -126,18 +120,8 @@ public final class Constants {
          * 5 (ELE)
          */
         public static class DIO {
-            // Currently all unset, because we rewired the stuff. 
-            public static final int RIGHT_ELEVATOR_ABS_ENCODER_ABS_PORT = -1;
-
             public static final int LEFT_ELEVATOR_LIMIT = 0;
             public static final int RIGHT_ELEVATOR_LIMIT = 1;
-
-            // Intake (INT)
-            public static final int INTAKE_ABSOLUTE_ENCODER_ABS_PORT = -1;
-            public static final int CLIMBER_ABSOLUTE_ENCODER_ABS_PORT = -1;
-            public static final int CORAL_ABSOLUTE_ENCODER_ABS_ID = -1;
-
-            public static final int LEFT_ELEVATOR_ABS_ENCODER_ABS_PORT = -1;
         }
     }
 

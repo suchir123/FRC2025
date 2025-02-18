@@ -7,8 +7,9 @@ import frc.robot.subsystems.CoralIntakeSubsystem;
 import frc.robot.subsystems.ElevatorSubsystem;
 
 public class ElevatorControlCommand extends Command {
-    private static final double BACK_LIMIT_WHEN_DOWN = 0.23;
-    private static final double ACTIVATE_BACK_LIMIT_HEIGHT_METERS = 0.1;
+    private static final double BACK_LIMIT_WHEN_DOWN = 0.03;
+
+    private boolean wasStoppedByLimitSwitch = false;
 
     private final ElevatorSubsystem elevator;
     private final CoralIntakeSubsystem coralIntake;
@@ -39,20 +40,20 @@ public class ElevatorControlCommand extends Command {
         // 2. Move the pivot first, and queue the elevator move once the pivot has passed the limit
         // 3. A mix of 1 and 2, where we only do 2 if the elevator is low enough that we're worried it won't pass the limit in time
 
+        // we have chosen option 1 because it turns out the hard limit when we're up is the same as the perma hard limit anyways so no extra code. thanks timothy
+
         // if we're below the height limit, clamp pivot angle minimum (note: max, global min is clamped in the subsystem)
         double targetHeight = this.stateManager.getHeight();
         double targetPivotAngle = this.stateManager.getPivotAngle().getRotations();
 
-        if(targetHeight < ACTIVATE_BACK_LIMIT_HEIGHT_METERS) {
-            targetPivotAngle = Math.max(targetPivotAngle, BACK_LIMIT_WHEN_DOWN);
-        } else if(this.elevator.getCurrentHeight() > ACTIVATE_BACK_LIMIT_HEIGHT_METERS * 2 || targetHeight > ACTIVATE_BACK_LIMIT_HEIGHT_METERS || this.coralIntake.getPivotAngle().getRotations() > BACK_LIMIT_WHEN_DOWN) { // if we have enough leeway, OR targeting over the minimum pivot height, OR the pivot won't hit the back limit
-            this.elevator.setTargetHeight(targetHeight);
-        }
-
+        targetPivotAngle = Math.max(targetPivotAngle, BACK_LIMIT_WHEN_DOWN);
+        this.elevator.setTargetHeight(targetHeight);
         this.coralIntake.setPivotTargetAngle(Rotation2d.fromRotations(targetPivotAngle));
 
         if (this.stateManager.getRunAlgaeRemover()) {
             this.algaeRemover.setIntakeSpeed(0.2);
+        } else {
+            this.algaeRemover.setIntakeSpeed(0);
         }
 
         switch (this.stateManager.getCoralIntakeState()) {
@@ -60,7 +61,20 @@ public class ElevatorControlCommand extends Command {
                 this.coralIntake.setIntakeSpeed(0);
                 break;
             case INTAKE:
-                this.coralIntake.setIntakeSpeed(0.6);
+                if(!wasStoppedByLimitSwitch && this.coralIntake.hasCoral()) { // limit switch pauser
+                    this.stateManager.getCurrentState().copy()
+                            .setCoralIntakeState(ElevatorStateManager.CoralIntakeState.STOPPED)
+                            .setAsCurrent();
+                    this.wasStoppedByLimitSwitch = true;
+                } else if(!this.coralIntake.hasCoral()) {
+                    this.wasStoppedByLimitSwitch = false;
+                }
+
+                if(!this.coralIntake.hasCoral()) {
+                    this.coralIntake.setIntakeSpeed(0.2);
+                } else {
+                    this.coralIntake.setIntakeSpeed(0.35);
+                }
                 break;
             case OUTTAKE:
                 this.coralIntake.setIntakeSpeed(-0.6);

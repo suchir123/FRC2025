@@ -18,7 +18,7 @@ import frc.robot.util.ThroughboreEncoder;
 public class ClimberSubsystem extends SubsystemBase {
     public static final ADIS16470_IMU.IMUAxis ROBOT_TILT_AXIS = IMUAxis.kYaw;
 
-    private final ThroughboreEncoder throughboreEncoder;
+    // private final ThroughboreEncoder throughboreEncoder;
 
     private final SparkMax climbMotor;
 
@@ -26,7 +26,7 @@ public class ClimberSubsystem extends SubsystemBase {
 
     public ClimberSubsystem() {
         climbMotor = new SparkMax(Constants.PortConstants.CAN.CLIMBER_MOTOR_ID, MotorType.kBrushless);
-        throughboreEncoder = new ThroughboreEncoder(Constants.PortConstants.DIO.CLIMBER_ABSOLUTE_ENCODER_ABS_PORT, 0, false);
+        // throughboreEncoder = new ThroughboreEncoder(Constants.PortConstants.DIO.CLIMBER_ABSOLUTE_ENCODER_ABS_PORT, 0, false);
         pidController = climbMotor.getClosedLoopController();
 
         SparkMaxConfig climbMotorConfig = new SparkMaxConfig();
@@ -40,12 +40,12 @@ public class ClimberSubsystem extends SubsystemBase {
                 .outputRange(-0.6, 0.6);
 
         climbMotor.configure(climbMotorConfig, SparkBase.ResetMode.kResetSafeParameters, SparkBase.PersistMode.kPersistParameters);
-        throughboreEncoder.name = "climber";
+        // throughboreEncoder.name = "climber";
     }
 
     @Override
     public void periodic() {
-        throughboreEncoder.periodic();
+        // throughboreEncoder.periodic();
     }
 
     public void setTarget(double target) {
@@ -61,10 +61,10 @@ public class ClimberSubsystem extends SubsystemBase {
     }
 
     public Rotation2d getThroughboreEncoderDistance() {
-        return throughboreEncoder.getTotalDistance();
+        return new Rotation2d();// throughboreEncoder.getTotalDistance();
     }
 
     public Rotation2d getAbsolutePosition() {
-        return this.throughboreEncoder.getAbsolutePosition();
+        return new Rotation2d(); // this.throughboreEncoder.getAbsolutePosition();
     }
 }

@@ -5,9 +5,11 @@ import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.SparkBase;
 import com.revrobotics.spark.SparkClosedLoopController;
+import com.revrobotics.spark.SparkLimitSwitch;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.ClosedLoopConfig;
+import com.revrobotics.spark.config.LimitSwitchConfig;
 import com.revrobotics.spark.config.SparkBaseConfig;
 import com.revrobotics.spark.config.SparkMaxConfig;
 
@@ -19,11 +21,12 @@ import frc.robot.Flags;
 
 public class CoralIntakeSubsystem extends SubsystemBase {
     private static final double VERY_HARD_BACK_LIMIT = 0.03; // to make sure we don't roll-over the intake
-    private static final double FRONT_LIMIT = 0.75;
+    private static final double FRONT_LIMIT = 0.55;
 
     private final SparkMax coralPivotMotor;
     private final RelativeEncoder coralPivotEncoder;
     private final AbsoluteEncoder coralPivotAbsoluteEncoder;
+    private final SparkLimitSwitch coralLimitSwitch;
 
     private final SparkClosedLoopController coralPivotPIDController;
 
@@ -44,7 +47,7 @@ public class CoralIntakeSubsystem extends SubsystemBase {
                 .voltageCompensation(12);
         coralPivotMotorConfig.absoluteEncoder
                 .setSparkMaxDataPortConfig()
-                .zeroOffset(0.8);
+                .zeroOffset(0.6);
         coralPivotMotorConfig.encoder
                 .positionConversionFactor(1d/48)
                 .velocityConversionFactor(1d/48/60);
@@ -67,6 +70,10 @@ public class CoralIntakeSubsystem extends SubsystemBase {
                 .idleMode(SparkBaseConfig.IdleMode.kBrake)
                 .smartCurrentLimit(20)
                 .voltageCompensation(12);
+        coralIntakeMotorConfig.limitSwitch
+                .reverseLimitSwitchEnabled(false)
+                .reverseLimitSwitchType(LimitSwitchConfig.Type.kNormallyOpen);
+        this.coralLimitSwitch = coralIntakeMotor.getReverseLimitSwitch();
         coralIntakeMotor.configure(coralIntakeMotorConfig, SparkBase.ResetMode.kResetSafeParameters, SparkBase.PersistMode.kPersistParameters);
 
         // throughboreEncoder.name = "climber";
@@ -77,8 +84,13 @@ public class CoralIntakeSubsystem extends SubsystemBase {
     @Override
     public void periodic() {
         // System.out.println(coralPivotEncoder.getPosition());
-        System.out.println(this.coralPivotAbsoluteEncoder.getPosition());
+        // System.out.println(this.coralPivotAbsoluteEncoder.getPosition());
         // throughboreEncoder.periodic();
+        // System.out.println(this.coralLimitSwitch.isPressed());
+    }
+
+    public boolean hasCoral() {
+        return this.coralLimitSwitch.isPressed();
     }
 
     public Rotation2d getPivotAngle() {

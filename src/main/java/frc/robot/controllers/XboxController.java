@@ -99,4 +99,9 @@ public class XboxController extends AbstractController {
     public Trigger rightShoulderTrigger() {
         return this.controller.rightTrigger();
     }
+
+    @Override
+    public Trigger pov(int value) {
+        return this.controller.pov(value);
+    }
 }

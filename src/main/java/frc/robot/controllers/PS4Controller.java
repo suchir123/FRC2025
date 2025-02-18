@@ -99,4 +99,9 @@ public class PS4Controller extends AbstractController {
     public Trigger rightShoulderTrigger() {
         return this.controller.R2();
     }
+
+    @Override
+    public Trigger pov(int value) {
+        return this.controller.pov(value);
+    }
 }

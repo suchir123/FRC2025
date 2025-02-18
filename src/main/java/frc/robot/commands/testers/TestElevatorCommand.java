@@ -24,6 +24,8 @@ public class TestElevatorCommand extends Command {
         double rightSpeed = this.joystick.getRightVerticalMovement();
         double leftSpeed = this.joystick.getLeftVerticalMovement();
 
+        System.out.println("setting R, L: " + rightSpeed + ", " + leftSpeed);
+
         // right is lead, left is follow.
         this.telescopingArm.setRawSpeeds(rightSpeed, leftSpeed);
     }

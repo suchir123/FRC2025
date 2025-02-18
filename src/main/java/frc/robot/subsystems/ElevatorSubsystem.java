@@ -166,6 +166,8 @@ public class ElevatorSubsystem extends SubsystemBase {
         if (Flags.Elevator.ENABLED) {
             this.rightMotor.set(rightSpeed);
             this.leftMotor.set(leftSpeed);
+
+            System.out.println("R, L at: " + rightMotor.get() + ", " + leftMotor.get());
         }
     }
 

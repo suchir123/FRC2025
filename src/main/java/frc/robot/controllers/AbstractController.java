@@ -108,6 +108,8 @@ public abstract class AbstractController {
      */
     public abstract Trigger lowerButton();
 
+    public abstract Trigger pov(int val);
+
     /**
      * Get the POV value.
      *

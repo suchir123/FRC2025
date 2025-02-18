@@ -8,6 +8,7 @@ import com.revrobotics.spark.config.SparkBaseConfig;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.Flags;
 
 public class AlgaeReefRemoverSubsystem extends SubsystemBase {
     private final SparkMax algaeRemoverMotor;
@@ -31,7 +32,9 @@ public class AlgaeReefRemoverSubsystem extends SubsystemBase {
     }
 
     public void setIntakeSpeed(double speed) {
-        algaeRemoverMotor.set(speed);
+        if(Flags.AlgaeReefRemover.ENABLED) {
+            algaeRemoverMotor.set(speed);
+        }
     }
 
 }

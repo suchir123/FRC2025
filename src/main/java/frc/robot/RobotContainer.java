@@ -7,6 +7,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandPS4Controller;
 import edu.wpi.first.wpilibj2.command.button.CommandPS5Controller;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants.OperatorConstants;
+import frc.robot.commands.AlgaeGroundIntakeCommand;
 import frc.robot.commands.BalanceClimberCommand;
 import frc.robot.commands.ClimbCommand;
 import frc.robot.commands.ManualDriveCommand;
@@ -19,11 +20,11 @@ import frc.robot.controllers.PS4Controller;
 import frc.robot.controllers.PS5Controller;
 import frc.robot.subsystems.*;
 import frc.robot.subsystems.staticsubsystems.LimeLight;
+import frc.robot.subsystems.staticsubsystems.RobotGyro;
 import frc.robot.subsystems.swerve.DriveTrainSubsystem;
 import frc.robot.util.ControlHandler;
 import frc.robot.util.NetworkTablesUtil;
 import frc.robot.util.Util;
-import frc.robot.util.ControlHandler.TriggerType;
 
 public class RobotContainer {
     //private static final GenericPublisher COLOR_SENSOR_PUB = NetworkTablesUtil.getPublisher("robot", "color_sensor_sees_note", NetworkTableType.kBoolean);
@@ -49,6 +50,7 @@ public class RobotContainer {
     private final ClimberSubsystem climber;
     private final CoralIntakeSubsystem coralIntake;
     private final AlgaeReefRemoverSubsystem algaeReefRemover;
+    private final AlgaeGroundIntakeSubsystem algaeGroundIntake;
 
     private final ElevatorStateManager elevatorStateManager = ElevatorStateManager.INSTANCE;
 
@@ -58,12 +60,13 @@ public class RobotContainer {
         this.climber = Util.createIfFlagElseNull(ClimberSubsystem::new, Flags.Climber.IS_ATTACHED);
         this.coralIntake = Util.createIfFlagElseNull(CoralIntakeSubsystem::new, Flags.CoralIntake.IS_ATTACHED);
         this.algaeReefRemover = Util.createIfFlagElseNull(AlgaeReefRemoverSubsystem::new, Flags.AlgaeReefRemover.IS_ATTACHED);
+        this.algaeGroundIntake = Util.createIfFlagElseNull(AlgaeGroundIntakeSubsystem::new, Flags.AlgaeGroundIntake.IS_ATTACHED);
 
         configureBindings();
 
         // Initialize static subsystems (this is a Java thing don't worry about it just copy it so that static blocks run on startup)
         LimeLight.poke();
-        // RobotGyro.poke();
+        RobotGyro.poke();
         // ColorSensor.poke();
 
         // if (Flags.DriveTrain.IS_ATTACHED && Flags.DriveTrain.ENABLE_AUTON_CHOOSER) {
@@ -78,27 +81,66 @@ public class RobotContainer {
 
     private void configureBindings() {
         if(Flags.Elevator.IS_ATTACHED && !Flags.Elevator.USE_TEST_ELEVATOR_COMMAND && !Flags.Elevator.USE_TEST_PID_COMMAND && !Flags.CoralIntake.USE_TEST_PID_COMMAND) {
-            ControlHandler.get(this.primaryController, OperatorConstants.SecondaryControllerConstants.ELEVATORS_ZERO).onTrue(new InstantCommand(() -> elevatorStateManager
+            ControlHandler.get(this.ps4Controller, OperatorConstants.SecondaryControllerConstants.INTAKE_STATE).onTrue(new InstantCommand(() -> elevatorStateManager.cloneState()
                     .setHeight(0)
-                    .setPivotAngle(Rotation2d.fromRotations(0.2))
-                    .setCoralIntakeState(ElevatorStateManager.CoralIntakeState.INTAKE)
-                    .setRunAlgaeRemover(false)));
-            ControlHandler.get(this.primaryController, ControlHandler.TriggerType.LEFT_SHOULDER_BUTTON).onTrue(new InstantCommand(() -> elevatorStateManager
-                    .setCoralIntakeState(ElevatorStateManager.CoralIntakeState.STOPPED)));
-            ControlHandler.get(this.primaryController, OperatorConstants.SecondaryControllerConstants.CORAL_SHOOTER_LVL_TWO).onTrue(new InstantCommand(() -> elevatorStateManager
-                    .setHeight(0.5)
+                    .setPivotAngle(Rotation2d.fromRotations(0.14))
+                    .setCoralIntakeState(ElevatorStateManager.CoralIntakeState.STOPPED)
+                    .setRunAlgaeRemover(false)
+                    .setAsCurrent()));
+
+            ControlHandler.get(this.ps4Controller, OperatorConstants.SecondaryControllerConstants.L1).onTrue(new InstantCommand(() -> elevatorStateManager.cloneState()
+                    .setHeight(0)
                     .setPivotAngle(Rotation2d.fromRotations(0.03))
                     .setCoralIntakeState(ElevatorStateManager.CoralIntakeState.STOPPED)
-                    .setRunAlgaeRemover(false)));
-            ControlHandler.get(this.primaryController, TriggerType.RIGHT_BUTTON).onTrue(new InstantCommand(() -> elevatorStateManager
+                    .setRunAlgaeRemover(false)
+                    .primeAsNext()));
+
+            ControlHandler.get(this.ps4Controller, OperatorConstants.SecondaryControllerConstants.L2).onTrue(new InstantCommand(() -> elevatorStateManager.cloneState()
                     .setHeight(0)
+                    .setPivotAngle(Rotation2d.fromRotations(0.46))
+                    .setCoralIntakeState(ElevatorStateManager.CoralIntakeState.STOPPED)
+                    .setRunAlgaeRemover(false)
+                    .primeAsNext()));
+
+            ControlHandler.get(this.ps4Controller, OperatorConstants.SecondaryControllerConstants.L3).onTrue(new InstantCommand(() -> elevatorStateManager.cloneState()
+                    .setHeight(0.39)
+                    .setPivotAngle(Rotation2d.fromRotations(0.46))
+                    .setCoralIntakeState(ElevatorStateManager.CoralIntakeState.STOPPED)
+                    .setRunAlgaeRemover(false)
+                    .primeAsNext()));
+
+            ControlHandler.get(this.ps4Controller, OperatorConstants.SecondaryControllerConstants.L4).onTrue(new InstantCommand(() -> elevatorStateManager.cloneState()
+                    .setHeight(1.02)
                     .setPivotAngle(Rotation2d.fromRotations(0.45))
                     .setCoralIntakeState(ElevatorStateManager.CoralIntakeState.STOPPED)
-                    .setRunAlgaeRemover(false)));
-            ControlHandler.get(this.primaryController, TriggerType.RIGHT_SHOULDER_BUTTON).onTrue(new InstantCommand(() -> elevatorStateManager
-                    .setCoralIntakeState(ElevatorStateManager.CoralIntakeState.INTAKE)));
-            ControlHandler.get(this.primaryController, TriggerType.RIGHT_SHOULDER_TRIGGER).onTrue(new InstantCommand(() -> elevatorStateManager
-                    .setCoralIntakeState(ElevatorStateManager.CoralIntakeState.OUTTAKE)));
+                    .setRunAlgaeRemover(false)
+                    .primeAsNext()));
+
+            ControlHandler.get(this.ps4Controller, OperatorConstants.SecondaryControllerConstants.APPLY_ALGAE_REMOVER_HEIGHT_DELTA).onTrue(new InstantCommand(() -> elevatorStateManager.cloneState()
+                    .setHeight(elevatorStateManager.getHeight() + 0.2)
+                    .setAsCurrent()))
+            .onChange(new InstantCommand(() -> elevatorStateManager.cloneState()
+                    .setHeight(elevatorStateManager.getHeight() - 0.1).setAsCurrent()
+            ));
+
+            ControlHandler.get(this.primaryController, OperatorConstants.PrimaryControllerConstants.CORAL_INTAKE_MOTOR).onTrue(new InstantCommand(() -> elevatorStateManager.cloneState()
+                    .setCoralIntakeState(ElevatorStateManager.CoralIntakeState.INTAKE)
+                    .setAsCurrent()));
+
+            ControlHandler.get(this.primaryController, OperatorConstants.PrimaryControllerConstants.ALGAE_REMOVER).onTrue(new InstantCommand(() -> elevatorStateManager.cloneState()
+                    .setRunAlgaeRemover(!this.elevatorStateManager.getRunAlgaeRemover())
+                    .setAsCurrent()));
+
+            ControlHandler.get(this.primaryController, OperatorConstants.PrimaryControllerConstants.ACTIVATE_ELEVATORS).onTrue(new InstantCommand(elevatorStateManager::pushNextState));
+
+            ControlHandler.get(this.nintendoProController, OperatorConstants.SecondaryControllerConstants.RESET_GYRO).onTrue(new InstantCommand(() -> {
+                if(Util.onBlueTeam()) {
+                    RobotGyro.resetGyroAngle();
+                } else {
+                    RobotGyro.setGyroAngle(180);
+                }
+                this.driveTrain.setHeadingLockMode(false);
+            }));
         }
 
         // TODO: bindings need to be re-implemented if still in use for YAGSL drive
@@ -151,7 +193,7 @@ public class RobotContainer {
                 this.climber.setDefaultCommand(new TestClimberCommand(climber, this.primaryController));
             } else {
                 Command autoClimb = new ClimbCommand(climber).andThen(new BalanceClimberCommand(climber));
-                ControlHandler.get(this.primaryController, Constants.OperatorConstants.SecondaryControllerConstants.AUTO_CLIMB).whileTrue(autoClimb);
+                // ControlHandler.get(this.primaryController, Constants.OperatorConstants.SecondaryControllerConstants.AUTO_CLIMB).whileTrue(autoClimb);
             }
         }
 
@@ -165,6 +207,13 @@ public class RobotContainer {
 
         if(Flags.Elevator.IS_ATTACHED && Flags.CoralIntake.IS_ATTACHED && Flags.AlgaeReefRemover.IS_ATTACHED && !Flags.Elevator.USE_TEST_PID_COMMAND && !Flags.Elevator.USE_TEST_ELEVATOR_COMMAND && !Flags.CoralIntake.USE_TEST_PID_COMMAND && !Flags.CoralIntake.USE_TEST_CORAL_COMMAND && !Flags.AlgaeReefRemover.USE_TEST_ALGAE_REMOVER_COMMAND) {
             this.elevators.setDefaultCommand(new ElevatorControlCommand(this.elevators, this.coralIntake, this.algaeReefRemover));
+        }
+
+        if(Flags.AlgaeGroundIntake.IS_ATTACHED) {
+            if(Flags.AlgaeGroundIntake.USE_TEST_ALGAE_GROUND_COMMAND) {
+            } else {
+                this.algaeGroundIntake.setDefaultCommand(new AlgaeGroundIntakeCommand(this.algaeGroundIntake, this.primaryController, this.ps4Controller));
+            }
         }
 
         /* // put another slash to undestroy this

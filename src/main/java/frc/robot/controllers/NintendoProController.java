@@ -138,4 +138,9 @@ public class NintendoProController extends AbstractController {
     public Trigger rightShoulderTrigger() {
         return this.button(8);
     }
+
+    @Override
+    public Trigger pov(int value) {
+        return this.controller.pov(value);
+    }
 }
