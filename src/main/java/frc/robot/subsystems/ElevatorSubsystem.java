@@ -105,6 +105,7 @@ public class ElevatorSubsystem extends SubsystemBase {
         //}, 1.0/200, 0);
     }
 
+    // Will this cause problems by stopping PID control too soon at the bottom?
     private void resetEncodersIfLimit() {
         if (getLeftLimitSwitch() || getRightLimitSwitch()) {
             resetEncoders();
@@ -140,7 +141,7 @@ public class ElevatorSubsystem extends SubsystemBase {
                            "Right position (relative)= " + this.getRightRelativePosition() + "\n" + 
                            "Left position (relative)= " + this.getLeftRelativePosition() + "\n");
         // <-- leave both of these --> */
-        // resetEncodersIfLimit();
+        resetEncodersIfLimit();
 
         // rightHeightAbsPub.setDouble(this.getRightMetersAscended());
         // leftHeightAbsPub.setDouble(this.getLeftMetersAscended());
