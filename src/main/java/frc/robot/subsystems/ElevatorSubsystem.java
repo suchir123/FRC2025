@@ -2,6 +2,7 @@ package frc.robot.subsystems;
 
 import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.RelativeEncoder;
+import com.revrobotics.spark.ClosedLoopSlot;
 import com.revrobotics.spark.SparkBase;
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
@@ -25,7 +26,8 @@ public class ElevatorSubsystem extends SubsystemBase {
 
     private static final double MAX_HEIGHT = 1.1;
     private static final double MIN_HEIGHT = 0.0;
-    private static final double MAX_OUTPUT_ELEVATOR_PIDS = 0.6;
+    private static final double MAX_OUTPUT_RIGHT_ELEVATOR_PIDS = 0.6;
+    private static final double MAX_OUTPUT_LEFT_ELEVATOR_PIDS = 0.4;
     private final static double ABSOLUTE_DEGREES_PER_RELATIVE_DEGREES = 1426.64 / 8254.24;
     private final static double ROTATIONS_PER_METER_ASCENDED = Rotation2d.fromDegrees(742.5).getRotations() / 0.5;
     private final static double METERS_ASCENDED_PER_ROTATION = 1 / ROTATIONS_PER_METER_ASCENDED;
@@ -71,8 +73,8 @@ public class ElevatorSubsystem extends SubsystemBase {
                 .velocityConversionFactor(360d * ABSOLUTE_DEGREES_PER_RELATIVE_DEGREES / 60d / 762.183 * METERS_ASCENDED_PER_ROTATION);
 
         leftConfig.closedLoop
-                .pidf(1.3, 0, 0, 0.2)
-                .outputRange(-MAX_OUTPUT_ELEVATOR_PIDS, MAX_OUTPUT_ELEVATOR_PIDS);
+                .pidf(1.92, 0, 0, 0.1)
+                .outputRange(-MAX_OUTPUT_LEFT_ELEVATOR_PIDS, MAX_OUTPUT_LEFT_ELEVATOR_PIDS);
 
 
         rightConfig
@@ -86,8 +88,8 @@ public class ElevatorSubsystem extends SubsystemBase {
                 .velocityConversionFactor(360d * ABSOLUTE_DEGREES_PER_RELATIVE_DEGREES / 60d / 762.183 * METERS_ASCENDED_PER_ROTATION);
 
         rightConfig.closedLoop
-                .pidf(1.3, 0, 0, 0.2)
-                .outputRange(-MAX_OUTPUT_ELEVATOR_PIDS, MAX_OUTPUT_ELEVATOR_PIDS);
+                .pidf(1.68, 0, 0, 0.1)
+                .outputRange(-MAX_OUTPUT_LEFT_ELEVATOR_PIDS, MAX_OUTPUT_LEFT_ELEVATOR_PIDS);
 
         leftMotor.configure(leftConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
         rightMotor.configure(rightConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
@@ -151,8 +153,8 @@ public class ElevatorSubsystem extends SubsystemBase {
     public void setTargetHeight(double heightMeters) {
         if (Flags.Elevator.ENABLED) {
             if (heightMeters <= MAX_HEIGHT && heightMeters >= MIN_HEIGHT) {
-                this.rightPIDController.setReference(heightMeters, SparkBase.ControlType.kPosition);
-                this.leftPIDController.setReference(heightMeters, SparkBase.ControlType.kPosition);
+                this.rightPIDController.setReference(heightMeters, SparkBase.ControlType.kPosition, ClosedLoopSlot.kSlot0, 0);
+                this.leftPIDController.setReference(heightMeters, SparkBase.ControlType.kPosition, ClosedLoopSlot.kSlot0, 0);
             }
         }
     }

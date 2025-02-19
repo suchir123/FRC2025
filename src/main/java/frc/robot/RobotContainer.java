@@ -116,31 +116,35 @@ public class RobotContainer {
                     .setRunAlgaeRemover(false)
                     .primeAsNext()));
 
+            /*
             ControlHandler.get(this.ps4Controller, OperatorConstants.SecondaryControllerConstants.APPLY_ALGAE_REMOVER_HEIGHT_DELTA).onTrue(new InstantCommand(() -> elevatorStateManager.cloneState()
                     .setHeight(elevatorStateManager.getHeight() + 0.2)
                     .setAsCurrent()))
             .onChange(new InstantCommand(() -> elevatorStateManager.cloneState()
                     .setHeight(elevatorStateManager.getHeight() - 0.1).setAsCurrent()
-            ));
+            ));*/
 
             ControlHandler.get(this.primaryController, OperatorConstants.PrimaryControllerConstants.CORAL_INTAKE_MOTOR).onTrue(new InstantCommand(() -> elevatorStateManager.cloneState()
                     .setCoralIntakeState(ElevatorStateManager.CoralIntakeState.INTAKE)
                     .setAsCurrent()));
 
             ControlHandler.get(this.primaryController, OperatorConstants.PrimaryControllerConstants.ALGAE_REMOVER).onTrue(new InstantCommand(() -> elevatorStateManager.cloneState()
+                    .setHeight(elevatorStateManager.getHeight() + (!this.elevatorStateManager.getRunAlgaeRemover() ? 0.1 : -0.1))
                     .setRunAlgaeRemover(!this.elevatorStateManager.getRunAlgaeRemover())
                     .setAsCurrent()));
 
             ControlHandler.get(this.primaryController, OperatorConstants.PrimaryControllerConstants.ACTIVATE_ELEVATORS).onTrue(new InstantCommand(elevatorStateManager::pushNextState));
 
-            ControlHandler.get(this.nintendoProController, OperatorConstants.SecondaryControllerConstants.RESET_GYRO).onTrue(new InstantCommand(() -> {
-                if(Util.onBlueTeam()) {
-                    RobotGyro.resetGyroAngle();
-                } else {
-                    RobotGyro.setGyroAngle(180);
-                }
-                this.driveTrain.setHeadingLockMode(false);
-            }));
+            if(Flags.DriveTrain.IS_ATTACHED) {
+                ControlHandler.get(this.ps4Controller, OperatorConstants.SecondaryControllerConstants.RESET_GYRO).onTrue(new InstantCommand(() -> {
+                    if(Util.onBlueTeam()) {
+                        RobotGyro.resetGyroAngle();
+                    } else {
+                        RobotGyro.setGyroAngle(180);
+                    }
+                    this.driveTrain.setHeadingLockMode(false);
+                }));
+            }
         }
 
         // TODO: bindings need to be re-implemented if still in use for YAGSL drive
