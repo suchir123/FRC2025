@@ -11,11 +11,10 @@ public class AlgaeGroundIntakeCommand extends Command {
     private final AlgaeGroundIntakeSubsystem algaeGroundIntake;
     private final AbstractController primaryController;
     private final AbstractController secondaryController;
-
-    private boolean wasToggleServosPressed = false;
     private final Trigger toggleServosButton;
     private final Trigger intakeButton;
     private final Trigger outtakeButton;
+    private boolean wasToggleServosPressed = false;
 
     public AlgaeGroundIntakeCommand(AlgaeGroundIntakeSubsystem algaeGroundIntake, AbstractController primaryController, AbstractController secondaryController) {
         this.algaeGroundIntake = algaeGroundIntake;

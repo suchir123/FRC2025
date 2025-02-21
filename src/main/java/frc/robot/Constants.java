@@ -43,8 +43,6 @@ public final class Constants {
             public static final TriggerType L2                                  = TriggerType.LEFT_BUTTON;
             public static final TriggerType L1                                  = TriggerType.LOWER_BUTTON;
             public static final TriggerType INTAKE_STATE                        = TriggerType.RIGHT_BUTTON;
-
-            public static final TriggerType APPLY_ALGAE_REMOVER_HEIGHT_DELTA    = TriggerType.LEFT_SHOULDER_TRIGGER;
         }
     }
 

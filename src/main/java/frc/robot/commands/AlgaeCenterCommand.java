@@ -5,8 +5,8 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Flags;
 import frc.robot.controllers.AbstractController;
 import frc.robot.subsystems.swerve.DriveTrainSubsystem;
-import frc.robot.util.Util;
 import frc.robot.util.NetworkTablesUtil;
+import frc.robot.util.Util;
 
 public class AlgaeCenterCommand extends Command {
     public static final double MAX_SPEED_METERS_PER_SEC = Flags.DriveTrain.LOWER_MAX_SPEED ? 1.5 : 3;
@@ -43,7 +43,7 @@ public class AlgaeCenterCommand extends Command {
         }
     }
 
-   @Override
+    @Override
     public void execute() {
         // System.out.println("vert: " + this.joystick.getRightVerticalMovement() + ", hor: " + this.joystick.getRightHorizontalMovement());
         // this.driveTrain.drive(this.joystick.getVerticalMovement());
@@ -55,7 +55,7 @@ public class AlgaeCenterCommand extends Command {
         double xSpeedError = Util.squareKeepSign(this.xSpeedLimiter.calculate(this.joystick.getLeftHorizontalMovement() * flip)) * MAX_SPEED_METERS_PER_SEC;
         // System.out.println("xSpeed = " + xSpeed);
         // System.out.println("ySpeed = " + ySpeed);
-        
+
         double rotSpeed = kP * pixelDiff;
 
         // System.out.println("forward speed: " + ySpeed + ", x speed: " + xSpeed);

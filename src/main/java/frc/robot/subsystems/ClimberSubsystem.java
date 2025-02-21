@@ -13,7 +13,6 @@ import edu.wpi.first.wpilibj.ADIS16470_IMU.IMUAxis;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Flags;
-import frc.robot.util.ThroughboreEncoder;
 
 public class ClimberSubsystem extends SubsystemBase {
     public static final ADIS16470_IMU.IMUAxis ROBOT_TILT_AXIS = IMUAxis.kYaw;

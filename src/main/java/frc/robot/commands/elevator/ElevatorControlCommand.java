@@ -8,13 +8,11 @@ import frc.robot.subsystems.ElevatorSubsystem;
 
 public class ElevatorControlCommand extends Command {
     private static final double BACK_LIMIT_WHEN_DOWN = 0.03;
-
-    private boolean wasStoppedByLimitSwitch = false;
-
     private final ElevatorSubsystem elevator;
     private final CoralIntakeSubsystem coralIntake;
     private final AlgaeReefRemoverSubsystem algaeRemover;
     private final ElevatorStateManager stateManager;
+    private boolean wasStoppedByLimitSwitch = false;
 
     public ElevatorControlCommand(ElevatorSubsystem elevator, CoralIntakeSubsystem coralIntake, AlgaeReefRemoverSubsystem algaeRemover) {
         this.elevator = elevator;
@@ -61,16 +59,16 @@ public class ElevatorControlCommand extends Command {
                 this.coralIntake.setIntakeSpeed(0);
                 break;
             case INTAKE:
-                if(!wasStoppedByLimitSwitch && this.coralIntake.hasCoral()) { // limit switch pauser
+                if (!wasStoppedByLimitSwitch && this.coralIntake.hasCoral()) { // limit switch pauser
                     this.stateManager.getCurrentState().copy()
                             .setCoralIntakeState(ElevatorStateManager.CoralIntakeState.STOPPED)
                             .setAsCurrent();
                     this.wasStoppedByLimitSwitch = true;
-                } else if(!this.coralIntake.hasCoral()) {
+                } else if (!this.coralIntake.hasCoral()) {
                     this.wasStoppedByLimitSwitch = false;
                 }
 
-                if(!this.coralIntake.hasCoral()) {
+                if (!this.coralIntake.hasCoral()) {
                     this.coralIntake.setIntakeSpeed(0.2);
                 } else {
                     this.coralIntake.setIntakeSpeed(0.35);

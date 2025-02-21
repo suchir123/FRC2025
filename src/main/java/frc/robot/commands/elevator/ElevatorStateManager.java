@@ -11,6 +11,83 @@ public class ElevatorStateManager {
     private ElevatorState currentState;
     private ElevatorState nextState;
 
+    private ElevatorStateManager(double height, Rotation2d pivotAngle, CoralIntakeState coralIntakeState, boolean runAlgaeRemover) {
+        this.currentState = new ElevatorState();
+        this.nextState = null;
+
+        this.currentState
+                .setHeight(height)
+                .setPivotAngle(pivotAngle)
+                .setCoralIntakeState(coralIntakeState)
+                .setRunAlgaeRemover(runAlgaeRemover);
+    }
+
+    public double getHeight() {
+        return this.currentState.height;
+    }
+
+    public Rotation2d getPivotAngle() {
+        return this.currentState.pivotAngle;
+    }
+
+    public CoralIntakeState getCoralIntakeState() {
+        return this.currentState.coralIntakeState;
+    }
+
+    public boolean getRunAlgaeRemover() {
+        return this.currentState.runAlgaeRemover;
+    }
+
+    public ElevatorState getCurrentState() {
+        return this.currentState;
+    }
+
+    public void setState(ElevatorState state) {
+        if (state != null && state.verify()) {
+            this.currentState = state;
+        }
+    }
+
+    /**
+     * Calls {@link ElevatorState#copy()} on the current state and returns the value.
+     *
+     * @return A copied object matching the current state.
+     * @see ElevatorState#copy()
+     * @see #getCurrentState()
+     */
+    public ElevatorState cloneState() {
+        return this.getCurrentState().copy();
+    }
+
+    public ElevatorState getNextState() {
+        return this.nextState;
+    }
+
+    /**
+     * Sets the next queued state.
+     *
+     * @param state The state to queue.
+     */
+    public void setNextState(ElevatorState state) {
+        this.nextState = state;
+    }
+
+    /**
+     * Sets the current state to the next queued state.
+     */
+    public void pushNextState() {
+        this.setState(this.getNextState());
+    }
+
+    /**
+     * The possible states for the coral intake.
+     */
+    public enum CoralIntakeState {
+        STOPPED,
+        INTAKE,
+        OUTTAKE
+    }
+
     /**
      * A holder for the actual target state of the elevator.
      */
@@ -89,80 +166,5 @@ public class ElevatorStateManager {
         public boolean verify() {
             return pivotAngle != null && coralIntakeState != null;
         }
-    }
-
-    private ElevatorStateManager(double height, Rotation2d pivotAngle, CoralIntakeState coralIntakeState, boolean runAlgaeRemover) {
-        this.currentState = new ElevatorState();
-        this.nextState = null;
-
-        this.currentState
-                .setHeight(height)
-                .setPivotAngle(pivotAngle)
-                .setCoralIntakeState(coralIntakeState)
-                .setRunAlgaeRemover(runAlgaeRemover);
-    }
-
-    public double getHeight() {
-        return this.currentState.height;
-    }
-
-    public Rotation2d getPivotAngle() {
-        return this.currentState.pivotAngle;
-    }
-
-    public CoralIntakeState getCoralIntakeState() {
-        return this.currentState.coralIntakeState;
-    }
-
-    public boolean getRunAlgaeRemover() {
-        return this.currentState.runAlgaeRemover;
-    }
-
-    public ElevatorState getCurrentState() {
-        return this.currentState;
-    }
-
-    public void setState(ElevatorState state) {
-        if(state != null && state.verify()) {
-            this.currentState = state;
-        }
-    }
-
-    /**
-     * Calls {@link ElevatorState#copy()} on the current state and returns the value.
-     * @return A copied object matching the current state.
-     * @see ElevatorState#copy()
-     * @see #getCurrentState()
-     */
-    public ElevatorState cloneState() {
-        return this.getCurrentState().copy();
-    }
-
-    /**
-     * Sets the next queued state.
-     * @param state The state to queue.
-     */
-    public void setNextState(ElevatorState state) {
-        this.nextState = state;
-    }
-
-    public ElevatorState getNextState() {
-        return this.nextState;
-    }
-
-    /**
-     * Sets the current state to the next queued state.
-     */
-    public void pushNextState() {
-        this.setState(this.getNextState());
-    }
-
-    /**
-     * The possible states for the coral intake.
-     */
-    public enum CoralIntakeState {
-        STOPPED,
-        INTAKE,
-        OUTTAKE
     }
 }

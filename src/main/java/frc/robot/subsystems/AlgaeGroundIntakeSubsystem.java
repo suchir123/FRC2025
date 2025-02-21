@@ -38,7 +38,7 @@ public class AlgaeGroundIntakeSubsystem extends SubsystemBase {
     @Override
     public void periodic() {
         // System.out.println("DOWN? " + this.down);
-        if(Flags.AlgaeGroundIntake.ENABLED) {
+        if (Flags.AlgaeGroundIntake.ENABLED) {
             if (this.down) {
                 this.flapToValue(0, 1);
             } else {
@@ -60,8 +60,7 @@ public class AlgaeGroundIntakeSubsystem extends SubsystemBase {
     }
 
     /**
-     *
-     * @param left Value [0,1]
+     * @param left  Value [0,1]
      * @param right Value [0,1]
      */
     public void flapToValue(double left, double right) {
