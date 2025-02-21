@@ -44,7 +44,7 @@ public final class RobotGyro {
      */
     public static Rotation2d getRotation2d() {
         // TODO: who knows if this is supposed to be negative or not -- TEST!
-        return new Rotation2d(-Math.toRadians(gyro.getAngle(IMUAxis.kZ) + angleAdjust));
+        return new Rotation2d(Math.toRadians(gyro.getAngle(IMUAxis.kZ) + angleAdjust));
     }
 
     /**

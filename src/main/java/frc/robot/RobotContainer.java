@@ -13,6 +13,7 @@ import frc.robot.commands.ClimbCommand;
 import frc.robot.commands.ManualDriveCommand;
 import frc.robot.commands.elevator.ElevatorControlCommand;
 import frc.robot.commands.elevator.ElevatorStateManager;
+import frc.robot.commands.elevator.ElevatorStateManager.CoralIntakeState;
 import frc.robot.commands.testers.*;
 import frc.robot.controllers.AbstractController;
 import frc.robot.controllers.NintendoProController;
@@ -25,6 +26,7 @@ import frc.robot.subsystems.swerve.DriveTrainSubsystem;
 import frc.robot.util.ControlHandler;
 import frc.robot.util.NetworkTablesUtil;
 import frc.robot.util.Util;
+import frc.robot.util.ControlHandler.TriggerType;
 
 public class RobotContainer {
     //private static final GenericPublisher COLOR_SENSOR_PUB = NetworkTablesUtil.getPublisher("robot", "color_sensor_sees_note", NetworkTableType.kBoolean);
@@ -116,6 +118,14 @@ public class RobotContainer {
                     .setRunAlgaeRemover(false)
                     .primeAsNext()));
 
+            ControlHandler.get(this.primaryController, TriggerType.LOWER_BUTTON).onTrue(new InstantCommand(() -> elevatorStateManager.cloneState()
+                    .setHeight(0)
+                    .setPivotAngle(Rotation2d.fromRotations(0.35))
+                    .setCoralIntakeState(CoralIntakeState.STOPPED)
+                    .setRunAlgaeRemover(false)
+                    .setAsCurrent()
+            ));
+
             /*
             ControlHandler.get(this.ps4Controller, OperatorConstants.SecondaryControllerConstants.APPLY_ALGAE_REMOVER_HEIGHT_DELTA).onTrue(new InstantCommand(() -> elevatorStateManager.cloneState()
                     .setHeight(elevatorStateManager.getHeight() + 0.2)
@@ -129,7 +139,7 @@ public class RobotContainer {
                     .setAsCurrent()));
 
             ControlHandler.get(this.primaryController, OperatorConstants.PrimaryControllerConstants.ALGAE_REMOVER).onTrue(new InstantCommand(() -> elevatorStateManager.cloneState()
-                    .setHeight(elevatorStateManager.getHeight() + (!this.elevatorStateManager.getRunAlgaeRemover() ? 0.1 : -0.1))
+                    .setHeight(elevatorStateManager.getHeight() + (!this.elevatorStateManager.getRunAlgaeRemover() ? 0.11 : -0.11))
                     .setRunAlgaeRemover(!this.elevatorStateManager.getRunAlgaeRemover())
                     .setAsCurrent()));
 

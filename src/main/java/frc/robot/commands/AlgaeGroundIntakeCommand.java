@@ -44,9 +44,9 @@ public class AlgaeGroundIntakeCommand extends Command {
         }
 
         if (this.intakeButton.getAsBoolean()) {
-            this.algaeGroundIntake.setIntakeSpeed(0.35);
+            this.algaeGroundIntake.setIntakeSpeed(0.5);
         } else if (this.outtakeButton.getAsBoolean()) {
-            this.algaeGroundIntake.setIntakeSpeed(-0.35);
+            this.algaeGroundIntake.setIntakeSpeed(-0.5);
         } else {
             this.algaeGroundIntake.setIntakeSpeed(0);
         }

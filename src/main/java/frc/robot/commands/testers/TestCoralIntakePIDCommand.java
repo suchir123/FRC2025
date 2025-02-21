@@ -2,10 +2,7 @@ package frc.robot.commands.testers;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.controllers.AbstractController;
 import frc.robot.subsystems.CoralIntakeSubsystem;
-import frc.robot.subsystems.swerve.SwerveModule;
-import frc.robot.util.Util;
 
 public class TestCoralIntakePIDCommand extends Command {
     private final CoralIntakeSubsystem coralIntake;
