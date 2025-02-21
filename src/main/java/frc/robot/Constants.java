@@ -26,10 +26,12 @@ public final class Constants {
         public static class PrimaryControllerConstants {
             public static final TriggerType ALGAE_GROUND_INTAKE                 = TriggerType.LEFT_SHOULDER_TRIGGER;
             public static final TriggerType ALGAE_GROUND_OUTTAKE                = TriggerType.LEFT_SHOULDER_BUTTON;
+            public static final TriggerType ALGAE_AUTO_AIM                      = TriggerType.LEFT_BUTTON;
             public static final TriggerType CORAL_INTAKE_MOTOR                  = TriggerType.RIGHT_SHOULDER_TRIGGER;
             public static final TriggerType ACTIVATE_ELEVATORS                  = TriggerType.RIGHT_SHOULDER_BUTTON;
 
             public static final TriggerType ALGAE_REMOVER                       = TriggerType.RIGHT_BUTTON;
+            public static final TriggerType REEF_AUTO_AIM                       = TriggerType.UPPER_BUTTON;
         }
 
         public static class SecondaryControllerConstants {

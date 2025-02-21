@@ -7,10 +7,12 @@ import edu.wpi.first.wpilibj2.command.button.CommandPS4Controller;
 import edu.wpi.first.wpilibj2.command.button.CommandPS5Controller;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants.OperatorConstants;
+import frc.robot.commands.AlgaeCenterCommand;
 import frc.robot.commands.AlgaeGroundIntakeCommand;
 import frc.robot.commands.BalanceClimberCommand;
 import frc.robot.commands.ClimbCommand;
 import frc.robot.commands.ManualDriveCommand;
+import frc.robot.commands.ReefAprilTagCenterCommand;
 import frc.robot.commands.elevator.ElevatorControlCommand;
 import frc.robot.commands.elevator.ElevatorStateManager;
 import frc.robot.commands.elevator.ElevatorStateManager.CoralIntakeState;
@@ -154,6 +156,9 @@ public class RobotContainer {
                     }
                     this.driveTrain.setHeadingLockMode(false);
                 }));
+
+                ControlHandler.get(this.ps4Controller, OperatorConstants.PrimaryControllerConstants.REEF_AUTO_AIM).whileTrue(new ReefAprilTagCenterCommand(driveTrain, this.primaryController));
+                ControlHandler.get(this.ps4Controller, OperatorConstants.PrimaryControllerConstants.ALGAE_AUTO_AIM).whileTrue(new AlgaeCenterCommand(driveTrain, this.primaryController));
             }
         }
 

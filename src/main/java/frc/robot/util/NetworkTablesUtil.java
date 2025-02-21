@@ -64,6 +64,16 @@ public class NetworkTablesUtil {
         }
     }
 
+    public static float getJetsonTripleCam() {
+        NetworkTable table = INSTANCE.getTable("jetson");
+        return table.getEntry("tag_center_diff").getNumber(0.0).floatValue();
+    }
+
+    public static float getJetsonAlgaeCenter() {
+        NetworkTable table = INSTANCE.getTable("jetson");
+        return table.getEntry("algae_pixel_diff").getNumber(0.0).floatValue();
+    }
+
     public static float getLimeLightArea() {
         NetworkTable table = INSTANCE.getTable("limelight");
         return table.getEntry("llpython").getNumberArray(new Number[]{0, 0, 0, 0})[3].floatValue();
