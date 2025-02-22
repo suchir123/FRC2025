@@ -1,28 +1,27 @@
 package frc.robot.commands;
 
-import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Flags;
 import frc.robot.controllers.AbstractController;
 import frc.robot.subsystems.swerve.DriveTrainSubsystem;
-import frc.robot.util.Util;
+import frc.robot.util.NetworkTablesUtil;
 
-public class ManualDriveCommand extends Command {
+public class ReefAprilTagCenterCommand extends Command {
     public static final double MAX_SPEED_METERS_PER_SEC = Flags.DriveTrain.LOWER_MAX_SPEED ? 1.5 : 3;
     public static final double MAX_ROT_SPEED_ANGULAR = 3;
     private final DriveTrainSubsystem driveTrain;
-    private final AbstractController joystick;
+    // private final AbstractController joystick;
     // private final AprilTagHandler aprilTagHandler;
-    private final SlewRateLimiter xSpeedLimiter = new SlewRateLimiter(1);
-    private final SlewRateLimiter ySpeedLimiter = new SlewRateLimiter(1);
+    // private final SlewRateLimiter xSpeedLimiter = new SlewRateLimiter(1);
+    // private final SlewRateLimiter ySpeedLimiter = new SlewRateLimiter(1);
     // private final SlewRateLimiter rotLimiter = new SlewRateLimiter(0.5);
     // private final Trigger autoAimSubwoofer;
     // private final LinearFilter filter = LinearFilter.singlePoleIIR(0.1, 0.02);
     // private boolean wasAutomaticallyDrivingLastFrame = false;
 
-    public ManualDriveCommand(DriveTrainSubsystem driveTrain, AbstractController joystick) { //AprilTagHandler aprilTagHandler) {
+    public ReefAprilTagCenterCommand(DriveTrainSubsystem driveTrain, AbstractController joystick) { //AprilTagHandler aprilTagHandler) {
         this.driveTrain = driveTrain;
-        this.joystick = joystick;
+        // this.joystick = joystick;
         // this.aprilTagHandler = aprilTagHandler;
         // this.autoAimSubwoofer = ControlHandler.get(joystick, ControllerConstants.AUTO_AIM_FOR_SHOOT);
 
@@ -34,31 +33,24 @@ public class ManualDriveCommand extends Command {
         // this.driveTrain.setPose(new Pose2d(2, 7, RobotGyro.getRotation2d()));
     }
 
-    private double flipFactor() {
-        if (Util.onBlueTeam()) {
-            return 1;
-        } else {
-            return -1;
-        }
-    }
-
     @Override
     public void execute() {
         // System.out.println("vert: " + this.joystick.getRightVerticalMovement() + ", hor: " + this.joystick.getRightHorizontalMovement());
         // this.driveTrain.drive(this.joystick.getVerticalMovement());
-        double flip = flipFactor();
-        double ySpeed = Util.squareKeepSign(this.ySpeedLimiter.calculate(this.joystick.getLeftVerticalMovement() * flip)) * MAX_SPEED_METERS_PER_SEC;
-        double xSpeed = Util.squareKeepSign(this.xSpeedLimiter.calculate(this.joystick.getLeftHorizontalMovement() * flip)) * MAX_SPEED_METERS_PER_SEC;
+        final double kP = 0.001;
+        //double flip = flipFactor();
+        double pixelDiff = NetworkTablesUtil.getJetsonTripleCam();
+        double ySpeedError = 0;
+        double xSpeedError = kP * pixelDiff;
         // System.out.println("xSpeed = " + xSpeed);
         // System.out.println("ySpeed = " + ySpeed);
 
-        double rotSpeed = -this.joystick.getRightHorizontalMovement() * MAX_ROT_SPEED_ANGULAR;
-
+        double rotSpeed = 0;
 
         // System.out.println("forward speed: " + ySpeed + ", x speed: " + xSpeed);
         // System.out.println("y: " + RobotMathUtil.roundNearestHundredth(this.joystick.getLeftVerticalMovement()) + ", x: " + RobotMathUtil.roundNearestHundredth(this.joystick.getLeftHorizontalMovement()));
 
-        this.driveTrain.drive(xSpeed, ySpeed, rotSpeed, true);
+        this.driveTrain.drive(xSpeedError, ySpeedError, rotSpeed, false);
     }
 
     /**

@@ -33,7 +33,7 @@ public class PowerHandler {
             for (Field field : f.getClass().getDeclaredFields()) {
                 boolean isFaulting = field.getBoolean(f);
                 if (isFaulting) {
-                    if (anyFaultPresent == false) {
+                    if (!anyFaultPresent) {
                         anyFaultPresent = true;
                         System.out.println("ERROR! BAD THING! PDP STICKY FAULTS ARE PRESENT!");
                         System.out.println("Faults are:");
@@ -43,7 +43,7 @@ public class PowerHandler {
             }
         } catch (Exception exception) {
             System.out.println("Error during printing PDP faults:");
-            System.out.println(exception);
+            exception.printStackTrace();
         }
     }
 

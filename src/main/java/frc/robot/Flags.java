@@ -22,10 +22,36 @@ public final class Flags {
         public static final boolean NINTENDO_SWITCH_CONTROLLER_AS_PRIMARY = false;
     }
 
-    public static class TelescopingArm {
+    public static class Elevator {
         public static final boolean IS_ATTACHED = true;
         public static final boolean ENABLED = true;
         public static final boolean USE_TEST_ELEVATOR_COMMAND = false;
+        public static final boolean USE_TEST_PID_COMMAND = false;
+    }
+
+    public static class Climber {
+        public static final boolean IS_ATTACHED = true;
+        public static final boolean ENABLED = true;
+        public static final boolean USE_TEST_CLIMBER_COMMAND = true;
+    }
+
+    public static class CoralIntake {
+        public static final boolean IS_ATTACHED = true;
+        public static final boolean ENABLED = true;
+        public static final boolean USE_TEST_CORAL_COMMAND = false;
+        public static final boolean USE_TEST_PID_COMMAND = false;
+    }
+
+    public static class AlgaeGroundIntake {
+        public static final boolean IS_ATTACHED = true;
+        public static final boolean ENABLED = true;
+        public static final boolean USE_TEST_ALGAE_GROUND_COMMAND = false;
+    }
+
+    public static class AlgaeReefRemover {
+        public static final boolean IS_ATTACHED = true;
+        public static final boolean ENABLED = true;
+        public static final boolean USE_TEST_ALGAE_REMOVER_COMMAND = false;
     }
 
     /**
@@ -35,12 +61,12 @@ public final class Flags {
         /**
          * Whether the drive train is physically attached and existing. If false, no motor controllers are initialized since they are assumed to be nonexistent.
          */
-        public static final boolean IS_ATTACHED = false;
+        public static final boolean IS_ATTACHED = true;
 
         /**
          * Whether the drive train should be allowed to send power to motor controllers. If false, motors will not be set to any power and PID requests will not be sent.
          */
-        public static final boolean ENABLED = false;
+        public static final boolean ENABLED = true;
 
         /**
          * Whether the drive motors should be allowed to run. If false, drive motors will not be set to any power and PID requests will not be sent.
@@ -87,7 +113,7 @@ public final class Flags {
          * adjust the heading, this would cause kinda unexpected behavior because the robot would try to reassume
          * its initial heading.
          */
-        public static final boolean ENABLE_LOCKED_HEADING_MODE = false;
+        public static final boolean ENABLE_LOCKED_HEADING_MODE = true;
 
         public static final boolean ENABLE_COSINE_COMPENSATOR = false;
 

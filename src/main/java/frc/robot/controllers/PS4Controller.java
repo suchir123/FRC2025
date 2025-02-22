@@ -1,17 +1,17 @@
 package frc.robot.controllers;
 
-import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.button.CommandPS4Controller;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 
 /**
- * A wrapper around {@link CommandXboxController}.
+ * A wrapper around {@link CommandPS4Controller}.
  */
-public class XboxController extends AbstractController {
-    public static final double IGNORE_DELTA = 0.08;
+public class PS4Controller extends AbstractController {
+    public static final double IGNORE_DELTA = 0.1;
 
-    private final CommandXboxController controller;
+    private final CommandPS4Controller controller;
 
-    public XboxController(CommandXboxController controller) {
+    public PS4Controller(CommandPS4Controller controller) {
         this.controller = controller;
     }
 
@@ -22,7 +22,7 @@ public class XboxController extends AbstractController {
 
     @Override
     public double getRightVerticalMovement() {
-        return AbstractController.deadzone(controller.getRightY(), IGNORE_DELTA);
+        return -AbstractController.deadzone(controller.getRightY(), IGNORE_DELTA);
     }
 
     @Override
@@ -32,7 +32,7 @@ public class XboxController extends AbstractController {
 
     @Override
     public double getLeftVerticalMovement() {
-        return AbstractController.deadzone(controller.getLeftY(), IGNORE_DELTA);
+        return -AbstractController.deadzone(controller.getLeftY(), IGNORE_DELTA);
     }
 
     @Override
@@ -57,22 +57,22 @@ public class XboxController extends AbstractController {
 
     @Override
     public Trigger upperButton() {
-        return this.controller.x();
+        return this.controller.triangle();
     }
 
     @Override
     public Trigger leftButton() {
-        return this.controller.y();
+        return this.controller.square();
     }
 
     @Override
     public Trigger rightButton() {
-        return this.controller.a();
+        return this.controller.circle();
     }
 
     @Override
     public Trigger lowerButton() {
-        return this.controller.b();
+        return this.controller.cross();
     }
 
     @Override
@@ -82,22 +82,22 @@ public class XboxController extends AbstractController {
 
     @Override
     public Trigger leftShoulderButton() {
-        return this.controller.leftBumper();
+        return this.controller.L1();
     }
 
     @Override
     public Trigger rightShoulderButton() {
-        return this.controller.rightBumper();
+        return this.controller.R1();
     }
 
     @Override
     public Trigger leftShoulderTrigger() {
-        return this.controller.leftTrigger();
+        return this.controller.L2();
     }
 
     @Override
     public Trigger rightShoulderTrigger() {
-        return this.controller.rightTrigger();
+        return this.controller.R2();
     }
 
     @Override

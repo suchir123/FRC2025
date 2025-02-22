@@ -8,9 +8,6 @@ import frc.robot.util.ControlHandler.TriggerType;
  * This is different from the {@link frc.robot.Flags Flags} class, which toggles functionality on the robot and may be changed more often.
  */
 public final class Constants {
-    // this is an expert coding pattern that should absolutely be used.
-    public static final int SOME_MADE_UP_WRONG_PORT = 0xDEADBEEF;
-
     private Constants() {
         throw new UnsupportedOperationException("This is a utility class and cannot be instantiated");
     }
@@ -23,122 +20,109 @@ public final class Constants {
         public static final int RIGHT_JOYSTICK_PORT = 2;
         public static final int NINTENDO_PRO_CONTROLLER = 1;
         public static final int PS5_CONTROLLER = 3;
+        public static final int PS4_CONTROLLER = 4;
 
         // Should this be here? especially with our new controller system, we could potentially refactor or re-abstract this using another class (maybe even for multiple driver preferences?)
-        public static class ControllerConstants {
-            // Nintendo pro 2ndary controller
-            public static final TriggerType ZERO_GYRO = TriggerType.LEFT_BUTTON;
-            public static final TriggerType ZERO_SWERVE_MODULES = TriggerType.UPPER_BUTTON;
-            public static final TriggerType RESET_POSE_ESTIMATOR = TriggerType.RIGHT_BUTTON;
-            public static final TriggerType RESET_RING_HANDLING_STATE = TriggerType.LOWER_BUTTON;
+        public static class PrimaryControllerConstants {
+            public static final TriggerType ALGAE_GROUND_INTAKE                 = TriggerType.LEFT_SHOULDER_TRIGGER;
+            public static final TriggerType ALGAE_GROUND_OUTTAKE                = TriggerType.LEFT_SHOULDER_BUTTON;
+            public static final TriggerType ALGAE_AUTO_AIM                      = TriggerType.LEFT_BUTTON;
+            public static final TriggerType CORAL_INTAKE_MOTOR                  = TriggerType.RIGHT_SHOULDER_TRIGGER;
+            public static final TriggerType ACTIVATE_ELEVATORS                  = TriggerType.RIGHT_SHOULDER_BUTTON;
 
-            public static final TriggerType SHOOTER_IDLE_RPM_TOGGLE = TriggerType.RIGHT_SHOULDER_BUTTON;
-            public static final TriggerType INTAKE_POS_TOGGLE = TriggerType.LEFT_SHOULDER_BUTTON;
+            public static final TriggerType ALGAE_REMOVER                       = TriggerType.RIGHT_BUTTON;
+            public static final TriggerType REEF_AUTO_AIM                       = TriggerType.UPPER_BUTTON;
+        }
 
-            public static final TriggerType TOGGLE_FLAP = TriggerType.LEFT_SHOULDER_TRIGGER;
-            public static final TriggerType WIGGLE_FLAP = TriggerType.RIGHT_SHOULDER_TRIGGER;
+        public static class SecondaryControllerConstants {
+            public static final TriggerType RESET_GYRO                          = TriggerType.POV_0;
+            public static final TriggerType TOGGLE_ALGAE_GROUND_INTAKE_HEIGHT   = TriggerType.LEFT_SHOULDER_BUTTON;
 
-            // PS5 primary controller
-            public static final TriggerType INTAKE_RUN = TriggerType.RIGHT_BUTTON;
-            public static final TriggerType INTAKE_REVERSE = TriggerType.LOWER_BUTTON;
-
-            public static final TriggerType SHOOTER_RUN_HIGH_SPEED = TriggerType.RIGHT_SHOULDER_TRIGGER;
-            public static final TriggerType SHOOTER_RUN_AMP_SPEED = TriggerType.LEFT_SHOULDER_TRIGGER;
-
-            public static final TriggerType AUTO_AIM_FOR_SHOOT = TriggerType.RIGHT_SHOULDER_BUTTON;
+            public static final TriggerType L4                                  = TriggerType.RIGHT_SHOULDER_BUTTON;
+            public static final TriggerType L3                                  = TriggerType.UPPER_BUTTON;
+            public static final TriggerType L2                                  = TriggerType.LEFT_BUTTON;
+            public static final TriggerType L1                                  = TriggerType.LOWER_BUTTON;
+            public static final TriggerType INTAKE_STATE                        = TriggerType.RIGHT_BUTTON;
         }
     }
 
-    /**
-     * Key: RIO = RoboRio, COD = CANCoder, DRI = Drive Motor, ROT = Rotation Motor, INT = Intake, CON = Conveyor, SHO = Shooter, CLI = Climber
-     * <pre>
-     * CAN IDs USED:
-     * 0  (RIO)
-     * 1  (COD)
-     * 2  (ROT)
-     * 3  (COD)
-     * 4  (DRI)
-     * 5  (ROT)
-     * 6  (COD)
-     * 7  (DRI)
-     * 8  (ROT)
-     * 9  (DRI)
-     * 10 (ROT)
-     * 11 (DRI)
-     * 12 (COD)
-     * 13 (INT)
-     * 14 (INT)
-     * 15 (CON)
-     * 16 (SHO)
-     * 17 (SHO)
-     * 18 (CON)
-     * 19 (CLI)
-     * 20 (CLI)
-     * 21 (SHO)
-     * 22 (CON)
-     * 23 (INT)
-     *
-     * </pre>
-     * <pre>
-     * DIOs USED:
-     * 0 (SHO)
-     * 1 (SHO)
-     * 2 (SHO)
-     * 3 (INT)
-     * 4 (INT)
-     * 5 (INT)
-     *
-     * </pre>
-     * <pre>
-     * PWMs USED:
-     * 0 (SHO)
-     * 1 (SHO)
-     */
     public static class PortConstants {
-        // CAN IDs
+        /**
+         * Key: RIO = RoboRio, COD = CANCoder, DRI = Drive Motor, ROT = Rotation Motor, ELE = Elevator, CLI = Climber
+         * <pre>
+         * CAN IDs USED:
+         * 0  (RIO)
+         *
+         * 1  (COD)
+         * 2  (ROT)
+         * 3  (COD)
+         * 4  (DRI)
+         * 5  (ROT)
+         * 6  (COD)
+         * 7  (DRI)
+         * 8  (ROT)
+         * 9  (DRI)
+         * 10 (ROT)
+         * 11 (DRI)
+         * 12 (COD)
+         *
+         * 17 (ELE)
+         *
+         * 21 (ELE)
+         */
+        public static class CAN {
+            // Drive Train (COD, DRI, ROT)
+            public static final int DTRAIN_FRONT_LEFT_DRIVE_MOTOR_ID = 11;
+            public static final int DTRAIN_FRONT_RIGHT_DRIVE_MOTOR_ID = 21;
+            public static final int DTRAIN_BACK_LEFT_DRIVE_MOTOR_ID = 14;
+            public static final int DTRAIN_BACK_RIGHT_DRIVE_MOTOR_ID = 19;
+            public static final int DTRAIN_FRONT_LEFT_ROTATION_MOTOR_ID = 10;
+            public static final int DTRAIN_FRONT_RIGHT_ROTATION_MOTOR_ID = 22;
+            public static final int DTRAIN_BACK_LEFT_ROTATION_MOTOR_ID = 15;
+            public static final int DTRAIN_BACK_RIGHT_ROTATION_MOTOR_ID = 20;
+            public static final int DTRAIN_FRONT_LEFT_CANCODER_ID = 12;
+            public static final int DTRAIN_FRONT_RIGHT_CANCODER_ID = 3;
+            public static final int DTRAIN_BACK_LEFT_CANCODER_ID = 6;
+            public static final int DTRAIN_BACK_RIGHT_CANCODER_ID = 1;
 
-        // (2025) Telescoping Arm
-        public static final int RIGHT_ELEVATOR_MOTOR_ID = 17;
-        public static final int RIGHT_CLIMB_ABS_ENCODER_ID = 1;
+            // (2025) Elevators (ELE)
+            public static final int RIGHT_ELEVATOR_MOTOR_ID = 7;
+            public static final int LEFT_ELEVATOR_MOTOR_ID = 16;
 
-        public static final int LEFT_ELEVATOR_MOTOR_ID = 21;
-        public static final int LEFT_CLIMB_ABS_ENCODER_ID = 0;
+            // (2025) Climber
+            public static final int CLIMBER_MOTOR_ID = 5;
 
+            // (2025) Coral Intake
+            public static final int CORAL_PIVOT_MOTOR_ID = 13;
+            public static final int CORAL_INTAKE_MOTOR_ID = 4;
 
-        // Drive Train (COD, DRI, ROT)
-        public static final int DTRAIN_FRONT_LEFT_DRIVE_MOTOR_ID = 9;
-        public static final int DTRAIN_FRONT_RIGHT_DRIVE_MOTOR_ID = 11;
-        public static final int DTRAIN_BACK_LEFT_DRIVE_MOTOR_ID = 7;
-        public static final int DTRAIN_BACK_RIGHT_DRIVE_MOTOR_ID = 4;
+            // (2025) Algae Remover mounted on elevator
+            public static final int ALGAE_REMOVER_MOTOR_ID = 2;
 
-        public static final int DTRAIN_FRONT_LEFT_ROTATION_MOTOR_ID = 8;
-        public static final int DTRAIN_FRONT_RIGHT_ROTATION_MOTOR_ID = 2;
-        public static final int DTRAIN_BACK_LEFT_ROTATION_MOTOR_ID = 5;
-        public static final int DTRAIN_BACK_RIGHT_ROTATION_MOTOR_ID = 10;
+            // (2025) Algae Ground Intake
+            public static final int ALGAE_GROUND_INTAKE_MOTOR_ID = 23;
+        }
+//ivan is very smart and he is our very bestest diversity hire as the only white man in our team besides mr. reid and mr. goodman and we all love ivan because we have asianified him real good because he loves eating rice and filters his water at home instead of drinking tap water and hes real good coder ivan also cant eat wheat because hes celiac so as a white guy he cant eat white bread ivan can also use chopsticks real good when we eate food at like 12 that time he matched his photo with a frog (but he didnt want to match with the girl frog) he also has lots of good shimp photos which make him look very shrimpy with his long shrimpy nose and large shrimpy eyes
+        public static class PWM {
+            public static final int ALGAE_LEFT_SERVO_PORT = 1;
+            public static final int ALGAE_RIGHT_SERVO_PORT = 0;
+        }
 
-        public static final int DTRAIN_FRONT_LEFT_CANCODER_ID = 12;
-        public static final int DTRAIN_FRONT_RIGHT_CANCODER_ID = 3;
-        public static final int DTRAIN_BACK_LEFT_CANCODER_ID = 6;
-        public static final int DTRAIN_BACK_RIGHT_CANCODER_ID = 1;
-
-        // DIO Ports
-
-        // Intake (INT)
-        public static final int INTAKE_ABSOLUTE_ENCODER_ABS_PORT = 3;
-        public static final int INTAKE_ABSOLUTE_ENCODER_A_PORT = 4;
-        public static final int INTAKE_ABSOLUTE_ENCODER_B_PORT = 5;
-
-        // Shooter (SHO)
-        public static final int SHOOTER_ABSOLUTE_ENCODER_ABS_PORT = 0;
-        public static final int SHOOTER_ABSOLUTE_ENCODER_A_PORT = 1;
-        public static final int SHOOTER_ABSOLUTE_ENCODER_B_PORT = 2;
-
-
-        // PWM Ports
-
-        // Sho)
-        public static final int SHOOTER_LEFT_SERVO_PORT = 1;
-        public static final int SHOOTER_RIGHT_SERVO_PORT = 0;
+        /**
+         * ELE = Elevator, CLI = Climber
+         * <pre>
+         * DIOs USED:
+         * 0 (ELE)
+         * 1 (ELE)
+         * 2 (ELE)
+         * 3 (ELE)
+         * 4 (ELE)
+         * 5 (ELE)
+         */
+        public static class DIO {
+            public static final int LEFT_ELEVATOR_LIMIT = 0;
+            public static final int RIGHT_ELEVATOR_LIMIT = 1;
+        }
     }
 
     public static class DriveConstants {

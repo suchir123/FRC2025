@@ -15,31 +15,24 @@ public class PS5Controller extends AbstractController {
         this.controller = controller;
     }
 
-    private static double deadzone(double val) {
-        if (Math.abs(val) < IGNORE_DELTA) {
-            return 0;
-        }
-        return val;
-    }
-
     @Override
     public double getRightHorizontalMovement() {
-        return deadzone(controller.getRightX());
+        return AbstractController.deadzone(controller.getRightX(), IGNORE_DELTA);
     }
 
     @Override
     public double getRightVerticalMovement() {
-        return -deadzone(controller.getRightY());
+        return -AbstractController.deadzone(controller.getRightY(), IGNORE_DELTA);
     }
 
     @Override
     public double getLeftHorizontalMovement() {
-        return deadzone(controller.getLeftX());
+        return AbstractController.deadzone(controller.getLeftX(), IGNORE_DELTA);
     }
 
     @Override
     public double getLeftVerticalMovement() {
-        return -deadzone(controller.getLeftY());
+        return -AbstractController.deadzone(controller.getLeftY(), IGNORE_DELTA);
     }
 
     @Override
@@ -105,5 +98,10 @@ public class PS5Controller extends AbstractController {
     @Override
     public Trigger rightShoulderTrigger() {
         return this.controller.R2();
+    }
+
+    @Override
+    public Trigger pov(int value) {
+        return this.controller.pov(value);
     }
 }
