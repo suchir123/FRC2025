@@ -15,9 +15,52 @@ public class ElevatorStateManager {
     private ElevatorState currentState;
     private ElevatorState nextState;
 
+    public Command getGoToIntakeStateCommand() {
+        return new InstantCommand(() -> cloneState()
+            .setHeight(0)
+            .setPivotAngle(Rotation2d.fromRotations(0.14))
+            .setCoralIntakeState(ElevatorStateManager.CoralIntakeState.STOPPED)
+            .setRunAlgaeRemover(false)
+            .setAsCurrent()
+        );
+    }
+
+    public Command getGoToL1Command() {
+        return new InstantCommand(() -> cloneState()
+            .setHeight(0)
+            .setPivotAngle(Rotation2d.fromRotations(0.03))
+            .setCoralIntakeState(ElevatorStateManager.CoralIntakeState.STOPPED)
+            .setRunAlgaeRemover(false)
+            .setAsCurrent()
+        );
+    }
+
+    public Command getGoToL2Command() {
+        return new InstantCommand(() -> cloneState()
+            .setHeight(0)
+            .setPivotAngle(Rotation2d.fromRotations(0.46))
+            .setCoralIntakeState(ElevatorStateManager.CoralIntakeState.STOPPED)
+            .setRunAlgaeRemover(false)
+            .setAsCurrent()
+        );
+    }
+
+    public Command getGoToL3Command() {
+        return new InstantCommand(() -> cloneState()
+            .setHeight(0.39)
+            .setPivotAngle(Rotation2d.fromRotations(0.46))
+            .setCoralIntakeState(ElevatorStateManager.CoralIntakeState.STOPPED)
+            .setRunAlgaeRemover(false)
+            .setAsCurrent()
+        );
+    }
+
     public Command getGoToL4Command() {
         return new InstantCommand(() -> cloneState()
-            
+            .setHeight(1.02)
+            .setPivotAngle(Rotation2d.fromRotations(0.45))
+            .setCoralIntakeState(ElevatorStateManager.CoralIntakeState.STOPPED)
+            .setRunAlgaeRemover(false)
             .setAsCurrent()
         );
     }

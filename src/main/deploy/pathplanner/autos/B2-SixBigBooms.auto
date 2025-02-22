@@ -25,7 +25,7 @@
         {
           "type": "named",
           "data": {
-            "name": "ElevatorDown"
+            "name": "GoToIntakeAngle"
           }
         },
         {
@@ -61,7 +61,7 @@
         {
           "type": "named",
           "data": {
-            "name": "ElevatorDown"
+            "name": "GoToIntakeAngle"
           }
         },
         {
@@ -97,7 +97,7 @@
         {
           "type": "named",
           "data": {
-            "name": "ElevatorDown"
+            "name": "GoToIntakeAngle"
           }
         },
         {

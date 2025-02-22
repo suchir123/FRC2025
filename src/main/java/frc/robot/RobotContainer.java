@@ -2,6 +2,8 @@ package frc.robot;
 
 import java.util.function.Supplier;
 
+import com.pathplanner.lib.auto.NamedCommands;
+
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -63,6 +65,8 @@ public class RobotContainer {
         this.algaeReefRemover = Util.createIfFlagElseNull(AlgaeReefRemoverSubsystem::new, Flags.AlgaeReefRemover.IS_ATTACHED);
         this.algaeGroundIntake = Util.createIfFlagElseNull(AlgaeGroundIntakeSubsystem::new, Flags.AlgaeGroundIntake.IS_ATTACHED);
 
+        configureNamedCommands();
+
         configureBindings();
 
         // Initialize static subsystems (this is a Java thing don't worry about it just copy it so that static blocks run on startup)
@@ -78,6 +82,16 @@ public class RobotContainer {
         // }
 
         NetworkTablesUtil.getConnections();
+    }
+
+    private void configureNamedCommands() {
+        NamedCommands.registerCommand("GoToL4", elevatorStateManager.getGoToL4Command());
+        NamedCommands.registerCommand("GoToL3", elevatorStateManager.getGoToL3Command());
+        NamedCommands.registerCommand("GoToL2", elevatorStateManager.getGoToL2Command());
+        NamedCommands.registerCommand("GoToL1", elevatorStateManager.getGoToL1Command());
+        NamedCommands.registerCommand("GoToIntakeAngle", elevatorStateManager.getGoToIntakeStateCommand());
+        
+        
     }
 
     private void configureBindings() {
@@ -117,13 +131,12 @@ public class RobotContainer {
                     .setRunAlgaeRemover(false)
                     .primeAsNext()));
 
-            ControlHandler.get(this.primaryController, TriggerType.LOWER_BUTTON).onTrue(new InstantCommand(() -> elevatorStateManager.cloneState()
+            ControlHandler.get(this.primaryController, OperatorConstants.PrimaryControllerConstants.CLIMB_PIVOT_ANGLE).onTrue(new InstantCommand(() -> elevatorStateManager.cloneState()
                     .setHeight(0)
                     .setPivotAngle(Rotation2d.fromRotations(0.35))
                     .setCoralIntakeState(CoralIntakeState.STOPPED)
                     .setRunAlgaeRemover(false)
-                    .setAsCurrent()
-            ));
+                    .setAsCurrent()));
 
             ControlHandler.get(this.primaryController, OperatorConstants.PrimaryControllerConstants.CORAL_INTAKE_MOTOR).onTrue(new InstantCommand(() -> elevatorStateManager.cloneState()
                     .setCoralIntakeState(ElevatorStateManager.CoralIntakeState.INTAKE)
