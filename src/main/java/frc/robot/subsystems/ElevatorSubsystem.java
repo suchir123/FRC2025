@@ -26,14 +26,14 @@ public class ElevatorSubsystem extends SubsystemBase {
 
     private static final double MAX_HEIGHT = 1.1;
     private static final double MIN_HEIGHT = 0.0;
-    // private static final double MAX_OUTPUT_RIGHT_ELEVATOR_PIDS = 0.6;
+    private static final double MAX_OUTPUT_RIGHT_ELEVATOR_PIDS = 0.6;
     private static final double MAX_OUTPUT_LEFT_ELEVATOR_PIDS = 0.4;
     private final static double ABSOLUTE_DEGREES_PER_RELATIVE_DEGREES = 1426.64 / 8254.24;
     private final static double ROTATIONS_PER_METER_ASCENDED = Rotation2d.fromDegrees(742.5).getRotations() / 0.5;
     private final static double METERS_ASCENDED_PER_ROTATION = 1 / ROTATIONS_PER_METER_ASCENDED;
 
-    // private static final GenericPublisher leftHeightAbsPub = NetworkTablesUtil.getPublisher("robot", "leftElevAbsH", NetworkTableType.kDouble);
-    // private static final GenericPublisher rightHeightAbsPub = NetworkTablesUtil.getPublisher("robot", "rightElevAbsH", NetworkTableType.kDouble);
+    private static final GenericPublisher leftHeightAbsPub = NetworkTablesUtil.getPublisher("robot", "leftElevAbsH", NetworkTableType.kDouble);
+    private static final GenericPublisher rightHeightAbsPub = NetworkTablesUtil.getPublisher("robot", "rightElevAbsH", NetworkTableType.kDouble);
     private static final GenericPublisher leftHeightRelPub = NetworkTablesUtil.getPublisher("robot", "leftElevRelH", NetworkTableType.kDouble);
     private static final GenericPublisher rightHeightRelPub = NetworkTablesUtil.getPublisher("robot", "rightElevRelH", NetworkTableType.kDouble);
     private final SparkMax rightMotor;
