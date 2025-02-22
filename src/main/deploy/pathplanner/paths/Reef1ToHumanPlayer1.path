@@ -1,0 +1,70 @@
+{
+  "version": "2025.0",
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 5.664749999999999,
+        "y": 4.0249999999999995
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 6.50325,
+        "y": 3.0499999999999994
+      },
+      "isLocked": false,
+      "linkedName": "Reef1"
+    },
+    {
+      "anchor": {
+        "x": 4.797000000000001,
+        "y": 1.63625
+      },
+      "prevControl": {
+        "x": 5.70375,
+        "y": 2.02625
+      },
+      "nextControl": {
+        "x": 3.890250000000001,
+        "y": 1.2462499999999999
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 1.08224999999562,
+        "y": 0.8660000000038042
+      },
+      "prevControl": {
+        "x": 2.105999999995619,
+        "y": 0.49550000000380345
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": "HumanPlayer1"
+    }
+  ],
+  "rotationTargets": [],
+  "constraintZones": [],
+  "pointTowardsZones": [],
+  "eventMarkers": [],
+  "globalConstraints": {
+    "maxVelocity": 3.0,
+    "maxAcceleration": 3.0,
+    "maxAngularVelocity": 540.0,
+    "maxAngularAcceleration": 720.0,
+    "nominalVoltage": 12.0,
+    "unlimited": false
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": 49.89909245378777
+  },
+  "reversed": false,
+  "folder": "FourBigBooms",
+  "idealStartingState": {
+    "velocity": 0,
+    "rotation": 0.0
+  },
+  "useDefaultConstraints": true
+}

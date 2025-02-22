@@ -1,0 +1,54 @@
+{
+  "version": "2025.0",
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 1.08224999999562,
+        "y": 0.8660000000038042
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 1.95,
+        "y": 1.4802499999999998
+      },
+      "isLocked": false,
+      "linkedName": "HumanPlayer1"
+    },
+    {
+      "anchor": {
+        "x": 3.9389999999999996,
+        "y": 3.0694999999999997
+      },
+      "prevControl": {
+        "x": 3.65625,
+        "y": 2.699
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": "Reef5"
+    }
+  ],
+  "rotationTargets": [],
+  "constraintZones": [],
+  "pointTowardsZones": [],
+  "eventMarkers": [],
+  "globalConstraints": {
+    "maxVelocity": 3.0,
+    "maxAcceleration": 3.0,
+    "maxAngularVelocity": 540.0,
+    "maxAngularAcceleration": 720.0,
+    "nominalVoltage": 12.0,
+    "unlimited": false
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": -121.82744657667327
+  },
+  "reversed": false,
+  "folder": "FourBigBooms",
+  "idealStartingState": {
+    "velocity": 0,
+    "rotation": 49.89909245378777
+  },
+  "useDefaultConstraints": true
+}

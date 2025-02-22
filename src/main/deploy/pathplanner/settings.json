@@ -2,8 +2,15 @@
   "robotWidth": 0.381,
   "robotLength": 0.381,
   "holonomicMode": true,
-  "pathFolders": [],
-  "autoFolders": [],
+  "pathFolders": [
+    "B-L-ShapedReef1",
+    "FourBigBooms",
+    "GoToNearReefFrom (Direct)",
+    "GoToNearReefFrom (L-shape)"
+  ],
+  "autoFolders": [
+    "BigBooms"
+  ],
   "defaultMaxVel": 3.0,
   "defaultMaxAccel": 3.0,
   "defaultMaxAngVel": 540.0,

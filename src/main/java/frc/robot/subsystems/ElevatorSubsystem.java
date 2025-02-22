@@ -46,6 +46,7 @@ public class ElevatorSubsystem extends SubsystemBase {
     private final DigitalInput rightLimitSwitch = new DigitalInput(Constants.PortConstants.DIO.RIGHT_ELEVATOR_LIMIT);
     private final SparkClosedLoopController rightPIDController;
     private final SparkClosedLoopController leftPIDController;
+    private double currentSetpointMeters;
 
     public ElevatorSubsystem() {
         rightMotor = new SparkMax(Constants.PortConstants.CAN.RIGHT_ELEVATOR_MOTOR_ID, MotorType.kBrushless);
@@ -97,6 +98,8 @@ public class ElevatorSubsystem extends SubsystemBase {
         rightMotorEncoder.setPosition(0);
         leftMotorEncoder.setPosition(0);
 
+        this.currentSetpointMeters = 0;
+
         // this.rightThroughboreEncoder.name = "right";
         // this.leftThroughboreEncoder.name = "left";
 
@@ -117,6 +120,14 @@ public class ElevatorSubsystem extends SubsystemBase {
         //this.rightThroughboreEncoder.periodic();
     }
 
+    /*
+     * Returns true if the current height is within five centimeters of the setpoint.
+     */
+    public boolean getAtSetpoint()
+    {
+        return Math.abs(getCurrentHeight() - this.currentSetpointMeters) < 0.05;
+    }
+    
     private void resetMotorEncodersToAbsoluteEncoders() {
         rightMotorEncoder.setPosition(rightAbsoluteEncoder.getPosition());
         leftMotorEncoder.setPosition(leftAbsoluteEncoder.getPosition());
@@ -128,7 +139,7 @@ public class ElevatorSubsystem extends SubsystemBase {
     }
 
     /**
-     * @return The average of the left and right heights
+     * @return The average of the left and right heights, in meters
      */
     public double getCurrentHeight() {
         return (getLeftRelativePosition() + getRightRelativePosition()) / 2;
@@ -160,6 +171,7 @@ public class ElevatorSubsystem extends SubsystemBase {
     }
 
     public void setTargetHeight(double heightMeters) {
+        this.currentSetpointMeters = heightMeters;
         if (Flags.Elevator.ENABLED) {
             if (heightMeters <= MAX_HEIGHT && heightMeters >= MIN_HEIGHT) {
                 this.rightPIDController.setReference(heightMeters, SparkBase.ControlType.kPosition, ClosedLoopSlot.kSlot0, 0);
