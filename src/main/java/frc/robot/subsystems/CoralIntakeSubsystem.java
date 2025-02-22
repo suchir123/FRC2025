@@ -12,7 +12,6 @@ import com.revrobotics.spark.config.ClosedLoopConfig;
 import com.revrobotics.spark.config.LimitSwitchConfig;
 import com.revrobotics.spark.config.SparkBaseConfig;
 import com.revrobotics.spark.config.SparkMaxConfig;
-
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -49,8 +48,8 @@ public class CoralIntakeSubsystem extends SubsystemBase {
                 .setSparkMaxDataPortConfig()
                 .zeroOffset(0.6);
         coralPivotMotorConfig.encoder
-                .positionConversionFactor(1d/48)
-                .velocityConversionFactor(1d/48/60);
+                .positionConversionFactor(1d / 48)
+                .velocityConversionFactor(1d / 48 / 60);
         coralPivotMotorConfig.closedLoop
                 .feedbackSensor(ClosedLoopConfig.FeedbackSensor.kAbsoluteEncoder)
                 .pidf(2.5, 0, 0, 0)
@@ -106,7 +105,7 @@ public class CoralIntakeSubsystem extends SubsystemBase {
     }
 
     public void setIntakeSpeed(double speed) {
-        if(Flags.CoralIntake.ENABLED) {
+        if (Flags.CoralIntake.ENABLED) {
             coralIntakeMotor.set(speed);
         }
     }

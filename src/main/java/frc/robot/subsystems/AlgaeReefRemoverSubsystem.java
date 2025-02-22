@@ -32,7 +32,7 @@ public class AlgaeReefRemoverSubsystem extends SubsystemBase {
     }
 
     public void setIntakeSpeed(double speed) {
-        if(Flags.AlgaeReefRemover.ENABLED) {
+        if (Flags.AlgaeReefRemover.ENABLED) {
             algaeRemoverMotor.set(speed);
         }
     }

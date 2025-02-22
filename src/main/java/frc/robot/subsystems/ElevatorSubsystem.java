@@ -127,6 +127,11 @@ public class ElevatorSubsystem extends SubsystemBase {
     {
         return Math.abs(getCurrentHeight() - this.currentSetpointMeters) < 0.05;
     }
+    
+    private void resetMotorEncodersToAbsoluteEncoders() {
+        rightMotorEncoder.setPosition(rightAbsoluteEncoder.getPosition());
+        leftMotorEncoder.setPosition(leftAbsoluteEncoder.getPosition());
+    }
 
     private void resetEncoders() {
         rightMotorEncoder.setPosition(0);
@@ -160,6 +165,9 @@ public class ElevatorSubsystem extends SubsystemBase {
         leftHeightRelPub.setDouble(this.getLeftRelativePosition());
         //leftHeightAbsRotPub.setDouble(this.leftThroughboreEncoder.getAbsolutePosition().getDegrees());
         //rightHeightAbsRotPub.setDouble(this.leftThroughboreEncoder.getAbsolutePosition().getDegrees());
+        if (getLeftLimitSwitch() || getRightLimitSwitch()) {
+            // resetMotorEncodersToAbsoluteEncoders();
+        }
     }
 
     public void setTargetHeight(double heightMeters) {
