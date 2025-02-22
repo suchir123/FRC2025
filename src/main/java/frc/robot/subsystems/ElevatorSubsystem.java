@@ -15,37 +15,25 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.networktables.GenericPublisher;
 import edu.wpi.first.networktables.NetworkTableType;
 import edu.wpi.first.wpilibj.DigitalInput;
-import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Flags;
 import frc.robot.util.NetworkTablesUtil;
 
 public class ElevatorSubsystem extends SubsystemBase {
+    public static final GenericPublisher leftHeightAbsRotPub = NetworkTablesUtil.getPublisher("robot", "leftElevAR", NetworkTableType.kDouble);
+    public static final GenericPublisher rightHeightAbsRotPub = NetworkTablesUtil.getPublisher("robot", "rightElevAR", NetworkTableType.kDouble);
+
+    private static final double MAX_HEIGHT = 1.1;
     private static final double MIN_HEIGHT = 0.0;
-    private static final double MAX_HEIGHT = 1.0; //not the final value, will test later
-
-    private final DigitalInput toplimitswitch = new DigitalInput(0);
-    private final DigitalInput bottomlimitswitch = new DigitalInput(1);
-
-    private final SparkMax rightMotor;
-    private final SparkMax leftMotor;
-
-    private final RelativeEncoder rightMotorEncoder;
-    private final RelativeEncoder leftMotorEncoder;
-
-    private final ThroughboreEncoder rightThroughboreEncoder;
-    private final ThroughboreEncoder leftThroughboreEncoder;
-
-    private final SparkClosedLoopController rightPIDController;
-    private final SparkClosedLoopController leftPIDController;
-
+    // private static final double MAX_OUTPUT_RIGHT_ELEVATOR_PIDS = 0.6;
+    private static final double MAX_OUTPUT_LEFT_ELEVATOR_PIDS = 0.4;
     private final static double ABSOLUTE_DEGREES_PER_RELATIVE_DEGREES = 1426.64 / 8254.24;
     private final static double ROTATIONS_PER_METER_ASCENDED = Rotation2d.fromDegrees(742.5).getRotations() / 0.5;
     private final static double METERS_ASCENDED_PER_ROTATION = 1 / ROTATIONS_PER_METER_ASCENDED;
 
-    private static final GenericPublisher leftHeightAbsPub = NetworkTablesUtil.getPublisher("robot", "leftElevAbsH", NetworkTableType.kDouble);
-    private static final GenericPublisher rightHeightAbsPub = NetworkTablesUtil.getPublisher("robot", "rightElevAbsH", NetworkTableType.kDouble);
+    // private static final GenericPublisher leftHeightAbsPub = NetworkTablesUtil.getPublisher("robot", "leftElevAbsH", NetworkTableType.kDouble);
+    // private static final GenericPublisher rightHeightAbsPub = NetworkTablesUtil.getPublisher("robot", "rightElevAbsH", NetworkTableType.kDouble);
     private static final GenericPublisher leftHeightRelPub = NetworkTablesUtil.getPublisher("robot", "leftElevRelH", NetworkTableType.kDouble);
     private static final GenericPublisher rightHeightRelPub = NetworkTablesUtil.getPublisher("robot", "rightElevRelH", NetworkTableType.kDouble);
     private final SparkMax rightMotor;
@@ -172,8 +160,17 @@ public class ElevatorSubsystem extends SubsystemBase {
     }
 
     public void setTargetHeight(double heightMeters) {
-        this.rightPIDController.setReference(heightMeters, SparkBase.ControlType.kPosition);
-        this.leftPIDController.setReference(heightMeters, SparkBase.ControlType.kPosition);
+        if (Flags.Elevator.ENABLED) {
+            if (heightMeters <= MAX_HEIGHT && heightMeters >= MIN_HEIGHT) {
+                this.rightPIDController.setReference(heightMeters, SparkBase.ControlType.kPosition, ClosedLoopSlot.kSlot0, 0);
+                this.leftPIDController.setReference(heightMeters, SparkBase.ControlType.kPosition, ClosedLoopSlot.kSlot0, 0);
+            }
+        }
+    }
+
+    public void setRelativeEncodersToAbsolute() {
+        rightMotorEncoder.setPosition(getRightMetersAscended());
+        leftMotorEncoder.setPosition(getLeftMetersAscended());
     }
 
     public void setRawSpeeds(double rightSpeed, double leftSpeed) {
@@ -207,5 +204,13 @@ public class ElevatorSubsystem extends SubsystemBase {
 
     public double getRightRelativePosition() {
         return this.rightMotorEncoder.getPosition();
+    }
+
+    public boolean getLeftLimitSwitch() {
+        return !this.leftLimitSwitch.get(); // active low
+    }
+
+    public boolean getRightLimitSwitch() {
+        return !this.rightLimitSwitch.get(); // active low
     }
 }
