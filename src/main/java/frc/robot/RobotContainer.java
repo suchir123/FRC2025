@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandPS5Controller;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.*;
+import frc.robot.commands.autons.ElevatorAutonManager;
 import frc.robot.commands.elevator.ElevatorControlCommand;
 import frc.robot.commands.elevator.ElevatorStateManager;
 import frc.robot.commands.elevator.ElevatorStateManager.CoralIntakeState;
@@ -56,6 +57,7 @@ public class RobotContainer {
     private final AlgaeGroundIntakeSubsystem algaeGroundIntake;
 
     private final ElevatorStateManager elevatorStateManager = ElevatorStateManager.INSTANCE;
+    private final ElevatorAutonManager elevatorAutonManager;
 
     public RobotContainer() {
         this.driveTrain = Util.createIfFlagElseNull(DriveTrainSubsystem::new, Flags.DriveTrain.IS_ATTACHED);
@@ -64,6 +66,7 @@ public class RobotContainer {
         this.coralIntake = Util.createIfFlagElseNull(CoralIntakeSubsystem::new, Flags.CoralIntake.IS_ATTACHED);
         this.algaeReefRemover = Util.createIfFlagElseNull(AlgaeReefRemoverSubsystem::new, Flags.AlgaeReefRemover.IS_ATTACHED);
         this.algaeGroundIntake = Util.createIfFlagElseNull(AlgaeGroundIntakeSubsystem::new, Flags.AlgaeGroundIntake.IS_ATTACHED);
+        this.elevatorAutonManager = new ElevatorAutonManager(elevators);
 
         configureNamedCommands();
 
@@ -85,11 +88,11 @@ public class RobotContainer {
     }
 
     private void configureNamedCommands() {
-        NamedCommands.registerCommand("GoToL4", elevatorStateManager.getGoToL4Command());
-        NamedCommands.registerCommand("GoToL3", elevatorStateManager.getGoToL3Command());
-        NamedCommands.registerCommand("GoToL2", elevatorStateManager.getGoToL2Command());
-        NamedCommands.registerCommand("GoToL1", elevatorStateManager.getGoToL1Command());
-        NamedCommands.registerCommand("GoToIntakeAngle", elevatorStateManager.getGoToIntakeStateCommand());
+        NamedCommands.registerCommand("GoToL4", this.elevatorAutonManager.getGoToL4Command());
+        NamedCommands.registerCommand("GoToL3", this.elevatorAutonManager.getGoToL3Command());
+        NamedCommands.registerCommand("GoToL2", this.elevatorAutonManager.getGoToL2Command());
+        NamedCommands.registerCommand("GoToL1", this.elevatorAutonManager.getGoToL1Command());
+        NamedCommands.registerCommand("GoToIntakeAngle", this.elevatorAutonManager.getGoToIntakeStateCommand());
         
         
     }

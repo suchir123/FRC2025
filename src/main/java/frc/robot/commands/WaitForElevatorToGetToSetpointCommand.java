@@ -1,15 +1,13 @@
 package frc.robot.commands;
 
-import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.wpilibj.Timer;
+import java.util.function.BooleanSupplier;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.commands.elevator.ElevatorStateManager;
-import frc.robot.subsystems.ClimberSubsystem;
-import frc.robot.subsystems.staticsubsystems.RobotGyro;
 
 public class WaitForElevatorToGetToSetpointCommand extends Command {
-    public WaitForElevatorToGetToSetpointCommand() {
+    private final BooleanSupplier getAtSetpoint;
+
+    public WaitForElevatorToGetToSetpointCommand(BooleanSupplier getAtSetpoint) {
+        this.getAtSetpoint = getAtSetpoint;
     }
 
     @Override
@@ -28,6 +26,6 @@ public class WaitForElevatorToGetToSetpointCommand extends Command {
     // Returns true when the command should end.
     @Override
     public boolean isFinished() {
-        return ElevatorStateManager.INSTANCE.atSetpoint();
+        return getAtSetpoint.getAsBoolean();
     }
 }
