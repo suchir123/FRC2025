@@ -7,6 +7,7 @@ import com.pathplanner.lib.auto.NamedCommands;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandPS4Controller;
 import edu.wpi.first.wpilibj2.command.button.CommandPS5Controller;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -93,8 +94,8 @@ public class RobotContainer {
         NamedCommands.registerCommand("GoToL2", this.elevatorAutonManager.getGoToL2Command());
         NamedCommands.registerCommand("GoToL1", this.elevatorAutonManager.getGoToL1Command());
         NamedCommands.registerCommand("GoToIntakeAngle", this.elevatorAutonManager.getGoToIntakeStateCommand());
-        
-        
+        NamedCommands.registerCommand("PlaceCoral", this.elevatorAutonManager.getPlaceCoralCommand());
+        NamedCommands.registerCommand("WaitForHumanPlayerCoral", new WaitCommand(1.5));
     }
 
     private void configureBindings() {
