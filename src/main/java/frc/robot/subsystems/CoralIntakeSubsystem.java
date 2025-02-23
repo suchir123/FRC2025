@@ -14,9 +14,12 @@ import com.revrobotics.spark.config.SparkBaseConfig;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.networktables.GenericPublisher;
+import edu.wpi.first.networktables.NetworkTableType;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Flags;
+import frc.robot.util.NetworkTablesUtil;
 
 public class CoralIntakeSubsystem extends SubsystemBase {
     private static final double VERY_HARD_BACK_LIMIT = 0.03; // to make sure we don't roll-over the intake
@@ -28,6 +31,9 @@ public class CoralIntakeSubsystem extends SubsystemBase {
     private final SparkLimitSwitch coralLimitSwitch;
 
     private final SparkClosedLoopController coralPivotPIDController;
+
+    private static final GenericPublisher pivotAnglePublisher = NetworkTablesUtil.getPublisher("robot", "coralPivotAbsoluteEncoderPosition", NetworkTableType.kDouble);
+    //private static final GenericPublisher coralIntakeMotorPublisher = NetworkTablesUtil.getPublisher("robot", "coralIntakeMotorPosition", NetworkTableType.kDouble);
 
     private final SparkMax coralIntakeMotor;
 
@@ -53,7 +59,7 @@ public class CoralIntakeSubsystem extends SubsystemBase {
         coralPivotMotorConfig.closedLoop
                 .feedbackSensor(ClosedLoopConfig.FeedbackSensor.kAbsoluteEncoder)
                 .pidf(2.5, 0, 0, 0)
-                .outputRange(-0.4, 0.4);
+                .outputRange(-0.2, 0.2);
         coralPivotMotorConfig.closedLoop.maxMotion
                 .maxVelocity(0.5 * 60)
                 .maxAcceleration(0.5 * 60);
@@ -86,6 +92,7 @@ public class CoralIntakeSubsystem extends SubsystemBase {
         // System.out.println(this.coralPivotAbsoluteEncoder.getPosition());
         // throughboreEncoder.periodic();
         // System.out.println(this.coralLimitSwitch.isPressed());
+        pivotAnglePublisher.setDouble(this.coralPivotAbsoluteEncoder.getPosition());
     }
 
     public boolean hasCoral() {

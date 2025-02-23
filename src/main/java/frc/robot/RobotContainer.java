@@ -104,14 +104,14 @@ public class RobotContainer {
     private void configureBindings() {
         if (Flags.Elevator.IS_ATTACHED && !Flags.Elevator.USE_TEST_ELEVATOR_COMMAND && !Flags.Elevator.USE_TEST_PID_COMMAND && !Flags.CoralIntake.USE_TEST_PID_COMMAND) {
             ControlHandler.get(this.ps4Controller, OperatorConstants.SecondaryControllerConstants.INTAKE_STATE).onTrue(new InstantCommand(() -> elevatorStateManager.cloneState()
-                    .setHeight(0)
+                    .setHeight(0.1)
                     .setPivotAngle(Rotation2d.fromRotations(0.14))
                     .setCoralIntakeState(ElevatorStateManager.CoralIntakeState.STOPPED)
                     .setRunAlgaeRemover(false)
                     .setAsCurrent()));
 
             ControlHandler.get(this.ps4Controller, OperatorConstants.SecondaryControllerConstants.L1).onTrue(new InstantCommand(() -> elevatorStateManager.cloneState()
-                    .setHeight(0)
+                    .setHeight(0.15)
                     .setPivotAngle(Rotation2d.fromRotations(0.03))
                     .setCoralIntakeState(ElevatorStateManager.CoralIntakeState.STOPPED)
                     .setRunAlgaeRemover(false)
@@ -228,7 +228,10 @@ public class RobotContainer {
     public Command getAutonomousCommand() {
         // This method will return an actual auton path once we implement it & switch in the comment.
         // return new InstantCommand();
-        return this.autonChooser.getSelected();
+        if(this.autonChooser != null) {
+            return this.autonChooser.getSelected();
+        }
+        return new InstantCommand();
     }
 
     public void onTeleopPeriodic() {

@@ -28,7 +28,7 @@ public class ElevatorAutonManager {
     
     public Command getGoToIntakeStateCommand() {
         return new InstantCommand(() -> ElevatorStateManager.INSTANCE.cloneState()
-            .setHeight(0)
+            .setHeight(0.1)
             .setPivotAngle(Rotation2d.fromRotations(0.14))
             .setCoralIntakeState(ElevatorStateManager.CoralIntakeState.STOPPED)
             .setRunAlgaeRemover(false)

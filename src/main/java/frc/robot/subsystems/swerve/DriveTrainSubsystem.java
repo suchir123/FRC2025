@@ -4,6 +4,8 @@
 
 package frc.robot.subsystems.swerve;
 
+import com.pathplanner.lib.config.PIDConstants;
+import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.Nat;
@@ -39,6 +41,10 @@ import frc.robot.util.NetworkTablesUtil;
 import frc.robot.util.QuestNav;
 
 import static edu.wpi.first.units.Units.RadiansPerSecond;
+
+import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.config.RobotConfig;
+import frc.robot.util.Util;
 
 /**
  * Represents a swerve drive style drivetrain.
@@ -123,20 +129,33 @@ public class DriveTrainSubsystem extends SubsystemBase {
 
         QuestNav.INSTANCE.zeroPosition();
         QuestNav.INSTANCE.zeroHeading();
-
-        // this.setPose(new Pose2d(1.7, 5.50, RobotGyro.getRotation2d()));
-        // this.setPose(GeometryUtil.flipFieldPose(new Pose2d(1.37, 5.52, new Rotation2d())));
-
-        /*
+        
+        this.configureAutoBuilder();
+    }
+    
+    private void configureAutoBuilder() {
+        RobotConfig config;
+        try {
+            config = RobotConfig.fromGUISettings();
+        } catch(Exception e) {
+            System.out.println("Error while loading robotconfig for auto");
+            e.printStackTrace();
+            config = null;
+        }
+        
         AutoBuilder.configure(
-                this::getPose,
-                this::setPose,
-                this::getRobotRelativeChassisSpeeds,
-                (chassisSpeeds, feedForwards) -> this.consumeRawModuleStates(kinematics.toSwerveModuleStates(chassisSpeeds)),
-                new HolonomicPathFollowerConfig(2.00, RobotConstants.LEG_LENGTHS_M * RobotConstants.LEG_LENGTHS_M, new ReplanningConfig(true, true, 1, 0.1)),
-                () -> !Util.onBlueTeam(),
-                this
-        );*/
+            this::getPose,
+            this::setPose,
+            this::getRobotRelativeChassisSpeeds,
+            this::consumeChassisSpeeds,
+            new PPHolonomicDriveController(
+                new PIDConstants(1, 0, 0),
+                new PIDConstants(1, 0, 0)
+            ),
+            config, // womp womp if its null
+            () -> !Util.onBlueTeam(),
+            this
+        );
     }
 
     /**
@@ -151,6 +170,10 @@ public class DriveTrainSubsystem extends SubsystemBase {
                 backLeft.getAbsoluteModulePosition(),
                 backRight.getAbsoluteModulePosition()
         };
+    }
+
+    public void consumeChassisSpeeds(ChassisSpeeds chassisSpeeds) {
+        this.consumeRawModuleStates(kinematics.toSwerveModuleStates(chassisSpeeds));
     }
 
     /**
