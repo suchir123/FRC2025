@@ -2,9 +2,12 @@ package frc.robot;
 
 import java.util.function.Supplier;
 
+import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandPS4Controller;
@@ -46,7 +49,7 @@ public class RobotContainer {
     private final PowerHandler powerHandler = new PowerHandler();
     // private final AprilTagHandler aprilTagHandler = new AprilTagHandler();
 
-    // private final SendableChooser<Command> autonChooser;
+    private final SendableChooser<Command> autonChooser;
 
     private final DriveTrainSubsystem driveTrain;
     private final ElevatorSubsystem elevators;
@@ -74,12 +77,12 @@ public class RobotContainer {
         RobotGyro.poke();
         // ColorSensor.poke();
 
-        // if (Flags.DriveTrain.IS_ATTACHED && Flags.DriveTrain.ENABLE_AUTON_CHOOSER) {
-        //     this.autonChooser = AutoBuilder.buildAutoChooser();
-        //     SmartDashboard.putData("choose your auto", this.autonChooser);
-        // } else {
-        //     this.autonChooser = null;
-        // }
+        if (Flags.DriveTrain.IS_ATTACHED && Flags.DriveTrain.ENABLE_AUTON_CHOOSER) {
+             this.autonChooser = AutoBuilder.buildAutoChooser();
+             SmartDashboard.putData("choose your auto", this.autonChooser);
+        } else {
+             this.autonChooser = null;
+        }
 
         NetworkTablesUtil.getConnections();
     }
@@ -220,7 +223,8 @@ public class RobotContainer {
 
     public Command getAutonomousCommand() {
         // This method will return an actual auton path once we implement it & switch in the comment.
-        return new InstantCommand(); //this.autonChooser.getSelected();
+        // return new InstantCommand();
+        return this.autonChooser.getSelected();
     }
 
     public void onTeleopPeriodic() {
