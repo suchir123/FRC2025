@@ -108,7 +108,9 @@ public class RobotContainer {
                     .setPivotAngle(Rotation2d.fromRotations(0.14))
                     .setCoralIntakeState(ElevatorStateManager.CoralIntakeState.STOPPED)
                     .setRunAlgaeRemover(false)
-                    .setAsCurrent()));
+                    .setAsCurrent())
+                    
+                    );
 
             ControlHandler.get(this.ps4Controller, OperatorConstants.SecondaryControllerConstants.L1).onTrue(new InstantCommand(() -> elevatorStateManager.cloneState()
                     .setHeight(0.15)
@@ -168,6 +170,8 @@ public class RobotContainer {
 
                 ControlHandler.get(this.ps4Controller, OperatorConstants.PrimaryControllerConstants.REEF_AUTO_AIM).whileTrue(new ReefAprilTagCenterCommand(driveTrain, this.primaryController));
                 ControlHandler.get(this.ps4Controller, OperatorConstants.PrimaryControllerConstants.ALGAE_AUTO_AIM).whileTrue(new AlgaeCenterCommand(driveTrain, this.primaryController));
+                ControlHandler.get(this.ps4Controller, OperatorConstants.SecondaryControllerConstants.L2).whileTrue(new LowerSecondaryDrive(driveTrain, this.primaryController));
+                ControlHandler.get(this.ps4Controller, OperatorConstants.SecondaryControllerConstants.INTAKE_STATE).whileTrue(new LowerSecondaryDrive(driveTrain, this.primaryController));
             }
         }
     }
