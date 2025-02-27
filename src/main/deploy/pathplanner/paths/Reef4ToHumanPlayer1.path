@@ -8,20 +8,20 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 3.0614999999999997,
-        "y": 3.02075
+        "x": 3.198,
+        "y": 2.9817499999999995
       },
       "isLocked": false,
       "linkedName": "Reef4"
     },
     {
       "anchor": {
-        "x": 1.2471318493150685,
-        "y": 1.0048373287671233
+        "x": 1.6380000000000001,
+        "y": 0.71
       },
       "prevControl": {
-        "x": 1.9110000000000005,
-        "y": 1.8409999999999993
+        "x": 2.0135015660780855,
+        "y": 1.3262714239625137
       },
       "nextControl": null,
       "isLocked": false,
@@ -42,13 +42,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 53.84181456019162
+    "rotation": -126.15800000000002
   },
   "reversed": false,
   "folder": "FourBigBooms",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 179.16968451374197
+    "rotation": 0.0
   },
   "useDefaultConstraints": true
 }
