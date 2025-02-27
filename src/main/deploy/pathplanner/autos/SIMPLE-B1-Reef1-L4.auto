@@ -7,13 +7,25 @@
         {
           "type": "path",
           "data": {
-            "pathName": "GoToNearReefFromB1-Direct"
+            "pathName": "Blue1ToReef1"
           }
         },
         {
           "type": "named",
           "data": {
             "name": "GoToL4"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "PlaceCoral"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "ElevatorDown"
           }
         }
       ]
