@@ -108,12 +108,10 @@ public class RobotContainer {
                     .setPivotAngle(Rotation2d.fromRotations(0.14))
                     .setCoralIntakeState(ElevatorStateManager.CoralIntakeState.STOPPED)
                     .setRunAlgaeRemover(false)
-                    .setAsCurrent())
-                    
-                    );
+                    .setAsCurrent()));
 
             ControlHandler.get(this.ps4Controller, OperatorConstants.SecondaryControllerConstants.L1).onTrue(new InstantCommand(() -> elevatorStateManager.cloneState()
-                    .setHeight(0.15)
+                    .setHeight(0)
                     .setPivotAngle(Rotation2d.fromRotations(0.03))
                     .setCoralIntakeState(ElevatorStateManager.CoralIntakeState.STOPPED)
                     .setRunAlgaeRemover(false)
@@ -140,9 +138,11 @@ public class RobotContainer {
                     .setRunAlgaeRemover(false)
                     .primeAsNext()));
 
-            ControlHandler.get(this.primaryController, OperatorConstants.PrimaryControllerConstants.CLIMB_PIVOT_ANGLE).onTrue(new InstantCommand(() -> elevatorStateManager.cloneState()
+            ControlHandler.get(this.primaryController, OperatorConstants.PrimaryControllerConstants.CLIMB_PIVOT_ANGLE_PRIMARY)
+                .or(ControlHandler.get(this.ps4Controller, OperatorConstants.SecondaryControllerConstants.CLIMB_PIVOT_ANGLE_SECONDARY))
+                .onTrue(new InstantCommand(() -> elevatorStateManager.cloneState()
                     .setHeight(0)
-                    .setPivotAngle(Rotation2d.fromRotations(0.35))
+                    .setPivotAngle(Rotation2d.fromRotations(0.4))
                     .setCoralIntakeState(CoralIntakeState.STOPPED)
                     .setRunAlgaeRemover(false)
                     .setAsCurrent()));
@@ -168,10 +168,10 @@ public class RobotContainer {
                     this.driveTrain.setHeadingLockMode(false);
                 }));
 
-                ControlHandler.get(this.ps4Controller, OperatorConstants.PrimaryControllerConstants.REEF_AUTO_AIM).whileTrue(new ReefAprilTagCenterCommand(driveTrain, this.primaryController));
-                ControlHandler.get(this.ps4Controller, OperatorConstants.PrimaryControllerConstants.ALGAE_AUTO_AIM).whileTrue(new AlgaeCenterCommand(driveTrain, this.primaryController));
-                ControlHandler.get(this.ps4Controller, OperatorConstants.SecondaryControllerConstants.L2).whileTrue(new LowerSecondaryDrive(driveTrain, this.primaryController));
-                ControlHandler.get(this.ps4Controller, OperatorConstants.SecondaryControllerConstants.INTAKE_STATE).whileTrue(new LowerSecondaryDrive(driveTrain, this.primaryController));
+                //ControlHandler.get(this.ps4Controller, OperatorConstants.PrimaryControllerConstants.REEF_AUTO_AIM).whileTrue(new ReefAprilTagCenterCommand(driveTrain, this.primaryController));
+                //ControlHandler.get(this.ps4Controller, OperatorConstants.PrimaryControllerConstants.ALGAE_AUTO_AIM).whileTrue(new AlgaeCenterCommand(driveTrain, this.primaryController));
+                ControlHandler.get(this.ps4Controller, OperatorConstants.SecondaryControllerConstants.MICRO_ADJUST_DRIVING).whileTrue(new SlowerManualDriveCommand(driveTrain, this.primaryController));
+                //ControlHandler.get(this.ps4Controller, OperatorConstants.SecondaryControllerConstants.INTAKE_STATE).whileTrue(new SlowerManualDriveCommand(driveTrain, this.primaryController));
             }
         }
     }

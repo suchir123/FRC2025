@@ -1,6 +1,7 @@
 package frc.robot.subsystems;
 
 
+import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.SparkBase;
 import com.revrobotics.spark.SparkClosedLoopController;
@@ -8,6 +9,8 @@ import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.SparkBaseConfig;
 import com.revrobotics.spark.config.SparkMaxConfig;
+import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
+
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.networktables.GenericPublisher;
 import edu.wpi.first.networktables.NetworkTableType;
@@ -25,6 +28,7 @@ public class ClimberSubsystem extends SubsystemBase {
 
     private final SparkMax climbMotor;
     private final RelativeEncoder climbMotorEncoder;
+    private final AbsoluteEncoder climbMotorAbsoluteEncoder;
 
     private static final GenericPublisher climbMotorEncoderVelocityPublisher = NetworkTablesUtil.getPublisher("robot", "climbMotorVelocity", NetworkTableType.kDouble);
     private static final GenericPublisher climbMotorEncoderPositionPublisher = NetworkTablesUtil.getPublisher("robot", "climbMotorPosition", NetworkTableType.kDouble);
@@ -34,6 +38,7 @@ public class ClimberSubsystem extends SubsystemBase {
     public ClimberSubsystem() {
         climbMotor = new SparkMax(Constants.PortConstants.CAN.CLIMBER_MOTOR_ID, MotorType.kBrushless);
         climbMotorEncoder = climbMotor.getEncoder();
+        climbMotorAbsoluteEncoder = climbMotor.getAbsoluteEncoder();
         // throughboreEncoder = new ThroughboreEncoder(Constants.PortConstants.DIO.CLIMBER_ABSOLUTE_ENCODER_ABS_PORT, 0, false);
         pidController = climbMotor.getClosedLoopController();
 
@@ -45,7 +50,8 @@ public class ClimberSubsystem extends SubsystemBase {
                 .voltageCompensation(12);
         climbMotorConfig.closedLoop
                 .pidf(1, 0, 0, 0)
-                .outputRange(-0.6, 0.6);
+                .outputRange(-0.6, 0.6)
+                .feedbackSensor(FeedbackSensor.kAbsoluteEncoder);
 
         climbMotor.configure(climbMotorConfig, SparkBase.ResetMode.kResetSafeParameters, SparkBase.PersistMode.kPersistParameters);
         // throughboreEncoder.name = "climber";
@@ -55,6 +61,7 @@ public class ClimberSubsystem extends SubsystemBase {
     public void periodic() {
         climbMotorEncoderVelocityPublisher.setDouble(climbMotorEncoder.getVelocity());
         climbMotorEncoderPositionPublisher.setDouble(climbMotorEncoder.getPosition());
+        System.out.println("climbMotorAbsoluteEncoder.getPosition() is " + climbMotorAbsoluteEncoder.getPosition());
         // throughboreEncoder.periodic();
     }
 

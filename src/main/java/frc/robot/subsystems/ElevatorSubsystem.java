@@ -157,7 +157,7 @@ public class ElevatorSubsystem extends SubsystemBase {
                            "Right position (relative)= " + this.getRightRelativePosition() + "\n" + 
                            "Left position (relative)= " + this.getLeftRelativePosition() + "\n");
         // <-- leave both of these --> */
-        resetEncodersIfLimit();
+        // resetEncodersIfLimit();
 
         // rightHeightAbsPub.setDouble(this.getRightMetersAscended());
         // leftHeightAbsPub.setDouble(this.getLeftMetersAscended());
