@@ -16,12 +16,12 @@
     },
     {
       "anchor": {
-        "x": 5.829965753424658,
-        "y": 4.040025684931507
+        "x": 3.1403681506845516,
+        "y": 3.964897260279329
       },
       "prevControl": {
-        "x": 5.603034880943877,
-        "y": 3.9351334587414253
+        "x": 2.9134372782037703,
+        "y": 3.860005034089247
       },
       "nextControl": null,
       "isLocked": false,
@@ -34,7 +34,7 @@
   "eventMarkers": [],
   "globalConstraints": {
     "maxVelocity": 3.0,
-    "maxAcceleration": 3.0,
+    "maxAcceleration": 8.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
     "nominalVoltage": 12.0,
@@ -42,7 +42,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 0.0
+    "rotation": 180.0
   },
   "reversed": false,
   "folder": "GoToNearReefFrom (Direct)",

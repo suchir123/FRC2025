@@ -2,9 +2,12 @@ package frc.robot;
 
 import java.util.function.Supplier;
 
+import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
@@ -48,7 +51,7 @@ public class RobotContainer {
     private final PowerHandler powerHandler = new PowerHandler();
     // private final AprilTagHandler aprilTagHandler = new AprilTagHandler();
 
-    // private final SendableChooser<Command> autonChooser;
+    private final SendableChooser<Command> autonChooser;
 
     private final DriveTrainSubsystem driveTrain;
     private final ElevatorSubsystem elevators;
@@ -78,12 +81,12 @@ public class RobotContainer {
         RobotGyro.poke();
         // ColorSensor.poke();
 
-        // if (Flags.DriveTrain.IS_ATTACHED && Flags.DriveTrain.ENABLE_AUTON_CHOOSER) {
-        //     this.autonChooser = AutoBuilder.buildAutoChooser();
-        //     SmartDashboard.putData("choose your auto", this.autonChooser);
-        // } else {
-        //     this.autonChooser = null;
-        // }
+        if (Flags.DriveTrain.IS_ATTACHED && Flags.DriveTrain.ENABLE_AUTON_CHOOSER) {
+             this.autonChooser = AutoBuilder.buildAutoChooser();
+             SmartDashboard.putData("choose your auto", this.autonChooser);
+        } else {
+             this.autonChooser = null;
+        }
 
         NetworkTablesUtil.getConnections();
     }
@@ -101,14 +104,16 @@ public class RobotContainer {
     private void configureBindings() {
         if (Flags.Elevator.IS_ATTACHED && !Flags.Elevator.USE_TEST_ELEVATOR_COMMAND && !Flags.Elevator.USE_TEST_PID_COMMAND && !Flags.CoralIntake.USE_TEST_PID_COMMAND) {
             ControlHandler.get(this.ps4Controller, OperatorConstants.SecondaryControllerConstants.INTAKE_STATE).onTrue(new InstantCommand(() -> elevatorStateManager.cloneState()
-                    .setHeight(0)
+                    .setHeight(0.1)
                     .setPivotAngle(Rotation2d.fromRotations(0.14))
                     .setCoralIntakeState(ElevatorStateManager.CoralIntakeState.STOPPED)
                     .setRunAlgaeRemover(false)
-                    .setAsCurrent()));
+                    .setAsCurrent())
+                    
+                    );
 
             ControlHandler.get(this.ps4Controller, OperatorConstants.SecondaryControllerConstants.L1).onTrue(new InstantCommand(() -> elevatorStateManager.cloneState()
-                    .setHeight(0)
+                    .setHeight(0.15)
                     .setPivotAngle(Rotation2d.fromRotations(0.03))
                     .setCoralIntakeState(ElevatorStateManager.CoralIntakeState.STOPPED)
                     .setRunAlgaeRemover(false)
@@ -165,6 +170,8 @@ public class RobotContainer {
 
                 ControlHandler.get(this.ps4Controller, OperatorConstants.PrimaryControllerConstants.REEF_AUTO_AIM).whileTrue(new ReefAprilTagCenterCommand(driveTrain, this.primaryController));
                 ControlHandler.get(this.ps4Controller, OperatorConstants.PrimaryControllerConstants.ALGAE_AUTO_AIM).whileTrue(new AlgaeCenterCommand(driveTrain, this.primaryController));
+                ControlHandler.get(this.ps4Controller, OperatorConstants.SecondaryControllerConstants.L2).whileTrue(new LowerSecondaryDrive(driveTrain, this.primaryController));
+                ControlHandler.get(this.ps4Controller, OperatorConstants.SecondaryControllerConstants.INTAKE_STATE).whileTrue(new LowerSecondaryDrive(driveTrain, this.primaryController));
             }
         }
     }
@@ -224,7 +231,11 @@ public class RobotContainer {
 
     public Command getAutonomousCommand() {
         // This method will return an actual auton path once we implement it & switch in the comment.
-        return new InstantCommand(); //this.autonChooser.getSelected();
+        // return new InstantCommand();
+        if(this.autonChooser != null) {
+            return this.autonChooser.getSelected();
+        }
+        return new InstantCommand();
     }
 
     public void onTeleopPeriodic() {

@@ -24,7 +24,7 @@ public final class Flags {
 
     public static class Elevator {
         public static final boolean IS_ATTACHED = true;
-        public static final boolean ENABLED = true;
+        public static final boolean ENABLED = false;
         public static final boolean USE_TEST_ELEVATOR_COMMAND = false;
         public static final boolean USE_TEST_PID_COMMAND = false;
     }
@@ -120,6 +120,6 @@ public final class Flags {
         public static final boolean ENABLE_ANGULAR_VELOCITY_COMPENSATION_TELEOP = false;
 
         // True if the auton selection GUI in Shuffleboard is active and we're choosing autons from it
-        public static final boolean ENABLE_AUTON_CHOOSER = false;
+        public static final boolean ENABLE_AUTON_CHOOSER = true;
     }
 }

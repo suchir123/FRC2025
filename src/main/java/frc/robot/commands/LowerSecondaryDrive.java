@@ -7,7 +7,7 @@ import frc.robot.controllers.AbstractController;
 import frc.robot.subsystems.swerve.DriveTrainSubsystem;
 import frc.robot.util.Util;
 
-public class ManualDriveCommand extends Command {
+public class LowerSecondaryDrive extends Command {
     public static final double MAX_SPEED_METERS_PER_SEC = Flags.DriveTrain.LOWER_MAX_SPEED ? 1.5 : 3;
     public static final double MAX_ROT_SPEED_ANGULAR = 3;
     private final DriveTrainSubsystem driveTrain;
@@ -20,7 +20,7 @@ public class ManualDriveCommand extends Command {
     // private final LinearFilter filter = LinearFilter.singlePoleIIR(0.1, 0.02);
     // private boolean wasAutomaticallyDrivingLastFrame = false;
 
-    public ManualDriveCommand(DriveTrainSubsystem driveTrain, AbstractController joystick) { //AprilTagHandler aprilTagHandler) {
+    public LowerSecondaryDrive(DriveTrainSubsystem driveTrain, AbstractController joystick) { //AprilTagHandler aprilTagHandler) {
         this.driveTrain = driveTrain;
         this.joystick = joystick;
         // this.aprilTagHandler = aprilTagHandler;
@@ -42,14 +42,15 @@ public class ManualDriveCommand extends Command {
         }
     }
 
+    private static final double SCALE_FACTOR = 0.25;
+
     @Override
     public void execute() {
         // System.out.println("vert: " + this.joystick.getRightVerticalMovement() + ", hor: " + this.joystick.getRightHorizontalMovement());
         // this.driveTrain.drive(this.joystick.getVerticalMovement());
         double flip = flipFactor();
-        // We need a negative sign here because the robot starts facing in the other direction
-        double ySpeed = -Util.squareKeepSign(this.ySpeedLimiter.calculate(this.joystick.getLeftVerticalMovement() * flip)) * MAX_SPEED_METERS_PER_SEC;
-        double xSpeed = Util.squareKeepSign(this.xSpeedLimiter.calculate(this.joystick.getLeftHorizontalMovement() * flip)) * MAX_SPEED_METERS_PER_SEC;
+        double ySpeed = SCALE_FACTOR * -Util.squareKeepSign(this.ySpeedLimiter.calculate(this.joystick.getLeftVerticalMovement() * flip)) * MAX_SPEED_METERS_PER_SEC;
+        double xSpeed = SCALE_FACTOR * Util.squareKeepSign(this.xSpeedLimiter.calculate(this.joystick.getLeftHorizontalMovement() * flip)) * MAX_SPEED_METERS_PER_SEC;
         // System.out.println("xSpeed = " + xSpeed);
         // System.out.println("ySpeed = " + ySpeed);
 

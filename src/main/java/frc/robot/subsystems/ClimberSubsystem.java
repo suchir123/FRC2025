@@ -1,6 +1,7 @@
 package frc.robot.subsystems;
 
 
+import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.SparkBase;
 import com.revrobotics.spark.SparkClosedLoopController;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
@@ -8,11 +9,14 @@ import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.SparkBaseConfig;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.networktables.GenericPublisher;
+import edu.wpi.first.networktables.NetworkTableType;
 import edu.wpi.first.wpilibj.ADIS16470_IMU;
 import edu.wpi.first.wpilibj.ADIS16470_IMU.IMUAxis;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Flags;
+import frc.robot.util.NetworkTablesUtil;
 
 public class ClimberSubsystem extends SubsystemBase {
     public static final ADIS16470_IMU.IMUAxis ROBOT_TILT_AXIS = IMUAxis.kYaw;
@@ -20,11 +24,16 @@ public class ClimberSubsystem extends SubsystemBase {
     // private final ThroughboreEncoder throughboreEncoder;
 
     private final SparkMax climbMotor;
+    private final RelativeEncoder climbMotorEncoder;
+
+    private static final GenericPublisher climbMotorEncoderVelocityPublisher = NetworkTablesUtil.getPublisher("robot", "climbMotorVelocity", NetworkTableType.kDouble);
+    private static final GenericPublisher climbMotorEncoderPositionPublisher = NetworkTablesUtil.getPublisher("robot", "climbMotorPosition", NetworkTableType.kDouble);
 
     private final SparkClosedLoopController pidController;
 
     public ClimberSubsystem() {
         climbMotor = new SparkMax(Constants.PortConstants.CAN.CLIMBER_MOTOR_ID, MotorType.kBrushless);
+        climbMotorEncoder = climbMotor.getEncoder();
         // throughboreEncoder = new ThroughboreEncoder(Constants.PortConstants.DIO.CLIMBER_ABSOLUTE_ENCODER_ABS_PORT, 0, false);
         pidController = climbMotor.getClosedLoopController();
 
@@ -44,6 +53,8 @@ public class ClimberSubsystem extends SubsystemBase {
 
     @Override
     public void periodic() {
+        climbMotorEncoderVelocityPublisher.setDouble(climbMotorEncoder.getVelocity());
+        climbMotorEncoderPositionPublisher.setDouble(climbMotorEncoder.getPosition());
         // throughboreEncoder.periodic();
     }
 

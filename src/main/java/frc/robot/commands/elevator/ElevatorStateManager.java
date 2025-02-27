@@ -82,6 +82,7 @@ public class ElevatorStateManager {
      */
     public void pushNextState() {
         this.setState(this.getNextState());
+        this.setNextState(null);
     }
 
     /**
@@ -162,7 +163,9 @@ public class ElevatorStateManager {
          * Sets this state object as the current target state.
          */
         public void setAsCurrent() {
-            ElevatorStateManager.this.setState(this);
+            this.primeAsNext();
+            ElevatorStateManager.this.pushNextState();
+
         }
 
         /**
