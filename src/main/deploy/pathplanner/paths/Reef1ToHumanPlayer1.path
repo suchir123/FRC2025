@@ -8,36 +8,36 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 5.829965753424658,
-        "y": 2.73270374020979
+        "x": 5.78548703386355,
+        "y": 2.5236198082703165
       },
       "isLocked": false,
       "linkedName": "Reef1"
     },
     {
       "anchor": {
-        "x": 5.79,
-        "y": 2.3270976027397263
+        "x": 5.63422131147541,
+        "y": 1.68140368852459
       },
       "prevControl": {
-        "x": 5.970806481629084,
-        "y": 3.041439000233298
+        "x": 5.942899154195651,
+        "y": 2.097402052819573
       },
       "nextControl": {
-        "x": 5.679708904109589,
-        "y": 1.891352739726027
+        "x": 5.29783120284997,
+        "y": 1.2280581107533268
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 1.2471318493150685,
-        "y": 1.0048373287671233
+        "x": 1.6380000000000001,
+        "y": 0.71
       },
       "prevControl": {
-        "x": 2.0284674657534243,
-        "y": 0.704323630136986
+        "x": 2.691859832088533,
+        "y": 0.8874870317246593
       },
       "nextControl": null,
       "isLocked": false,
@@ -58,13 +58,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 53.84181456019162
+    "rotation": -126.15800000000002
   },
   "reversed": false,
   "folder": "FourBigBooms",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 0.0
+    "rotation": 180.0
   },
   "useDefaultConstraints": true
 }

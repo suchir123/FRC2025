@@ -3,25 +3,25 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.2471318493150685,
-        "y": 1.0048373287671233
+        "x": 1.6380000000000001,
+        "y": 0.7002499999999998
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.114881849319448,
-        "y": 1.619087328763319
+        "x": 2.5404704769087187,
+        "y": 2.1474289443824555
       },
       "isLocked": false,
       "linkedName": "HumanPlayer1"
     },
     {
       "anchor": {
-        "x": 3.831549657534247,
-        "y": 2.868022260273973
+        "x": 3.83175,
+        "y": 2.855
       },
       "prevControl": {
-        "x": 3.5487996575342473,
-        "y": 2.497522260273973
+        "x": 3.758743855608758,
+        "y": 2.4108769792189904
       },
       "nextControl": null,
       "isLocked": false,
@@ -34,7 +34,7 @@
   "eventMarkers": [],
   "globalConstraints": {
     "maxVelocity": 3.0,
-    "maxAcceleration": 8.0,
+    "maxAcceleration": 3.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
     "nominalVoltage": 12.0,
@@ -42,13 +42,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -119.99999999999999
+    "rotation": 59.99999999999999
   },
   "reversed": false,
   "folder": "FourBigBooms",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 53.84181456019162
+    "rotation": -126.15800000000002
   },
   "useDefaultConstraints": true
 }

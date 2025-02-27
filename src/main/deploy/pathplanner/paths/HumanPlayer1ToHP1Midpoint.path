@@ -3,29 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 8.7555,
-        "y": 6.101749999999999
+        "x": 1.6380000000000001,
+        "y": 0.7002499999999998
       },
       "prevControl": null,
       "nextControl": {
-        "x": 9.107057314202269,
-        "y": 6.180217143820318
+        "x": 2.54475,
+        "y": 1.685
       },
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "HumanPlayer1"
     },
     {
       "anchor": {
-        "x": 3.1403681506845516,
-        "y": 3.964897260279329
+        "x": 2.8957500000000005,
+        "y": 1.92875
       },
       "prevControl": {
-        "x": 2.9134372782037703,
-        "y": 3.860005034089247
+        "x": 2.554500000000001,
+        "y": 1.5875
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "NearReef"
+      "linkedName": "HP1Midpoint"
     }
   ],
   "rotationTargets": [],
@@ -34,21 +34,21 @@
   "eventMarkers": [],
   "globalConstraints": {
     "maxVelocity": 3.0,
-    "maxAcceleration": 8.0,
+    "maxAcceleration": 3.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
     "nominalVoltage": 12.0,
     "unlimited": false
   },
   "goalEndState": {
-    "velocity": 0,
-    "rotation": 180.0
+    "velocity": 2.0,
+    "rotation": 59.99999999999999
   },
   "reversed": false,
-  "folder": "GoToNearReefFrom (Direct)",
+  "folder": "FourBigBooms",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 0.0
+    "rotation": -126.15800000000002
   },
   "useDefaultConstraints": true
 }

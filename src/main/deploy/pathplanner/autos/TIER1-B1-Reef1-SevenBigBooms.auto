@@ -1,0 +1,142 @@
+{
+  "version": "2025.0",
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Blue1ToReef1"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "GoToL4"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "PlaceCoral"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "ElevatorDown"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Reef1ToHumanPlayer1"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "WaitForHumanPlayerCoral"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "HumanPlayer1ToHP1Midpoint"
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "HP1MidpointToReef5"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "GoToL4"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "PlaceCoral"
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "Reef5ToHumanPlayer1"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "ElevatorDown"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "WaitForHumanPlayerCoral"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "HumanPlayer1ToHP1Midpoint"
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "HP1MidpointToReef5"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "GoToL4"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "PlaceCoral"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "GoToL3"
+          }
+        }
+      ]
+    }
+  },
+  "resetOdom": true,
+  "folder": "BigBooms",
+  "choreoAuto": false
+}

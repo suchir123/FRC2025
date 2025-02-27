@@ -7,7 +7,43 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Blue1toReef1"
+            "pathName": "Blue1ToReef1"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "GoToL4"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "PlaceCoral"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "GoToIntakeAngle"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Reef1ToHumanPlayer1"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 1.5
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "HumanPlayer1ToReef5"
           }
         },
         {
@@ -31,7 +67,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Reef1ToHumanPlayer1"
+            "pathName": "Reef5ToHumanPlayer1"
           }
         },
         {

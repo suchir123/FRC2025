@@ -7,7 +7,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Blue1toReef1"
+            "pathName": "Blue1ToReef1"
           }
         },
         {
@@ -25,7 +25,7 @@
         {
           "type": "named",
           "data": {
-            "name": "GoToIntakeAngle"
+            "name": "ElevatorDown"
           }
         },
         {
@@ -62,42 +62,6 @@
           "type": "named",
           "data": {
             "name": "ElevatorDown"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "Reef5ToHumanPlayer1"
-          }
-        },
-        {
-          "type": "wait",
-          "data": {
-            "waitTime": 1.5
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "HumanPlayer1ToReef5"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "GoToL4"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "PlaceCoral"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "GoToIntakeAngle"
           }
         },
         {
