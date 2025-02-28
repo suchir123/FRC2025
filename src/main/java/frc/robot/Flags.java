@@ -32,8 +32,8 @@ public final class Flags {
     public static class Climber {
         public static final boolean IS_ATTACHED = true;
         public static final boolean ENABLED = true;
-        public static final boolean USE_TEST_CLIMBER_COMMAND = true;
-        public static final boolean USE_TEST_PID_COMMAND = false;
+        public static final boolean USE_TEST_CLIMBER_COMMAND = false;
+        public static final boolean USE_TEST_PID_COMMAND = true;
     }
 
     public static class CoralIntake {

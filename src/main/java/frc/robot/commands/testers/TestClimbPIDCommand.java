@@ -1,11 +1,13 @@
 package frc.robot.commands.testers;
 
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.commands.elevator.ElevatorStateManager;
+import frc.robot.commands.elevator.ElevatorStateManager.CoralIntakeState;
 import frc.robot.controllers.AbstractController;
 import frc.robot.subsystems.ClimberSubsystem;
-import frc.robot.subsystems.ElevatorSubsystem;
 
 public class TestClimbPIDCommand extends Command {
     private final ClimberSubsystem climber;
@@ -18,9 +20,9 @@ public class TestClimbPIDCommand extends Command {
         this.controller = c;
 
         uB = c.pov(0);
-        leftB = c.pov(90);
+        leftB = c.pov(270);
         lowB = c.pov(180);
-        rB = c.pov(270);
+        rB = c.pov(90);
 
         addRequirements(climber);
     }
@@ -34,17 +36,23 @@ public class TestClimbPIDCommand extends Command {
     @Override
     public void execute() {
         if (controller.getPOV() == 0) {
-            wasPID = true;
+            wasPID = false;
             climber.setRawSpeed(0.7);
         } else if (controller.getPOV() == 180) {
-            wasPID = true;
+            wasPID = false;
             climber.setRawSpeed(-0.7);
         } else if(rB.getAsBoolean()) {
-            wasPID = false;
-            climber.setTargetRotationCount(0.82);
+            wasPID = true;
+            climber.setTargetRotationCount(0.87);
+            ElevatorStateManager.INSTANCE.cloneState()
+                    .setHeight(0)
+                    .setPivotAngle(Rotation2d.fromRotations(0.4))
+                    .setCoralIntakeState(CoralIntakeState.STOPPED)
+                    .setRunAlgaeRemover(false)
+                    .setAsCurrent();
         } else if(leftB.getAsBoolean()) {
-            wasPID = false;
-            climber.setTargetRotationCount(0.68);
+            wasPID = true;
+            climber.setTargetRotationCount(0.712);
         } else if(!wasPID) {
             climber.setRawSpeed(0);
         }
