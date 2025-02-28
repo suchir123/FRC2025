@@ -24,10 +24,7 @@ import frc.robot.util.NetworkTablesUtil;
 
 public class ClimberSubsystem extends SubsystemBase {
     public static final ADIS16470_IMU.IMUAxis ROBOT_TILT_AXIS = IMUAxis.kYaw;
-    private static final double UPPER_HARD_LIMIT = 0.822;
-    // 0.8205 = climb start position
-    // set hard stop to 0.825
-
+    private static final double UPPER_HARD_LIMIT = 0.87;
     // private final ThroughboreEncoder throughboreEncoder;
 
     private final SparkMax climbMotor;
@@ -65,7 +62,7 @@ public class ClimberSubsystem extends SubsystemBase {
     public void periodic() {
         climbMotorEncoderVelocityPublisher.setDouble(climbMotorEncoder.getVelocity());
         climbMotorEncoderPositionPublisher.setDouble(climbMotorEncoder.getPosition());
-        // x    System.out.println("climbMotorAbsoluteEncoder.getPosition() is " + climbMotorAbsoluteEncoder.getPosition());
+        System.out.println("climbMotorAbsoluteEncoder.getPosition() is " + climbMotorAbsoluteEncoder.getPosition());
         // throughboreEncoder.periodic();
     }
 
@@ -78,6 +75,9 @@ public class ClimberSubsystem extends SubsystemBase {
 
     public void setRawSpeed(double speed) {
         if (Flags.Climber.ENABLED) {
+            if(speed > 0 && this.climbMotorAbsoluteEncoder.getPosition() >= UPPER_HARD_LIMIT - 0.01) {
+                return;
+            }
             climbMotor.set(speed);
         }
     }
