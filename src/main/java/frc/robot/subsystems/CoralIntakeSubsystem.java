@@ -59,7 +59,7 @@ public class CoralIntakeSubsystem extends SubsystemBase {
         coralPivotMotorConfig.closedLoop
                 .feedbackSensor(ClosedLoopConfig.FeedbackSensor.kAbsoluteEncoder)
                 .pidf(2.5, 0, 0, 0)
-                .outputRange(-0.2, 0.2);
+                .outputRange(-0.3, 0.3);
         coralPivotMotorConfig.closedLoop.maxMotion
                 .maxVelocity(0.5 * 60)
                 .maxAcceleration(0.5 * 60);

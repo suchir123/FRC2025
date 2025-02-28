@@ -22,9 +22,9 @@ public class TestClimberCommand extends Command {
     @Override
     public void execute() {
         if (joystick.getPOV() == 0) {
-            climber.setRawSpeed(0.35);
+            climber.setRawSpeed(0.7);
         } else if (joystick.getPOV() == 180) {
-            climber.setRawSpeed(-0.35);
+            climber.setRawSpeed(-0.7);
         } else {
             climber.setRawSpeed(0);
         }

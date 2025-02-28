@@ -26,6 +26,10 @@ public class WaitForElevatorToGetToSetpointCommand extends Command {
     // Returns true when the command should end.
     @Override
     public boolean isFinished() {
-        return getAtSetpoint.getAsBoolean();
+        boolean weAreAtTheSetpoint = getAtSetpoint.getAsBoolean();
+        if (weAreAtTheSetpoint) {
+            System.out.println("WaitForElevatorCommand got to the setpoint!");
+        }
+        return weAreAtTheSetpoint;
     }
 }

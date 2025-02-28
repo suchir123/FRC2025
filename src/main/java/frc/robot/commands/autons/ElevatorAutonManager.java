@@ -18,22 +18,26 @@ public class ElevatorAutonManager {
     }
 
     public Command getPlaceCoralCommand() {
-        return new InstantCommand(() -> ElevatorStateManager.INSTANCE.cloneState()
-            .setCoralIntakeState(ElevatorStateManager.CoralIntakeState.OUTTAKE)
-            .setAsCurrent()
-        ).andThen(
-            new WaitCommand(0.5)
+        return new InstantCommand(() -> {
+            System.out.println("PlaceCoralCommand InstantCommand ran!");
+            ElevatorStateManager.INSTANCE.cloneState()
+                .setCoralIntakeState(ElevatorStateManager.CoralIntakeState.INTAKE)
+                .setAsCurrent();
+        }).andThen(
+            new WaitCommand(1.0)
         );
     }
     
     public Command getGoToIntakeStateCommand() {
-        return new InstantCommand(() -> ElevatorStateManager.INSTANCE.cloneState()
-            .setHeight(0.1)
-            .setPivotAngle(Rotation2d.fromRotations(0.14))
-            .setCoralIntakeState(ElevatorStateManager.CoralIntakeState.STOPPED)
-            .setRunAlgaeRemover(false)
-            .setAsCurrent()
-        ).andThen(
+        return new InstantCommand(() -> {
+            System.out.println("getGoToIntakeState InstantCommand ran!");
+            ElevatorStateManager.INSTANCE.cloneState()
+                .setHeight(0)
+                .setPivotAngle(Rotation2d.fromRotations(0.14))
+                .setCoralIntakeState(ElevatorStateManager.CoralIntakeState.STOPPED)
+                .setRunAlgaeRemover(false)
+                .setAsCurrent();
+        }).andThen(
             new WaitForElevatorToGetToSetpointCommand(getAtSetpoint)
         );
     }
@@ -64,7 +68,7 @@ public class ElevatorAutonManager {
 
     public Command getGoToL3Command() {
         return new InstantCommand(() -> ElevatorStateManager.INSTANCE.cloneState()
-            .setHeight(0.39)
+            .setHeight(0.35)
             .setPivotAngle(Rotation2d.fromRotations(0.46))
             .setCoralIntakeState(ElevatorStateManager.CoralIntakeState.STOPPED)
             .setRunAlgaeRemover(false)
@@ -75,14 +79,18 @@ public class ElevatorAutonManager {
     }
 
     public Command getGoToL4Command() {
-        return new InstantCommand(() -> ElevatorStateManager.INSTANCE.cloneState()
-            .setHeight(1.02)
-            .setPivotAngle(Rotation2d.fromRotations(0.45))
-            .setCoralIntakeState(ElevatorStateManager.CoralIntakeState.STOPPED)
-            .setRunAlgaeRemover(false)
-            .setAsCurrent()
-        ).andThen(
+        return new InstantCommand(() -> {
+            System.out.println("InstantCommand L4 ran!");
+            ElevatorStateManager.INSTANCE.cloneState()
+                .setHeight(0.99)
+                .setPivotAngle(Rotation2d.fromRotations(0.44))
+                .setCoralIntakeState(ElevatorStateManager.CoralIntakeState.STOPPED)
+                .setRunAlgaeRemover(false)
+                .setAsCurrent();
+        }).andThen(
             new WaitForElevatorToGetToSetpointCommand(getAtSetpoint)
+        ).andThen(
+            new WaitCommand(0.5)
         );
     }
 }
