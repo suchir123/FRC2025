@@ -103,7 +103,7 @@ public class ElevatorAutonManager {
             System.out.println("InstantCommand L4 ran!");
             ElevatorStateManager.INSTANCE.cloneState()
                 .setHeight(0.99)
-                .setPivotAngle(Rotation2d.fromRotations(0.44))
+                .setPivotAngle(Rotation2d.fromRotations(0.42))
                 .setCoralIntakeState(ElevatorStateManager.CoralIntakeState.STOPPED)
                 .setRunAlgaeRemover(false)
                 .setAsCurrent();

@@ -146,6 +146,7 @@ public class RobotContainer {
                     .setRunAlgaeRemover(false)
                     .primeAsNext()));
 
+            // MAKE SURE TO ALSO UPDATE THE AUTONOMOUS VERSION!!!!!!!
             ControlHandler.get(this.ps4Controller, OperatorConstants.SecondaryControllerConstants.L4).onTrue(new InstantCommand(() -> elevatorStateManager.cloneState()
                     .setHeight(0.99)
                     .setPivotAngle(Rotation2d.fromRotations(0.42))
