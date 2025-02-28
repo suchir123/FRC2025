@@ -70,7 +70,7 @@ public class RobotContainer {
         this.coralIntake = Util.createIfFlagElseNull(CoralIntakeSubsystem::new, Flags.CoralIntake.IS_ATTACHED);
         this.algaeReefRemover = Util.createIfFlagElseNull(AlgaeReefRemoverSubsystem::new, Flags.AlgaeReefRemover.IS_ATTACHED);
         this.algaeGroundIntake = Util.createIfFlagElseNull(AlgaeGroundIntakeSubsystem::new, Flags.AlgaeGroundIntake.IS_ATTACHED);
-        this.elevatorAutonManager = new ElevatorAutonManager(elevators);
+        this.elevatorAutonManager = new ElevatorAutonManager(elevators, coralIntake);
 
         configureNamedCommands();
 

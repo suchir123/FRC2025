@@ -7,14 +7,17 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.commands.elevator.ElevatorStateManager;
+import frc.robot.subsystems.CoralIntakeSubsystem;
 import frc.robot.subsystems.ElevatorSubsystem;
 
 public class ElevatorAutonManager {
     private final BooleanSupplier getAtSetpoint;
+    private final BooleanSupplier getIsCoralInIntake;
 
-    public ElevatorAutonManager(ElevatorSubsystem elevator)
+    public ElevatorAutonManager(ElevatorSubsystem elevator, CoralIntakeSubsystem coralIntake)
     {
         this.getAtSetpoint = elevator::getAtSetpoint;
+        this.getIsCoralInIntake = coralIntake::hasCoral;
     }
 
     public Command getPlaceCoralCommand() {
@@ -24,7 +27,7 @@ public class ElevatorAutonManager {
                 .setCoralIntakeState(ElevatorStateManager.CoralIntakeState.INTAKE)
                 .setAsCurrent();
         }).andThen(
-            new WaitCommand(1.0)
+            new WaitUntilCommand(getIsCoralInIntake)
         );
     }
     
@@ -38,7 +41,7 @@ public class ElevatorAutonManager {
                 .setRunAlgaeRemover(false)
                 .setAsCurrent();
         }).andThen(
-            new WaitForElevatorToGetToSetpointCommand(getAtSetpoint)
+            new WaitUntilCommand(getAtSetpoint)
         );
     }
 
@@ -50,7 +53,7 @@ public class ElevatorAutonManager {
             .setRunAlgaeRemover(false)
             .setAsCurrent()
         ).andThen(
-            new WaitForElevatorToGetToSetpointCommand(getAtSetpoint)
+            new WaitUntilCommand(getAtSetpoint)
         );
     }
 
@@ -62,7 +65,7 @@ public class ElevatorAutonManager {
             .setRunAlgaeRemover(false)
             .setAsCurrent()
         ).andThen(
-            new WaitForElevatorToGetToSetpointCommand(getAtSetpoint)
+            new WaitUntilCommand(getAtSetpoint)
         );
     }
 
@@ -74,7 +77,7 @@ public class ElevatorAutonManager {
             .setRunAlgaeRemover(false)
             .setAsCurrent()
         ).andThen(
-            new WaitForElevatorToGetToSetpointCommand(getAtSetpoint)
+            new WaitUntilCommand(getAtSetpoint)
         );
     }
 
@@ -88,7 +91,7 @@ public class ElevatorAutonManager {
                 .setRunAlgaeRemover(false)
                 .setAsCurrent();
         }).andThen(
-            new WaitForElevatorToGetToSetpointCommand(getAtSetpoint)
+            new WaitUntilCommand(getAtSetpoint)
         ).andThen(
             new WaitCommand(0.5)
         );
