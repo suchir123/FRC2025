@@ -173,7 +173,7 @@ public class ElevatorSubsystem extends SubsystemBase {
     }
 
     public void setTargetHeight(double heightMeters) {
-        System.out.println("Setting target height to " + heightMeters);
+        // System.out.println("Setting target height to " + heightMeters);
         this.currentSetpointMeters = heightMeters;
         if (Flags.Elevator.ENABLED) {
             if (heightMeters <= MAX_HEIGHT && heightMeters >= MIN_HEIGHT) {

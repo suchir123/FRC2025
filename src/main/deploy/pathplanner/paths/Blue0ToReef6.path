@@ -16,12 +16,12 @@
     },
     {
       "anchor": {
-        "x": 5.148,
-        "y": 2.8452499999999996
+        "x": 5.15,
+        "y": 2.88
       },
       "prevControl": {
-        "x": 5.583155337564041,
-        "y": 2.0672441042249465
+        "x": 5.65,
+        "y": 2.0139745962155615
       },
       "nextControl": null,
       "isLocked": false,
@@ -34,8 +34,8 @@
   "eventMarkers": [
     {
       "name": "GoToL4",
-      "waypointRelativePos": 0.5525423728813559,
-      "endWaypointRelativePos": null,
+      "waypointRelativePos": 0.45,
+      "endWaypointRelativePos": 0.65,
       "command": null
     }
   ],
@@ -49,7 +49,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 120.01836742760895
+    "rotation": 119.99999999999999
   },
   "reversed": false,
   "folder": "FourBigBooms",
