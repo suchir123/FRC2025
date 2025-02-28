@@ -97,9 +97,13 @@ public class RobotContainer {
         NamedCommands.registerCommand("GoToL2", this.elevatorAutonManager.getGoToL2Command());
         NamedCommands.registerCommand("GoToL1", this.elevatorAutonManager.getGoToL1Command());
         NamedCommands.registerCommand("GoToIntakeAngle", this.elevatorAutonManager.getGoToIntakeStateCommand());
-        NamedCommands.registerCommand("ElevatorDown", this.elevatorAutonManager.getGoToIntakeStateCommand());
+        NamedCommands.registerCommand("CoralIntake", this.elevatorAutonManager.getCoralIntakeCommand());
         NamedCommands.registerCommand("PlaceCoral", this.elevatorAutonManager.getPlaceCoralCommand());
-        NamedCommands.registerCommand("WaitForHumanPlayerCoral", new WaitCommand(1.5));
+
+        // This name is DEPRECATED in favor of GoToIntakeAngle but I'm not going through all the autons to fix it
+        NamedCommands.registerCommand("ElevatorDown", this.elevatorAutonManager.getGoToIntakeStateCommand());
+        // This name is DEPRECATED in favor of CoralIntake but I'm not going through all the autons to fix it
+        NamedCommands.registerCommand("WaitForHumanPlayerCoral", this.elevatorAutonManager.getCoralIntakeCommand());
     }
 
     private void configureBindings() {
