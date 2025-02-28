@@ -24,7 +24,7 @@ public class ElevatorAutonManager {
         return new InstantCommand(() -> {
             System.out.println("PlaceCoralCommand InstantCommand ran!");
             ElevatorStateManager.INSTANCE.cloneState()
-                .setCoralIntakeState(ElevatorStateManager.CoralIntakeState.INTAKE)
+                .setCoralIntakeState(ElevatorStateManager.CoralIntakeState.INTAKE_FORCE_02)
                 .setAsCurrent();
         }).andThen(
             new WaitCommand(1.0)
@@ -37,7 +37,7 @@ public class ElevatorAutonManager {
             ElevatorStateManager.INSTANCE.cloneState()
                 .setHeight(0)
                 .setPivotAngle(Rotation2d.fromRotations(0.14))
-                .setCoralIntakeState(ElevatorStateManager.CoralIntakeState.INTAKE)
+                .setCoralIntakeState(ElevatorStateManager.CoralIntakeState.INTAKE_FORCE_035)
                 .setRunAlgaeRemover(false)
                 .setAsCurrent();
         }).andThen(
