@@ -8,20 +8,20 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.54475,
-        "y": 1.685
+        "x": 2.582896582999554,
+        "y": 2.426064802200132
       },
       "isLocked": false,
       "linkedName": "HumanPlayer1"
     },
     {
       "anchor": {
-        "x": 2.8957500000000005,
-        "y": 1.92875
+        "x": 3.332,
+        "y": 2.028
       },
       "prevControl": {
-        "x": 2.554500000000001,
-        "y": 1.5875
+        "x": 2.964,
+        "y": 1.5094999999999994
       },
       "nextControl": null,
       "isLocked": false,
@@ -41,7 +41,7 @@
     "unlimited": false
   },
   "goalEndState": {
-    "velocity": 2.0,
+    "velocity": 2.5,
     "rotation": 59.99999999999999
   },
   "reversed": false,

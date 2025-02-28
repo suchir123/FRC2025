@@ -17,6 +17,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.*;
 import frc.robot.commands.autons.ElevatorAutonManager;
+import frc.robot.commands.autons.FollowApriltagForwardCommand;
 import frc.robot.commands.elevator.ElevatorControlCommand;
 import frc.robot.commands.elevator.ElevatorStateManager;
 import frc.robot.commands.elevator.ElevatorStateManager.CoralIntakeState;
@@ -99,8 +100,16 @@ public class RobotContainer {
         NamedCommands.registerCommand("GoToIntakeAngle", this.elevatorAutonManager.getGoToIntakeStateCommand());
         NamedCommands.registerCommand("CoralIntake", this.elevatorAutonManager.getCoralIntakeCommand());
         NamedCommands.registerCommand("PlaceCoral", this.elevatorAutonManager.getPlaceCoralCommand());
-        NamedCommands.registerCommand("IntakeThenPlaceCoral", this.elevatorAutonManager.getCoralIntakeCommand().andThen(this.elevatorAutonManager.getPlaceCoralCommand()));
 
+        NamedCommands.registerCommand("FollowApriltagForward4Seconds", new FollowApriltagForwardCommand(driveTrain, 4.0, true));
+        NamedCommands.registerCommand("FollowApriltagForward2Seconds", new FollowApriltagForwardCommand(driveTrain, 2.0, true));
+        NamedCommands.registerCommand("FollowApriltagForward1Second", new FollowApriltagForwardCommand(driveTrain, 1.0, true));
+
+        
+        // Deprecated -- specify duration
+        NamedCommands.registerCommand("FollowApriltagForward", new FollowApriltagForwardCommand(driveTrain, 2.0, true));
+        // Deprecated -- PlaceCoral should always work now!
+        NamedCommands.registerCommand("IntakeThenPlaceCoral", this.elevatorAutonManager.getCoralIntakeCommand().andThen(this.elevatorAutonManager.getPlaceCoralCommand()));
         // This name is DEPRECATED in favor of GoToIntakeAngle but I'm not going through all the autons to fix it
         NamedCommands.registerCommand("ElevatorDown", this.elevatorAutonManager.getGoToIntakeStateCommand());
         // This name is DEPRECATED in favor of CoralIntake but I'm not going through all the autons to fix it
