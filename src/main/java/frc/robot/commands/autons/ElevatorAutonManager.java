@@ -21,14 +21,17 @@ public class ElevatorAutonManager {
     }
 
     public Command getPlaceCoralCommand() {
-        return new InstantCommand(() -> {
-            System.out.println("PlaceCoralCommand InstantCommand ran!");
-            ElevatorStateManager.INSTANCE.cloneState()
-                .setCoralIntakeState(ElevatorStateManager.CoralIntakeState.INTAKE_FORCE_02)
-                .setAsCurrent();
-        }).andThen(
-            new WaitCommand(1.0)
-        );
+        return new WaitCommand(0.3)
+            .andThen(
+                new InstantCommand(() -> {
+                    System.out.println("PlaceCoralCommand InstantCommand ran!");
+                    ElevatorStateManager.INSTANCE.cloneState()
+                        .setCoralIntakeState(ElevatorStateManager.CoralIntakeState.INTAKE_FORCE_02)
+                        .setAsCurrent();
+                }
+            )).andThen(
+                new WaitCommand(0.3)
+            );
     }
     
     public Command getCoralIntakeCommand() {
@@ -105,8 +108,6 @@ public class ElevatorAutonManager {
                 .setRunAlgaeRemover(false)
                 .setAsCurrent();
         }).andThen(
-            new WaitUntilCommand(getAtSetpoint)
-        ).andThen(
             new WaitUntilCommand(getAtSetpoint)
         );
     }
