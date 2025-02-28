@@ -24,7 +24,7 @@ import frc.robot.util.NetworkTablesUtil;
 
 public class ClimberSubsystem extends SubsystemBase {
     public static final ADIS16470_IMU.IMUAxis ROBOT_TILT_AXIS = IMUAxis.kYaw;
-    private static final double UPPER_HARD_LIMIT = 0.87;
+    private static final double UPPER_HARD_LIMIT = 0.82;
     // private final ThroughboreEncoder throughboreEncoder;
 
     private final SparkMax climbMotor;
@@ -62,7 +62,11 @@ public class ClimberSubsystem extends SubsystemBase {
     public void periodic() {
         climbMotorEncoderVelocityPublisher.setDouble(climbMotorEncoder.getVelocity());
         climbMotorEncoderPositionPublisher.setDouble(climbMotorEncoder.getPosition());
-        System.out.println("climbMotorAbsoluteEncoder.getPosition() is " + climbMotorAbsoluteEncoder.getPosition());
+        //System.out.println("climbMotorAbsoluteEncoder.getPosition() is " + climbMotorAbsoluteEncoder.getPosition());
+        
+        if(this.climbMotor.get() > 0 && this.climbMotorAbsoluteEncoder.getPosition() >= UPPER_HARD_LIMIT - 0.01) {
+            climbMotor.set(0);
+        }
         // throughboreEncoder.periodic();
     }
 
