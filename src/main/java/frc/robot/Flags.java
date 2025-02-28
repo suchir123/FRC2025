@@ -24,7 +24,7 @@ public final class Flags {
 
     public static class Elevator {
         public static final boolean IS_ATTACHED = true;
-        public static final boolean ENABLED = false;
+        public static final boolean ENABLED = true;
         public static final boolean USE_TEST_ELEVATOR_COMMAND = false;
         public static final boolean USE_TEST_PID_COMMAND = false;
     }

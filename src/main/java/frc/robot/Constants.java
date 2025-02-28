@@ -32,13 +32,15 @@ public final class Constants {
 
             public static final TriggerType ALGAE_REMOVER                       = TriggerType.RIGHT_BUTTON;
             public static final TriggerType REEF_AUTO_AIM                       = TriggerType.UPPER_BUTTON;
-            public static final TriggerType CLIMB_PIVOT_ANGLE                   = TriggerType.LOWER_BUTTON;
+            public static final TriggerType CLIMB_PIVOT_ANGLE_PRIMARY           = TriggerType.LOWER_BUTTON;
         }
 
         public static class SecondaryControllerConstants {
             public static final TriggerType RESET_GYRO                          = TriggerType.POV_0;
             public static final TriggerType TOGGLE_ALGAE_GROUND_INTAKE_HEIGHT   = TriggerType.LEFT_SHOULDER_BUTTON;
+            public static final TriggerType MICRO_ADJUST_DRIVING                = TriggerType.LEFT_SHOULDER_TRIGGER;
 
+            public static final TriggerType CLIMB_PIVOT_ANGLE_SECONDARY         = TriggerType.LEFT_SHOULDER_TRIGGER;
             public static final TriggerType L4                                  = TriggerType.RIGHT_SHOULDER_BUTTON;
             public static final TriggerType L3                                  = TriggerType.UPPER_BUTTON;
             public static final TriggerType L2                                  = TriggerType.LEFT_BUTTON;

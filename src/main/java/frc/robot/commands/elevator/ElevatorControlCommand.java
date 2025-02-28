@@ -45,6 +45,7 @@ public class ElevatorControlCommand extends Command {
         double targetPivotAngle = this.stateManager.getPivotAngle().getRotations();
 
         targetPivotAngle = Math.max(targetPivotAngle, BACK_LIMIT_WHEN_DOWN);
+        // System.out.println("Target height: " + targetHeight);
         this.elevator.setTargetHeight(targetHeight);
         this.coralIntake.setPivotTargetAngle(Rotation2d.fromRotations(targetPivotAngle));
 
@@ -57,6 +58,12 @@ public class ElevatorControlCommand extends Command {
         switch (this.stateManager.getCoralIntakeState()) {
             case STOPPED:
                 this.coralIntake.setIntakeSpeed(0);
+                break;
+            case INTAKE_FORCE_02:
+                this.coralIntake.setIntakeSpeed(0.2);
+                break;
+            case INTAKE_FORCE_035:
+                this.coralIntake.setIntakeSpeed(0.35);
                 break;
             case INTAKE:
                 if (!wasStoppedByLimitSwitch && this.coralIntake.hasCoral()) { // limit switch pauser

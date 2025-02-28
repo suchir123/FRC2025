@@ -70,7 +70,7 @@ public class RobotContainer {
         this.coralIntake = Util.createIfFlagElseNull(CoralIntakeSubsystem::new, Flags.CoralIntake.IS_ATTACHED);
         this.algaeReefRemover = Util.createIfFlagElseNull(AlgaeReefRemoverSubsystem::new, Flags.AlgaeReefRemover.IS_ATTACHED);
         this.algaeGroundIntake = Util.createIfFlagElseNull(AlgaeGroundIntakeSubsystem::new, Flags.AlgaeGroundIntake.IS_ATTACHED);
-        this.elevatorAutonManager = new ElevatorAutonManager(elevators);
+        this.elevatorAutonManager = new ElevatorAutonManager(elevators, coralIntake);
 
         configureNamedCommands();
 
@@ -97,23 +97,27 @@ public class RobotContainer {
         NamedCommands.registerCommand("GoToL2", this.elevatorAutonManager.getGoToL2Command());
         NamedCommands.registerCommand("GoToL1", this.elevatorAutonManager.getGoToL1Command());
         NamedCommands.registerCommand("GoToIntakeAngle", this.elevatorAutonManager.getGoToIntakeStateCommand());
+        NamedCommands.registerCommand("CoralIntake", this.elevatorAutonManager.getCoralIntakeCommand());
         NamedCommands.registerCommand("PlaceCoral", this.elevatorAutonManager.getPlaceCoralCommand());
-        NamedCommands.registerCommand("WaitForHumanPlayerCoral", new WaitCommand(1.5));
+        NamedCommands.registerCommand("IntakeThenPlaceCoral", this.elevatorAutonManager.getCoralIntakeCommand().andThen(this.elevatorAutonManager.getPlaceCoralCommand()));
+
+        // This name is DEPRECATED in favor of GoToIntakeAngle but I'm not going through all the autons to fix it
+        NamedCommands.registerCommand("ElevatorDown", this.elevatorAutonManager.getGoToIntakeStateCommand());
+        // This name is DEPRECATED in favor of CoralIntake but I'm not going through all the autons to fix it
+        NamedCommands.registerCommand("WaitForHumanPlayerCoral", this.elevatorAutonManager.getCoralIntakeCommand());
     }
 
     private void configureBindings() {
         if (Flags.Elevator.IS_ATTACHED && !Flags.Elevator.USE_TEST_ELEVATOR_COMMAND && !Flags.Elevator.USE_TEST_PID_COMMAND && !Flags.CoralIntake.USE_TEST_PID_COMMAND) {
             ControlHandler.get(this.ps4Controller, OperatorConstants.SecondaryControllerConstants.INTAKE_STATE).onTrue(new InstantCommand(() -> elevatorStateManager.cloneState()
-                    .setHeight(0.1)
+                    .setHeight(0)
                     .setPivotAngle(Rotation2d.fromRotations(0.14))
-                    .setCoralIntakeState(ElevatorStateManager.CoralIntakeState.STOPPED)
+                    .setCoralIntakeState(ElevatorStateManager.CoralIntakeState.INTAKE)
                     .setRunAlgaeRemover(false)
-                    .setAsCurrent())
-                    
-                    );
+                    .setAsCurrent()));
 
             ControlHandler.get(this.ps4Controller, OperatorConstants.SecondaryControllerConstants.L1).onTrue(new InstantCommand(() -> elevatorStateManager.cloneState()
-                    .setHeight(0.15)
+                    .setHeight(0)
                     .setPivotAngle(Rotation2d.fromRotations(0.03))
                     .setCoralIntakeState(ElevatorStateManager.CoralIntakeState.STOPPED)
                     .setRunAlgaeRemover(false)
@@ -127,22 +131,24 @@ public class RobotContainer {
                     .primeAsNext()));
 
             ControlHandler.get(this.ps4Controller, OperatorConstants.SecondaryControllerConstants.L3).onTrue(new InstantCommand(() -> elevatorStateManager.cloneState()
-                    .setHeight(0.39)
+                    .setHeight(0.35)
                     .setPivotAngle(Rotation2d.fromRotations(0.46))
                     .setCoralIntakeState(ElevatorStateManager.CoralIntakeState.STOPPED)
                     .setRunAlgaeRemover(false)
                     .primeAsNext()));
 
             ControlHandler.get(this.ps4Controller, OperatorConstants.SecondaryControllerConstants.L4).onTrue(new InstantCommand(() -> elevatorStateManager.cloneState()
-                    .setHeight(1.02)
-                    .setPivotAngle(Rotation2d.fromRotations(0.45))
+                    .setHeight(0.99)
+                    .setPivotAngle(Rotation2d.fromRotations(0.42))
                     .setCoralIntakeState(ElevatorStateManager.CoralIntakeState.STOPPED)
                     .setRunAlgaeRemover(false)
                     .primeAsNext()));
 
-            ControlHandler.get(this.primaryController, OperatorConstants.PrimaryControllerConstants.CLIMB_PIVOT_ANGLE).onTrue(new InstantCommand(() -> elevatorStateManager.cloneState()
+            ControlHandler.get(this.primaryController, OperatorConstants.PrimaryControllerConstants.CLIMB_PIVOT_ANGLE_PRIMARY)
+                .or(ControlHandler.get(this.ps4Controller, OperatorConstants.SecondaryControllerConstants.CLIMB_PIVOT_ANGLE_SECONDARY))
+                .onTrue(new InstantCommand(() -> elevatorStateManager.cloneState()
                     .setHeight(0)
-                    .setPivotAngle(Rotation2d.fromRotations(0.35))
+                    .setPivotAngle(Rotation2d.fromRotations(0.4))
                     .setCoralIntakeState(CoralIntakeState.STOPPED)
                     .setRunAlgaeRemover(false)
                     .setAsCurrent()));
@@ -155,6 +161,7 @@ public class RobotContainer {
                     .setHeight(elevatorStateManager.getHeight() + (!this.elevatorStateManager.getRunAlgaeRemover() ? 0.11 : -0.11))
                     .setRunAlgaeRemover(!this.elevatorStateManager.getRunAlgaeRemover())
                     .setAsCurrent()));
+                // .alongWith(new InstantCommand(() -> this.algaeGroundIntake.setIntakeSpeed(-0.5), this.algaeGroundIntake))).onFalse(new InstantCommand(() -> this.algaeGroundIntake.setIntakeSpeed(0), this.algaeGroundIntake));
 
             ControlHandler.get(this.primaryController, OperatorConstants.PrimaryControllerConstants.ACTIVATE_ELEVATORS).onTrue(new InstantCommand(elevatorStateManager::pushNextState));
 
@@ -168,10 +175,10 @@ public class RobotContainer {
                     this.driveTrain.setHeadingLockMode(false);
                 }));
 
-                ControlHandler.get(this.ps4Controller, OperatorConstants.PrimaryControllerConstants.REEF_AUTO_AIM).whileTrue(new ReefAprilTagCenterCommand(driveTrain, this.primaryController));
-                ControlHandler.get(this.ps4Controller, OperatorConstants.PrimaryControllerConstants.ALGAE_AUTO_AIM).whileTrue(new AlgaeCenterCommand(driveTrain, this.primaryController));
-                ControlHandler.get(this.ps4Controller, OperatorConstants.SecondaryControllerConstants.L2).whileTrue(new LowerSecondaryDrive(driveTrain, this.primaryController));
-                ControlHandler.get(this.ps4Controller, OperatorConstants.SecondaryControllerConstants.INTAKE_STATE).whileTrue(new LowerSecondaryDrive(driveTrain, this.primaryController));
+                ControlHandler.get(this.primaryController, OperatorConstants.PrimaryControllerConstants.REEF_AUTO_AIM).whileTrue(new ReefAprilTagCenterCommand(driveTrain, this.primaryController));
+                //ControlHandler.get(this.ps4Controller, OperatorConstants.PrimaryControllerConstants.ALGAE_AUTO_AIM).whileTrue(new AlgaeCenterCommand(driveTrain, this.primaryController));
+                // ControlHandler.get(this.ps4Controller, OperatorConstants.SecondaryControllerConstants.MICRO_ADJUST_DRIVING).whileTrue(new SlowerManualDriveCommand(driveTrain, this.primaryController));
+                //ControlHandler.get(this.ps4Controller, OperatorConstants.SecondaryControllerConstants.INTAKE_STATE).whileTrue(new SlowerManualDriveCommand(driveTrain, this.primaryController));
             }
         }
     }
@@ -217,15 +224,15 @@ public class RobotContainer {
             }
         }
 
-        if (Flags.Elevator.IS_ATTACHED && Flags.CoralIntake.IS_ATTACHED && Flags.AlgaeReefRemover.IS_ATTACHED && !Flags.Elevator.USE_TEST_PID_COMMAND && !Flags.Elevator.USE_TEST_ELEVATOR_COMMAND && !Flags.CoralIntake.USE_TEST_PID_COMMAND && !Flags.CoralIntake.USE_TEST_CORAL_COMMAND && !Flags.AlgaeReefRemover.USE_TEST_ALGAE_REMOVER_COMMAND) {
-            this.elevators.setDefaultCommand(new ElevatorControlCommand(this.elevators, this.coralIntake, this.algaeReefRemover));
-        }
-
         if (Flags.AlgaeGroundIntake.IS_ATTACHED) {
             if (Flags.AlgaeGroundIntake.USE_TEST_ALGAE_GROUND_COMMAND) {
             } else {
                 this.algaeGroundIntake.setDefaultCommand(new AlgaeGroundIntakeCommand(this.algaeGroundIntake, this.primaryController, this.ps4Controller));
             }
+        }
+
+        if (Flags.Elevator.IS_ATTACHED && Flags.CoralIntake.IS_ATTACHED && Flags.AlgaeReefRemover.IS_ATTACHED && !Flags.Elevator.USE_TEST_PID_COMMAND && !Flags.Elevator.USE_TEST_ELEVATOR_COMMAND && !Flags.CoralIntake.USE_TEST_PID_COMMAND && !Flags.CoralIntake.USE_TEST_CORAL_COMMAND && !Flags.AlgaeReefRemover.USE_TEST_ALGAE_REMOVER_COMMAND) {
+            this.elevators.setDefaultCommand(new ElevatorControlCommand(this.elevators, this.coralIntake, this.algaeReefRemover));
         }
     }
 
@@ -236,6 +243,12 @@ public class RobotContainer {
             return this.autonChooser.getSelected();
         }
         return new InstantCommand();
+    }
+
+    public void onAutonomousInit() {
+        if (Flags.Elevator.IS_ATTACHED && Flags.CoralIntake.IS_ATTACHED && Flags.AlgaeReefRemover.IS_ATTACHED && !Flags.Elevator.USE_TEST_PID_COMMAND && !Flags.Elevator.USE_TEST_ELEVATOR_COMMAND && !Flags.CoralIntake.USE_TEST_PID_COMMAND && !Flags.CoralIntake.USE_TEST_CORAL_COMMAND && !Flags.AlgaeReefRemover.USE_TEST_ALGAE_REMOVER_COMMAND) {
+            this.elevators.setDefaultCommand(new ElevatorControlCommand(this.elevators, this.coralIntake, this.algaeReefRemover));
+        }
     }
 
     public void onTeleopPeriodic() {

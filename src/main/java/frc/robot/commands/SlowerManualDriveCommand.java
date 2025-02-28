@@ -7,7 +7,7 @@ import frc.robot.controllers.AbstractController;
 import frc.robot.subsystems.swerve.DriveTrainSubsystem;
 import frc.robot.util.Util;
 
-public class LowerSecondaryDrive extends Command {
+public class SlowerManualDriveCommand extends Command {
     public static final double MAX_SPEED_METERS_PER_SEC = Flags.DriveTrain.LOWER_MAX_SPEED ? 1.5 : 3;
     public static final double MAX_ROT_SPEED_ANGULAR = 3;
     private final DriveTrainSubsystem driveTrain;
@@ -20,7 +20,7 @@ public class LowerSecondaryDrive extends Command {
     // private final LinearFilter filter = LinearFilter.singlePoleIIR(0.1, 0.02);
     // private boolean wasAutomaticallyDrivingLastFrame = false;
 
-    public LowerSecondaryDrive(DriveTrainSubsystem driveTrain, AbstractController joystick) { //AprilTagHandler aprilTagHandler) {
+    public SlowerManualDriveCommand(DriveTrainSubsystem driveTrain, AbstractController joystick) { //AprilTagHandler aprilTagHandler) {
         this.driveTrain = driveTrain;
         this.joystick = joystick;
         // this.aprilTagHandler = aprilTagHandler;

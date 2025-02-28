@@ -91,7 +91,9 @@ public class ElevatorStateManager {
     public enum CoralIntakeState {
         STOPPED,
         INTAKE,
-        OUTTAKE
+        OUTTAKE,
+        INTAKE_FORCE_02,
+        INTAKE_FORCE_035,
     }
 
     /**

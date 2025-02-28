@@ -5,6 +5,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Flags;
 import frc.robot.controllers.AbstractController;
 import frc.robot.subsystems.swerve.DriveTrainSubsystem;
+import frc.robot.util.NetworkTablesUtil;
 import frc.robot.util.Util;
 
 public class ManualDriveCommand extends Command {
@@ -44,6 +45,7 @@ public class ManualDriveCommand extends Command {
 
     @Override
     public void execute() {
+        // System.out.println(NetworkTablesUtil.getLimeyJson());
         // System.out.println("vert: " + this.joystick.getRightVerticalMovement() + ", hor: " + this.joystick.getRightHorizontalMovement());
         // this.driveTrain.drive(this.joystick.getVerticalMovement());
         double flip = flipFactor();

@@ -89,7 +89,7 @@ public class ElevatorSubsystem extends SubsystemBase {
                 .velocityConversionFactor(360d * ABSOLUTE_DEGREES_PER_RELATIVE_DEGREES / 60d / 762.183 * METERS_ASCENDED_PER_ROTATION);
 
         rightConfig.closedLoop
-                .pidf(1.68, 0, 0, 0.1)
+                .pidf(1.7, 0, 0, 0.1)
                 .outputRange(-MAX_OUTPUT_LEFT_ELEVATOR_PIDS, MAX_OUTPUT_LEFT_ELEVATOR_PIDS);
 
         leftMotor.configure(leftConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
@@ -157,20 +157,23 @@ public class ElevatorSubsystem extends SubsystemBase {
                            "Right position (relative)= " + this.getRightRelativePosition() + "\n" + 
                            "Left position (relative)= " + this.getLeftRelativePosition() + "\n");
         // <-- leave both of these --> */
-        resetEncodersIfLimit();
+        // resetEncodersIfLimit();
 
         // rightHeightAbsPub.setDouble(this.getRightMetersAscended());
         // leftHeightAbsPub.setDouble(this.getLeftMetersAscended());
         rightHeightRelPub.setDouble(this.getRightRelativePosition());
         leftHeightRelPub.setDouble(this.getLeftRelativePosition());
+
         //leftHeightAbsRotPub.setDouble(this.leftThroughboreEncoder.getAbsolutePosition().getDegrees());
         //rightHeightAbsRotPub.setDouble(this.leftThroughboreEncoder.getAbsolutePosition().getDegrees());
         if (getLeftLimitSwitch() || getRightLimitSwitch()) {
             // resetMotorEncodersToAbsoluteEncoders();
         }
+        // System.out.println("Current set/point: " + this.currentSetpointMeters);
     }
 
     public void setTargetHeight(double heightMeters) {
+        // System.out.println("Setting target height to " + heightMeters);
         this.currentSetpointMeters = heightMeters;
         if (Flags.Elevator.ENABLED) {
             if (heightMeters <= MAX_HEIGHT && heightMeters >= MIN_HEIGHT) {

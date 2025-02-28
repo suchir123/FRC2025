@@ -371,8 +371,10 @@ public class SwerveModule {
      * @param turnVoltage  Voltage of turn motor
      */
     public void setVoltages(double driveVoltage, double turnVoltage) {
-        driveMotor.setVoltage(driveVoltage);
-        turnMotor.setVoltage(turnVoltage);
+        if(Flags.DriveTrain.ENABLED) {
+            driveMotor.setVoltage(driveVoltage);
+            turnMotor.setVoltage(turnVoltage);
+        }
     }
 
     /**

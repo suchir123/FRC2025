@@ -48,7 +48,9 @@ public class AlgaeGroundIntakeSubsystem extends SubsystemBase {
     }
 
     public void setIntakeSpeed(double speed) {
-        algaeIntakeMotor.set(speed);
+        if(Flags.AlgaeGroundIntake.ENABLED) {
+            algaeIntakeMotor.set(speed);
+        }
     }
 
     public void toggleServosDown() {
@@ -65,7 +67,9 @@ public class AlgaeGroundIntakeSubsystem extends SubsystemBase {
      */
     public void flapToValue(double left, double right) {
         // System.out.println("left: " + this.leftServo.getAngle() + ", right: " + this.rightServo.getAngle());
-        this.algaeLeftServo.set(left);
-        this.algaeRightServo.set(right);
+        if(Flags.AlgaeGroundIntake.ENABLED) {
+            this.algaeLeftServo.set(left);
+            this.algaeRightServo.set(right);
+        }
     }
 }

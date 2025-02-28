@@ -5,15 +5,22 @@
     "data": {
       "commands": [
         {
-          "type": "path",
+          "type": "parallel",
           "data": {
-            "pathName": "Blue0ToReef6"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "GoToL4"
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "Blue0ToReef6"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "GoToL3"
+                }
+              }
+            ]
           }
         },
         {
@@ -44,63 +51,7 @@
         {
           "type": "named",
           "data": {
-            "name": "CoralIntake"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "HumanPlayer1ToHP1Midpoint"
-          }
-        },
-        {
-          "type": "parallel",
-          "data": {
-            "commands": [
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "HP1MidpointToReef5"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "GoToL4"
-                }
-              }
-            ]
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "PlaceCoral"
-          }
-        },
-        {
-          "type": "parallel",
-          "data": {
-            "commands": [
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "Reef5ToHumanPlayer1"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "ElevatorDown"
-                }
-              }
-            ]
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "CoralIntake"
+            "name": "WaitForHumanPlayerCoral"
           }
         },
         {
@@ -137,7 +88,7 @@
         {
           "type": "named",
           "data": {
-            "name": "GoToL3"
+            "name": "GoToIntakeAngle"
           }
         }
       ]
