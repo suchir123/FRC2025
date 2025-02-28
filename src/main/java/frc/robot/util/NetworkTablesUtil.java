@@ -64,6 +64,14 @@ public class NetworkTablesUtil {
         }
     }
 
+    public static String getLimeyJson() {
+        return INSTANCE.getTable("limelight").getEntry("json").getString("");
+    }
+
+    public static int getLimeyTargetTag() {
+        return INSTANCE.getTable("limelight").getEntry("tid").getNumber(0).intValue();
+    }
+
     public static float getJetsonTripleCam() {
         NetworkTable table = INSTANCE.getTable("jetson");
         return table.getEntry("tag_center_diff").getNumber(0.0).floatValue();
