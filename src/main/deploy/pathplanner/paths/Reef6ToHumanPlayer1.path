@@ -3,16 +3,32 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 5.15,
-        "y": 2.87
+        "x": 5.143,
+        "y": 2.875
       },
       "prevControl": null,
       "nextControl": {
-        "x": 4.438250000000001,
-        "y": 2.285
+        "x": 4.80675,
+        "y": 2.699
       },
       "isLocked": false,
       "linkedName": "Reef6"
+    },
+    {
+      "anchor": {
+        "x": 4.31925,
+        "y": 2.2407499999999994
+      },
+      "prevControl": {
+        "x": 4.753308031563965,
+        "y": 2.508844666554214
+      },
+      "nextControl": {
+        "x": 3.656250000000001,
+        "y": 1.831249999999999
+      },
+      "isLocked": false,
+      "linkedName": null
     },
     {
       "anchor": {
@@ -20,8 +36,8 @@
         "y": 0.7002499999999998
       },
       "prevControl": {
-        "x": 2.019473520974655,
-        "y": 1.1855759275695932
+        "x": 2.03775,
+        "y": 0.8757499999999994
       },
       "nextControl": null,
       "isLocked": false,
