@@ -7,7 +7,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Blue1ToReef1"
+            "pathName": "Blue0ToReef6"
           }
         },
         {
@@ -23,21 +23,28 @@
           }
         },
         {
-          "type": "named",
+          "type": "parallel",
           "data": {
-            "name": "ElevatorDown"
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "Reef6ToHumanPlayer1"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "ElevatorDown"
+                }
+              }
+            ]
           }
         },
         {
-          "type": "path",
-          "data": {
-            "pathName": "Reef1ToHumanPlayer1"
-          }
-        },
-        {
           "type": "named",
           "data": {
-            "name": "WaitForHumanPlayerCoral"
+            "name": "CoralIntake"
           }
         },
         {
@@ -93,7 +100,7 @@
         {
           "type": "named",
           "data": {
-            "name": "WaitForHumanPlayerCoral"
+            "name": "CoralIntake"
           }
         },
         {

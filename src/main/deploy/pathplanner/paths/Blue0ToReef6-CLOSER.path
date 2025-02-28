@@ -16,16 +16,16 @@
     },
     {
       "anchor": {
-        "x": 5.143,
-        "y": 2.875
+        "x": 5.0505,
+        "y": 3.0304999999999995
       },
       "prevControl": {
-        "x": 5.578155337564041,
-        "y": 2.096994104224947
+        "x": 5.485655337564042,
+        "y": 2.2524941042249464
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "Reef6"
+      "linkedName": null
     }
   ],
   "rotationTargets": [],
@@ -42,7 +42,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 119.99999999999999
+    "rotation": 120.01836742760895
   },
   "reversed": false,
   "folder": "FourBigBooms",
