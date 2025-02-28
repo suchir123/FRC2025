@@ -34,7 +34,7 @@ public class ElevatorAutonManager {
             .setRunAlgaeRemover(false)
             .setAsCurrent()
         ).andThen(
-            new WaitForElevatorToGetToSetpointCommand(getAtSetpoint)
+            new WaitUntilCommand(getAtSetpoint)
         );
     }
 
@@ -46,7 +46,7 @@ public class ElevatorAutonManager {
             .setRunAlgaeRemover(false)
             .setAsCurrent()
         ).andThen(
-            new WaitForElevatorToGetToSetpointCommand(getAtSetpoint)
+            new WaitUntilCommand(getAtSetpoint)
         );
     }
 
@@ -58,7 +58,7 @@ public class ElevatorAutonManager {
             .setRunAlgaeRemover(false)
             .setAsCurrent()
         ).andThen(
-            new WaitForElevatorToGetToSetpointCommand(getAtSetpoint)
+            new WaitUntilCommand(getAtSetpoint)
         );
     }
 
@@ -70,7 +70,7 @@ public class ElevatorAutonManager {
             .setRunAlgaeRemover(false)
             .setAsCurrent()
         ).andThen(
-            new WaitForElevatorToGetToSetpointCommand(getAtSetpoint)
+            new WaitUntilCommand(getAtSetpoint)
         );
     }
 
@@ -82,7 +82,7 @@ public class ElevatorAutonManager {
             .setRunAlgaeRemover(false)
             .setAsCurrent()
         ).andThen(
-            new WaitForElevatorToGetToSetpointCommand(getAtSetpoint)
+            new WaitUntilCommand(getAtSetpoint)
         );
     }
 }

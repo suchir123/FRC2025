@@ -3,10 +3,10 @@ package frc.robot.commands.autons;
 import java.util.function.BooleanSupplier;
 import edu.wpi.first.wpilibj2.command.Command;
 
-public class WaitForElevatorToGetToSetpointCommand extends Command {
+public class WaitUntilCommand extends Command {
     private final BooleanSupplier getAtSetpoint;
 
-    public WaitForElevatorToGetToSetpointCommand(BooleanSupplier getAtSetpoint) {
+    public WaitUntilCommand(BooleanSupplier getAtSetpoint) {
         this.getAtSetpoint = getAtSetpoint;
     }
 
