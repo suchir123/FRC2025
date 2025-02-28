@@ -11,6 +11,7 @@ import com.revrobotics.spark.config.SparkBaseConfig;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.networktables.GenericPublisher;
 import edu.wpi.first.networktables.NetworkTableType;
@@ -23,6 +24,9 @@ import frc.robot.util.NetworkTablesUtil;
 
 public class ClimberSubsystem extends SubsystemBase {
     public static final ADIS16470_IMU.IMUAxis ROBOT_TILT_AXIS = IMUAxis.kYaw;
+    private static final double UPPER_HARD_LIMIT = 0.822;
+    // 0.8205 = climb start position
+    // set hard stop to 0.825
 
     // private final ThroughboreEncoder throughboreEncoder;
 
@@ -49,7 +53,7 @@ public class ClimberSubsystem extends SubsystemBase {
                 .idleMode(SparkBaseConfig.IdleMode.kBrake)
                 .voltageCompensation(12);
         climbMotorConfig.closedLoop
-                .pidf(1, 0, 0, 0)
+                .pidf(7, 0, 0, 0)
                 .outputRange(-0.6, 0.6)
                 .feedbackSensor(FeedbackSensor.kAbsoluteEncoder);
 
@@ -61,12 +65,13 @@ public class ClimberSubsystem extends SubsystemBase {
     public void periodic() {
         climbMotorEncoderVelocityPublisher.setDouble(climbMotorEncoder.getVelocity());
         climbMotorEncoderPositionPublisher.setDouble(climbMotorEncoder.getPosition());
-        // System.out.println("climbMotorAbsoluteEncoder.getPosition() is " + climbMotorAbsoluteEncoder.getPosition());
+        System.out.println("climbMotorAbsoluteEncoder.getPosition() is " + climbMotorAbsoluteEncoder.getPosition());
         // throughboreEncoder.periodic();
     }
 
-    public void setTarget(double target) {
+    public void setTargetRotationCount(double target) {
         if (Flags.Climber.ENABLED) {
+            target = MathUtil.clamp(target, 0, UPPER_HARD_LIMIT);
             pidController.setReference(target, SparkBase.ControlType.kPosition);
         }
     }
