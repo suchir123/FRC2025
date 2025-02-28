@@ -107,7 +107,7 @@ public class ElevatorAutonManager {
         }).andThen(
             new WaitUntilCommand(getAtSetpoint)
         ).andThen(
-            new WaitCommand(0.5)
+            new WaitUntilCommand(getAtSetpoint)
         );
     }
 }

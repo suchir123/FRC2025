@@ -16,12 +16,12 @@
     },
     {
       "anchor": {
-        "x": 1.62825,
-        "y": 7.281499999999999
+        "x": 1.64775,
+        "y": 7.3595
       },
       "prevControl": {
-        "x": 2.15475,
-        "y": 6.374750000000001
+        "x": 2.17425,
+        "y": 6.452750000000001
       },
       "nextControl": null,
       "isLocked": false,
@@ -33,7 +33,7 @@
   "pointTowardsZones": [],
   "eventMarkers": [],
   "globalConstraints": {
-    "maxVelocity": 3.0,
+    "maxVelocity": 3.5,
     "maxAcceleration": 3.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
@@ -42,7 +42,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -53.365886124032514
+    "rotation": 126.634
   },
   "reversed": false,
   "folder": "FourBigBooms",
