@@ -59,6 +59,12 @@ public class ElevatorControlCommand extends Command {
             case STOPPED:
                 this.coralIntake.setIntakeSpeed(0);
                 break;
+            case INTAKE_FORCE_02:
+                this.coralIntake.setIntakeSpeed(0.2);
+                break;
+            case INTAKE_FORCE_035:
+                this.coralIntake.setIntakeSpeed(0.35);
+                break;
             case INTAKE:
                 if (!wasStoppedByLimitSwitch && this.coralIntake.hasCoral()) { // limit switch pauser
                     this.stateManager.getCurrentState().copy()
