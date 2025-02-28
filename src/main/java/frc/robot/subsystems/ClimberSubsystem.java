@@ -65,7 +65,7 @@ public class ClimberSubsystem extends SubsystemBase {
     public void periodic() {
         climbMotorEncoderVelocityPublisher.setDouble(climbMotorEncoder.getVelocity());
         climbMotorEncoderPositionPublisher.setDouble(climbMotorEncoder.getPosition());
-        System.out.println("climbMotorAbsoluteEncoder.getPosition() is " + climbMotorAbsoluteEncoder.getPosition());
+        // x    System.out.println("climbMotorAbsoluteEncoder.getPosition() is " + climbMotorAbsoluteEncoder.getPosition());
         // throughboreEncoder.periodic();
     }
 

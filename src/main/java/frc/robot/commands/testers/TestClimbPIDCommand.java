@@ -30,17 +30,22 @@ public class TestClimbPIDCommand extends Command {
         
     }
 
+    private boolean wasPID = false;
     @Override
     public void execute() {
         if (controller.getPOV() == 0) {
+            wasPID = true;
             climber.setRawSpeed(0.7);
         } else if (controller.getPOV() == 180) {
+            wasPID = true;
             climber.setRawSpeed(-0.7);
         } else if(rB.getAsBoolean()) {
+            wasPID = false;
             climber.setTargetRotationCount(0.82);
         } else if(leftB.getAsBoolean()) {
+            wasPID = false;
             climber.setTargetRotationCount(0.68);
-        } else {
+        } else if(!wasPID) {
             climber.setRawSpeed(0);
         }
     }
