@@ -210,6 +210,8 @@ public class RobotContainer {
         if (Flags.Climber.IS_ATTACHED) {
             if (Flags.Climber.USE_TEST_CLIMBER_COMMAND) {
                 this.climber.setDefaultCommand(new TestClimberCommand(climber, this.primaryController));
+            } else if(Flags.Climber.USE_TEST_PID_COMMAND) {
+                this.climber.setDefaultCommand(new TestClimbPIDCommand(climber, this.primaryController));
             } else {
                 Command autoClimb = new ClimbCommand(climber).andThen(new BalanceClimberCommand(climber));
                 // ControlHandler.get(this.primaryController, Constants.OperatorConstants.SecondaryControllerConstants.AUTO_CLIMB).whileTrue(autoClimb);

@@ -37,6 +37,7 @@ public class ClimbCommand extends Command {
 
     @Override
     public void execute() {
+        /*
         double pitch = RobotGyro.getGyroAngleDegreesPitch();
         double roll = RobotGyro.getGyroAngleDegreesRoll();
         double yaw = RobotGyro.getGyroAngleDegreesYaw();
@@ -51,7 +52,7 @@ public class ClimbCommand extends Command {
 
         if (false) {
             this.climber.setRawSpeed(SPEED);
-        }
+        }*/
     }
 
     // Called once the command ends or is interrupted.

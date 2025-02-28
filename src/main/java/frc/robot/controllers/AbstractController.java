@@ -102,9 +102,10 @@ public abstract class AbstractController {
     public abstract Trigger rightButton();
 
     /**
-     * On the right hand side on controllers, there's four buttons arranged in a diamond shape. Due to what I can only assume to be a stylistic decision, the PS5 controller decided to not go with X/Y/A/B, hence the interesting name choice.
-     *
-     * @return A bindable {@link Trigger} for the button at the bottom of the diamond on the right side of the controller.
+     * Gets the POV value (the arrows on the left).
+     * 
+     * @return the POV
+     * @see {@link #getPOV()}
      */
     public abstract Trigger lowerButton();
 
