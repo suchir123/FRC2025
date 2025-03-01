@@ -9,15 +9,31 @@ import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.commands.elevator.ElevatorStateManager;
 import frc.robot.subsystems.CoralIntakeSubsystem;
 import frc.robot.subsystems.ElevatorSubsystem;
+import frc.robot.subsystems.staticsubsystems.RobotGyro;
+import frc.robot.subsystems.swerve.DriveTrainSubsystem;
+import frc.robot.util.Util;
 
 public class ElevatorAutonManager {
     private final BooleanSupplier getAtSetpoint;
     private final BooleanSupplier getIsCoralInIntake;
+    private final DriveTrainSubsystem driveTrain;
 
-    public ElevatorAutonManager(ElevatorSubsystem elevator, CoralIntakeSubsystem coralIntake)
+    public ElevatorAutonManager(ElevatorSubsystem elevator, CoralIntakeSubsystem coralIntake, DriveTrainSubsystem driveTrain)
     {
         this.getAtSetpoint = elevator::getAtSetpoint;
         this.getIsCoralInIntake = coralIntake::hasCoral;
+        this.driveTrain = driveTrain;
+    }
+
+    public Command resetGyroCommand() {
+        return new InstantCommand(() -> {
+                    if (Util.onBlueTeam()) {
+                        RobotGyro.resetGyroAngle();
+                    } else {
+                        RobotGyro.setGyroAngle(180);
+                    }
+                    this.driveTrain.setHeadingLockMode(false);
+                });
     }
 
     public Command getPlaceCoralCommand() {

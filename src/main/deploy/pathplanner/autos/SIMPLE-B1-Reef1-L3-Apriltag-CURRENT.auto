@@ -1,0 +1,43 @@
+{
+  "version": "2025.0",
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "B1ToB1Midpoint"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "GoToL3"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "FollowApriltagForward4Seconds"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "PlaceCoral"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "ResetGyro"
+          }
+        }
+      ]
+    }
+  },
+  "resetOdom": true,
+  "folder": null,
+  "choreoAuto": false
+}

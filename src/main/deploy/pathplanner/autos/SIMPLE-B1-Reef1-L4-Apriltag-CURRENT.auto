@@ -11,28 +11,27 @@
           }
         },
         {
-          "type": "parallel",
+          "type": "named",
           "data": {
-            "commands": [
-              {
-                "type": "named",
-                "data": {
-                  "name": "FollowApriltagForward4Seconds"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "GoToL4"
-                }
-              }
-            ]
+            "name": "GoToL4"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "FollowApriltagForward4Seconds"
           }
         },
         {
           "type": "named",
           "data": {
             "name": "PlaceCoral"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "ResetGyro"
           }
         }
       ]
