@@ -193,7 +193,7 @@ public class RobotContainer {
 
                 ControlHandler.get(this.primaryController, OperatorConstants.PrimaryControllerConstants.REEF_AUTO_AIM).whileTrue(new ReefAprilTagCenterCommand(driveTrain, this.primaryController));
                 //ControlHandler.get(this.ps4Controller, OperatorConstants.PrimaryControllerConstants.ALGAE_AUTO_AIM).whileTrue(new AlgaeCenterCommand(driveTrain, this.primaryController));
-                // ControlHandler.get(this.ps4Controller, OperatorConstants.SecondaryControllerConstants.MICRO_ADJUST_DRIVING).whileTrue(new SlowerManualDriveCommand(driveTrain, this.primaryController));
+                ControlHandler.get(this.ps4Controller, OperatorConstants.SecondaryControllerConstants.MICRO_ADJUST_DRIVING).whileTrue(new SlowerManualDriveCommand(driveTrain, this.ps4Controller));
                 //ControlHandler.get(this.ps4Controller, OperatorConstants.SecondaryControllerConstants.INTAKE_STATE).whileTrue(new SlowerManualDriveCommand(driveTrain, this.primaryController));
             }
         }
