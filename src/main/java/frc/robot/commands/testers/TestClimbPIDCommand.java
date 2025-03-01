@@ -41,7 +41,7 @@ public class TestClimbPIDCommand extends Command {
         } else if (controller.getPOV() == 180) {
             wasPID = false;
             climber.setRawSpeed(-0.7);
-        } else if(rB.getAsBoolean()) {
+        } else if(controller.getPOV() == 90) {
             wasPID = true;
             climber.setTargetRotationCount(0.818);
             ElevatorStateManager.INSTANCE.cloneState()
@@ -50,7 +50,7 @@ public class TestClimbPIDCommand extends Command {
                     .setCoralIntakeState(CoralIntakeState.STOPPED)
                     .setRunAlgaeRemover(false)
                     .setAsCurrent();
-        } else if(leftB.getAsBoolean()) {
+        } else if(controller.getPOV() == 270) {
             wasPID = true;
             climber.setTargetRotationCount(0.666);
         } else if(!wasPID) {

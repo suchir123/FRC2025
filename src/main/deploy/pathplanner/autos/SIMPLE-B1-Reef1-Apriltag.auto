@@ -17,13 +17,13 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "GoToL4"
+                  "name": "FollowApriltagForward4Seconds"
                 }
               },
               {
                 "type": "named",
                 "data": {
-                  "name": "FollowApriltagForward2Seconds"
+                  "name": "GoToL4"
                 }
               }
             ]
@@ -33,12 +33,6 @@
           "type": "named",
           "data": {
             "name": "PlaceCoral"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "ElevatorDown"
           }
         }
       ]

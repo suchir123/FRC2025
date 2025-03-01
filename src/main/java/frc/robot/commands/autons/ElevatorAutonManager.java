@@ -30,7 +30,7 @@ public class ElevatorAutonManager {
                         .setAsCurrent();
                 }
             )).andThen(
-                new WaitCommand(0.3)
+                new WaitCommand(0.6)
             );
     }
     

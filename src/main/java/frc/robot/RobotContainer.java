@@ -53,6 +53,7 @@ public class RobotContainer {
     // private final AprilTagHandler aprilTagHandler = new AprilTagHandler();
 
     private final SendableChooser<Command> autonChooser;
+    private Command auto;
 
     private final DriveTrainSubsystem driveTrain;
     private final ElevatorSubsystem elevators;
@@ -167,6 +168,10 @@ public class RobotContainer {
                     .setCoralIntakeState(ElevatorStateManager.CoralIntakeState.INTAKE)
                     .setAsCurrent()));
 
+            ControlHandler.get(this.ps4Controller, OperatorConstants.SecondaryControllerConstants.DROP_L1).onTrue(new InstantCommand(() -> elevatorStateManager.cloneState()
+                    .setCoralIntakeState(CoralIntakeState.OUTTAKE)
+                    .setAsCurrent()));
+
             ControlHandler.get(this.primaryController, OperatorConstants.PrimaryControllerConstants.ALGAE_REMOVER).onTrue(new InstantCommand(() -> elevatorStateManager.cloneState()
                     .setHeight(elevatorStateManager.getHeight() + (!this.elevatorStateManager.getRunAlgaeRemover() ? 0.11 : -0.11))
                     .setRunAlgaeRemover(!this.elevatorStateManager.getRunAlgaeRemover())
@@ -198,8 +203,8 @@ public class RobotContainer {
     }
 
     public void onTeleopInit() {
-        if (this.getAutonomousCommand() != null) {
-            this.getAutonomousCommand().cancel();
+        if (this.auto != null) {
+            this.auto.cancel();
         }
 
         if (Flags.Elevator.IS_ATTACHED) {
@@ -252,7 +257,8 @@ public class RobotContainer {
         // This method will return an actual auton path once we implement it & switch in the comment.
         // return new InstantCommand();
         if(this.autonChooser != null) {
-            return this.autonChooser.getSelected();
+            auto = this.autonChooser.getSelected();
+            auto.schedule();
         }
         return new InstantCommand();
     }

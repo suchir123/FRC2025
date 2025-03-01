@@ -76,7 +76,7 @@ public class FollowApriltagForwardCommand extends Command {
         double pixelDiff = -NetworkTablesUtil.getLimelightTX();
         int tagId = NetworkTablesUtil.getLimeyTargetTag();
         // double ySpeedError = -Util.squareKeepSign(this.ySpeedLimiter.calculate(this.joystick.getLeftVerticalMovement() * flip)) * MAX_SPEED_METERS_PER_SEC;
-        double xSpeedError = MathUtil.clamp(kPTranslation * pixelDiff, -1, 1);
+        double xSpeedError = MathUtil.clamp(kPTranslation * pixelDiff, -0.45, 0.45);
         // System.out.println("xSpeed = " + xSpeed);
         // System.out.println("ySpeed = " + ySpeed);
 
