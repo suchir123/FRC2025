@@ -5,15 +5,22 @@
     "data": {
       "commands": [
         {
-          "type": "path",
+          "type": "parallel",
           "data": {
-            "pathName": "Blue3ToReef2WithL4"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "GoToL4"
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "Blue3ToReef2WithL4"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "GoToL4"
+                }
+              }
+            ]
           }
         },
         {
@@ -48,12 +55,6 @@
           }
         },
         {
-          "type": "path",
-          "data": {
-            "pathName": "HumanPlayer2ToHP2Midpoint"
-          }
-        },
-        {
           "type": "parallel",
           "data": {
             "commands": [
@@ -66,7 +67,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "HP2MidpointToReef3"
+                  "pathName": "HumanPlayer2ToReef3"
                 }
               }
             ]
@@ -104,19 +105,13 @@
           }
         },
         {
-          "type": "path",
-          "data": {
-            "pathName": "HumanPlayer2ToHP2Midpoint"
-          }
-        },
-        {
           "type": "parallel",
           "data": {
             "commands": [
               {
                 "type": "path",
                 "data": {
-                  "pathName": "HP2MidpointToReef3"
+                  "pathName": "HumanPlayer2ToReef3"
                 }
               },
               {

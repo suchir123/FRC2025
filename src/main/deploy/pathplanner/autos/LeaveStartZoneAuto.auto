@@ -9,12 +9,6 @@
           "data": {
             "pathName": "LeaveStartZone"
           }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "ResetGyro"
-          }
         }
       ]
     }
