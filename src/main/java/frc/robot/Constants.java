@@ -33,8 +33,6 @@ public final class Constants {
             public static final TriggerType ALGAE_REMOVER                       = TriggerType.RIGHT_BUTTON;
             public static final TriggerType REEF_AUTO_AIM                       = TriggerType.LOWER_BUTTON;
             public static final TriggerType CLIMB_PIVOT_ANGLE_PRIMARY           = TriggerType.UPPER_BUTTON;
-
-            public static final TriggerType CLIMBER_UP_TO_HARD_STOP             = TriggerType.POV_0;
         }
 
         public static class SecondaryControllerConstants {
