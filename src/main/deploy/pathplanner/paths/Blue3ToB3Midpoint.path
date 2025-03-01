@@ -41,8 +41,8 @@
     "unlimited": false
   },
   "goalEndState": {
-    "velocity": 0,
-    "rotation": -120.19162296095759
+    "velocity": 1.5,
+    "rotation": -119.99999999999999
   },
   "reversed": false,
   "folder": "FourBigBooms",
