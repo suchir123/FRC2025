@@ -15,6 +15,7 @@ public class QuestNav {
     NetworkTable nt4Table = nt4Instance.getTable("questnav");
     private IntegerSubscriber questMiso = nt4Table.getIntegerTopic("miso").subscribe(0);
     private IntegerPublisher questMosi = nt4Table.getIntegerTopic("mosi").publish();
+    private DoubleArrayPublisher questPoseReset = nt4Table.getDoubleArrayTopic("resetpose").publish();
 
     // Subscribe to the Network Tables questnav data topics
     private DoubleSubscriber questTimestamp = nt4Table.getDoubleTopic("timestamp").subscribe(0.0f);
@@ -91,7 +92,11 @@ public class QuestNav {
     }
 
     private Pose2d getQuestNavPose() {
-        var oculousPositionCompensated = getQuestNavTranslation().minus(new Translation2d(0, 0.1651)); // 6.5
+        var oculousPositionCompensated = getQuestNavTranslation().minus(new Translation2d(0, 0)); // 6.5
         return new Pose2d(oculousPositionCompensated, Rotation2d.fromDegrees(getOculusYaw()));
+    }
+
+    public void setPose(Pose2d pose) {
+        questPoseReset.accept(new double[] {pose.getX(), pose.getY(), pose.getRotation().getDegrees()});
     }
 }

@@ -9,6 +9,7 @@ import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.Nat;
+import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
@@ -24,6 +25,7 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.networktables.DoublePublisher;
 import edu.wpi.first.networktables.StructArrayPublisher;
 import edu.wpi.first.networktables.StructPublisher;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -128,7 +130,7 @@ public class DriveTrainSubsystem extends SubsystemBase {
         SmartDashboard.putData("Field", field);
         SmartDashboard.putData("estimated field", estimatedField);
 
-        QuestNav.INSTANCE.zeroPosition();
+        QuestNav.INSTANCE.setPose(new Pose2d());
         QuestNav.INSTANCE.zeroHeading();
         
         this.configureAutoBuilder();
@@ -195,6 +197,7 @@ public class DriveTrainSubsystem extends SubsystemBase {
         RobotGyro.setGyroAngle(pose.getRotation().getDegrees());
         System.out.println(RobotGyro.getRotation2d());
         poseEstimator.resetPosition(pose.getRotation(), this.getAbsoluteModulePositions(), pose);
+        QuestNav.INSTANCE.setPose(pose);
     }
 
     /**
@@ -436,6 +439,18 @@ public class DriveTrainSubsystem extends SubsystemBase {
      */
     public void updateOdometry() {
         this.poseEstimator.update(RobotGyro.getRotation2d(), new SwerveModulePosition[]{frontLeft.getAbsoluteModulePosition(), frontRight.getAbsoluteModulePosition(), backLeft.getAbsoluteModulePosition(), backRight.getAbsoluteModulePosition()});
+        if(Flags.DriveTrain.ENABLE_OCULUS_ODOMETRY_FUSING) {
+            updateOdometryWithOculus(); 
+        }
+    }
+
+    public void updateOdometryWithOculus() {
+        if(QuestNav.INSTANCE.connected()) {
+            Pose2d oculus = QuestNav.INSTANCE.getPose();
+            this.poseEstimator.addVisionMeasurement(oculus, QuestNav.INSTANCE.timestamp(), VecBuilder.fill(0.1, 0.1, 1));
+        } else {
+            DriverStation.reportWarning("Oculus not connected!", false);
+        }
     }
 
     /**
