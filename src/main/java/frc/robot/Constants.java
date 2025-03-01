@@ -31,8 +31,8 @@ public final class Constants {
             public static final TriggerType ACTIVATE_ELEVATORS                  = TriggerType.RIGHT_SHOULDER_BUTTON;
 
             public static final TriggerType ALGAE_REMOVER                       = TriggerType.RIGHT_BUTTON;
-            public static final TriggerType REEF_AUTO_AIM                       = TriggerType.UPPER_BUTTON;
-            public static final TriggerType CLIMB_PIVOT_ANGLE_PRIMARY           = TriggerType.LOWER_BUTTON;
+            public static final TriggerType REEF_AUTO_AIM                       = TriggerType.LOWER_BUTTON;
+            public static final TriggerType CLIMB_PIVOT_ANGLE_PRIMARY           = TriggerType.UPPER_BUTTON;
 
             public static final TriggerType CLIMBER_UP_TO_HARD_STOP             = TriggerType.POV_0;
         }
@@ -42,7 +42,7 @@ public final class Constants {
             public static final TriggerType TOGGLE_ALGAE_GROUND_INTAKE_HEIGHT   = TriggerType.LEFT_SHOULDER_BUTTON;
             public static final TriggerType MICRO_ADJUST_DRIVING                = TriggerType.LEFT_SHOULDER_TRIGGER;
 
-            public static final TriggerType CLIMB_PIVOT_ANGLE_SECONDARY         = TriggerType.LEFT_SHOULDER_TRIGGER;
+            public static final TriggerType CLIMB_PIVOT_ANGLE_SECONDARY         = TriggerType.POV_0;
             public static final TriggerType DROP_L1                             = TriggerType.RIGHT_SHOULDER_TRIGGER;
             public static final TriggerType L4                                  = TriggerType.RIGHT_SHOULDER_BUTTON;
             public static final TriggerType L3                                  = TriggerType.UPPER_BUTTON;

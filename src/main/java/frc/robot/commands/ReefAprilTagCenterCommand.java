@@ -76,7 +76,7 @@ public class ReefAprilTagCenterCommand extends Command {
             Rotation2d targetAngle = AprilTagUtil.getTagPose(tagId).orElseGet(Pose3d::new).getRotation().toRotation2d();
             Rotation2d currentAngle = RobotGyro.getRotation2d();
 
-            double angleDiff = MathUtil.inputModulus(targetAngle.minus(currentAngle).plus(Rotation2d.k180deg).getDegrees(), -180, 180);
+            double angleDiff = MathUtil.inputModulus(targetAngle.minus(currentAngle).getDegrees(), -180, 180);
             // rotSpeed = MathUtil.clamp(angleDiff * kPRotation, -0.5, 0.5);
         }
 
