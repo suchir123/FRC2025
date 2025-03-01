@@ -3,13 +3,13 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 3.332,
-        "y": 2.028
+        "x": 3.582,
+        "y": 2.461
       },
       "prevControl": null,
       "nextControl": {
-        "x": 4.033999999999999,
-        "y": 2.5155
+        "x": 4.283999999999999,
+        "y": 2.9484999999999997
       },
       "isLocked": false,
       "linkedName": "HP1Midpoint"
