@@ -37,7 +37,8 @@ public class ElevatorAutonManager {
     }
 
     public Command getPlaceCoralCommand() {
-        return new WaitCommand(0.3)
+        return 
+            new WaitCommand(0.3)
             .andThen(
                 new InstantCommand(() -> {
                     System.out.println("PlaceCoralCommand InstantCommand ran!");
