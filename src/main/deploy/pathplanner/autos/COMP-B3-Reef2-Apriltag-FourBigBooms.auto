@@ -5,19 +5,13 @@
     "data": {
       "commands": [
         {
-          "type": "path",
-          "data": {
-            "pathName": "Blue3ToB3Midpoint"
-          }
-        },
-        {
           "type": "parallel",
           "data": {
             "commands": [
               {
-                "type": "named",
+                "type": "path",
                 "data": {
-                  "name": "FollowApriltagForward2Seconds"
+                  "pathName": "Blue3ToB3Midpoint"
                 }
               },
               {
@@ -27,6 +21,12 @@
                 }
               }
             ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "FollowApriltagForward1Second"
           }
         },
         {
@@ -61,25 +61,19 @@
           }
         },
         {
-          "type": "path",
-          "data": {
-            "pathName": "HumanPlayer2ToHP2Midpoint"
-          }
-        },
-        {
           "type": "parallel",
           "data": {
             "commands": [
               {
                 "type": "named",
                 "data": {
-                  "name": "FollowApriltagForward2Seconds"
+                  "name": "GoToL4"
                 }
               },
               {
-                "type": "named",
+                "type": "path",
                 "data": {
-                  "name": "GoToL4"
+                  "pathName": "HumanPlayer2ToHP2Midpoint"
                 }
               }
             ]
