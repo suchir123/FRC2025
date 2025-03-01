@@ -39,6 +39,12 @@
           "data": {
             "pathName": "Reef1ToReef1HPMidpoint"
           }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "GoToIntakeAngle"
+          }
         }
       ]
     }
