@@ -65,6 +65,43 @@
           "data": {
             "pathName": "HumanPlayer2ToHP2Midpoint"
           }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "FollowApriltagForward2Seconds"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "GoToL4"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "PlaceCoral"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Reef3ToRetreatFromReef3"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "ElevatorDown"
+          }
         }
       ]
     }

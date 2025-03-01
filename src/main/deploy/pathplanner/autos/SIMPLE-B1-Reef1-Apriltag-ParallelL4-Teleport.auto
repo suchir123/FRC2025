@@ -36,6 +36,12 @@
           }
         },
         {
+          "type": "path",
+          "data": {
+            "pathName": "Reef1ToRetreatFromReef1"
+          }
+        },
+        {
           "type": "named",
           "data": {
             "name": "ElevatorDown"
