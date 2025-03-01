@@ -33,6 +33,15 @@ public class ElevatorAutonManager {
                 new WaitCommand(0.3)
             );
     }
+
+    public Command getStopIntakeCommand() {
+        return new InstantCommand(() -> {
+            System.out.println("getCoralIntake STOPPING InstantCommand ran!");
+            ElevatorStateManager.INSTANCE.cloneState()
+                .setCoralIntakeState(ElevatorStateManager.CoralIntakeState.STOPPED)
+                .setAsCurrent();
+        });
+    }
     
     public Command getCoralIntakeCommand() {
         return new InstantCommand(() -> {
@@ -45,6 +54,8 @@ public class ElevatorAutonManager {
                 .setAsCurrent();
         }).andThen(
             new WaitUntilCommand(getIsCoralInIntake)
+        ).andThen(
+            getStopIntakeCommand()
         );
     }
     

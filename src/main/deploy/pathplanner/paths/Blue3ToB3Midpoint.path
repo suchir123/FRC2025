@@ -3,45 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 5.13825,
-        "y": 5.16575
+        "x": 7.084733606557376,
+        "y": 7.507428278688524
       },
       "prevControl": null,
       "nextControl": {
-        "x": 4.88018189102691,
-        "y": 5.375749254269898
+        "x": 6.224189737100313,
+        "y": 7.00007872696333
       },
       "isLocked": false,
-      "linkedName": "Reef2"
+      "linkedName": "B3"
     },
     {
       "anchor": {
-        "x": 4.368,
-        "y": 5.819
+        "x": 5.388,
+        "y": 5.599
       },
       "prevControl": {
-        "x": 4.681449551266391,
-        "y": 5.643392721278468
-      },
-      "nextControl": {
-        "x": 2.7495000000000003,
-        "y": 6.725750000000001
-      },
-      "isLocked": false,
-      "linkedName": null
-    },
-    {
-      "anchor": {
-        "x": 1.64775,
-        "y": 7.3595
-      },
-      "prevControl": {
-        "x": 1.8404142958912195,
-        "y": 7.200187511196577
+        "x": 5.6297828664186245,
+        "y": 5.989258034109648
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "HumanPlayer2"
+      "linkedName": null
     }
   ],
   "rotationTargets": [],
@@ -58,13 +42,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 126.634
+    "rotation": -120.19162296095759
   },
   "reversed": false,
   "folder": "FourBigBooms",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": -120.19162296095759
+    "rotation": -179.999
   },
   "useDefaultConstraints": true
 }

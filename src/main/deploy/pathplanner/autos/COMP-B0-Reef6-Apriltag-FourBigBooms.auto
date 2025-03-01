@@ -90,6 +90,25 @@
           "data": {
             "name": "PlaceCoral"
           }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "Reef5ToRetreatFromReef5"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "GoToIntakeAngle"
+                }
+              }
+            ]
+          }
         }
       ]
     }
