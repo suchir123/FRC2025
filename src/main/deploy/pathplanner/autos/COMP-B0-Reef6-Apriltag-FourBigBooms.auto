@@ -17,7 +17,7 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "FollowApriltagForward2Seconds"
+                  "name": "FollowApriltagForward1Second"
                 }
               },
               {
@@ -73,7 +73,7 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "FollowApriltagForward2Seconds"
+                  "name": "FollowApriltagForward1Second"
                 }
               },
               {
