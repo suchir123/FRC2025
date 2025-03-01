@@ -43,6 +43,7 @@ public final class Constants {
             public static final TriggerType MICRO_ADJUST_DRIVING                = TriggerType.LEFT_SHOULDER_TRIGGER;
 
             public static final TriggerType CLIMB_PIVOT_ANGLE_SECONDARY         = TriggerType.LEFT_SHOULDER_TRIGGER;
+            public static final TriggerType DROP_L1                             = TriggerType.RIGHT_SHOULDER_TRIGGER;
             public static final TriggerType L4                                  = TriggerType.RIGHT_SHOULDER_BUTTON;
             public static final TriggerType L3                                  = TriggerType.UPPER_BUTTON;
             public static final TriggerType L2                                  = TriggerType.LEFT_BUTTON;
