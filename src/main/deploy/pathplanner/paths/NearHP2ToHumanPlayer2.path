@@ -3,29 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.64775,
-        "y": 7.3595
+        "x": 2.25,
+        "y": 7.2
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.0205592105263155,
-        "y": 6.459292763157895
+        "x": 2.002370873498138,
+        "y": 7.165651554504975
       },
       "isLocked": false,
-      "linkedName": "HumanPlayer2"
+      "linkedName": "NearHP2"
     },
     {
       "anchor": {
-        "x": 3.2199999999999998,
-        "y": 6.1952
+        "x": 1.64775,
+        "y": 7.3595
       },
       "prevControl": {
-        "x": 3.1517500000000007,
-        "y": 6.643700000000001
+        "x": 2.035299745051424,
+        "y": 7.189418756651726
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "HumanPlayer2"
     }
   ],
   "rotationTargets": [],
@@ -41,14 +41,14 @@
     "unlimited": false
   },
   "goalEndState": {
-    "velocity": 2.5,
-    "rotation": -59.99999999999999
+    "velocity": 0,
+    "rotation": 126.634
   },
   "reversed": false,
   "folder": "FourBigBooms",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 126.634
+    "rotation": 180.0
   },
   "useDefaultConstraints": true
 }

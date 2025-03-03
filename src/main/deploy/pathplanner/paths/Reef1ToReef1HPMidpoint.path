@@ -17,15 +17,15 @@
     {
       "anchor": {
         "x": 5.83,
-        "y": 2.519
+        "y": 1.1194999999999993
       },
       "prevControl": {
         "x": 5.83,
-        "y": 3.5190000000000006
+        "y": 2.1194999999999995
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "Reef1HPMidpoint"
     }
   ],
   "rotationTargets": [],

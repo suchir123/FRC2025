@@ -19,7 +19,7 @@
         {
           "type": "named",
           "data": {
-            "name": "FollowApriltagForward2Seconds"
+            "name": "FollowApriltagForward4Seconds"
           }
         },
         {
@@ -60,6 +60,12 @@
           }
         },
         {
+          "type": "path",
+          "data": {
+            "pathName": "MoveForwardALittle"
+          }
+        },
+        {
           "type": "named",
           "data": {
             "name": "CoralIntake"
@@ -87,7 +93,7 @@
         {
           "type": "named",
           "data": {
-            "name": "FollowApriltagForward2Seconds"
+            "name": "FollowApriltagForward4Seconds"
           }
         },
         {
@@ -116,6 +122,12 @@
           }
         },
         {
+          "type": "path",
+          "data": {
+            "pathName": "MoveForwardALittle"
+          }
+        },
+        {
           "type": "named",
           "data": {
             "name": "CoralIntake"
@@ -138,6 +150,12 @@
                 }
               }
             ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "FollowApriltagForward4Seconds"
           }
         },
         {
