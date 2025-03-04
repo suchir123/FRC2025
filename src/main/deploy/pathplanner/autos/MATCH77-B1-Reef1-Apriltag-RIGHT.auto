@@ -1,0 +1,124 @@
+{
+  "version": "2025.0",
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "B1ToB1Midpoint"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "GoToL4"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "FollowApriltagForward4Seconds"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "PlaceCoral"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Reef1ToReef1HP2Midpoint"
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "Reef1HP2MidpointToNearHP2"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "GoToIntakeAngle"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "NearHP2ToHumanPlayer2"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "CoralIntake"
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "HumanPlayer2ToHP2Midpoint"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "GoToL4"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "FollowApriltagForward4Seconds"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "PlaceCoral"
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "Reef3ToHumanPlayer2"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "GoToIntakeAngle"
+                }
+              }
+            ]
+          }
+        }
+      ]
+    }
+  },
+  "resetOdom": true,
+  "folder": null,
+  "choreoAuto": false
+}
