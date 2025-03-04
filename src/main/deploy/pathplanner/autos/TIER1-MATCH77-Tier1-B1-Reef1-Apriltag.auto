@@ -19,7 +19,7 @@
         {
           "type": "named",
           "data": {
-            "name": "FollowApriltagForward2Seconds"
+            "name": "FollowApriltagForward4Seconds"
           }
         },
         {
@@ -87,7 +87,7 @@
         {
           "type": "named",
           "data": {
-            "name": "FollowApriltagForward2Seconds"
+            "name": "FollowApriltagForward4Seconds"
           }
         },
         {
