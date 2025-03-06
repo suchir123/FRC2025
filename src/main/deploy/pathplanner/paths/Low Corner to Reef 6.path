@@ -3,48 +3,57 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 5.13825,
-        "y": 2.88
+        "x": 7.084733606557376,
+        "y": 0.468
       },
       "prevControl": null,
       "nextControl": {
-        "x": 4.88018189102691,
-        "y": 3.089999254269898
-      },
-      "isLocked": false,
-      "linkedName": "Reef2"
-    },
-    {
-      "anchor": {
-        "x": 4.368,
-        "y": 5.819
-      },
-      "prevControl": {
-        "x": 4.681449551266391,
-        "y": 5.643392721278468
-      },
-      "nextControl": {
-        "x": 2.7495000000000003,
-        "y": 6.725750000000001
+        "x": 7.046405736560178,
+        "y": 0.9427962937891732
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 1.64775,
-        "y": 7.3595
+        "x": 6.95,
+        "y": 1.24
       },
       "prevControl": {
-        "x": 1.8404142958912195,
-        "y": 7.200187511196577
+        "x": 7.158920605245661,
+        "y": 1.060249171637698
+      },
+      "nextControl": {
+        "x": 6.760489180326428,
+        "y": 1.4030510632490658
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 5.13825,
+        "y": 2.88
+      },
+      "prevControl": {
+        "x": 5.676809210526316,
+        "y": 2.4265526315789465
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "HumanPlayer2"
+      "linkedName": "Reef2"
     }
   ],
-  "rotationTargets": [],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 0.55,
+      "rotationDegrees": 180.0
+    },
+    {
+      "waypointRelativePos": 0.6,
+      "rotationDegrees": 119.99999999999999
+    }
+  ],
   "constraintZones": [],
   "pointTowardsZones": [],
   "eventMarkers": [],
@@ -58,13 +67,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 126.634
+    "rotation": 119.99999999999999
   },
   "reversed": false,
-  "folder": "FourBigBooms",
+  "folder": "Lil Addy's Bigger Booms",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 119.99999999999999
+    "rotation": 180.0
   },
   "useDefaultConstraints": true
 }

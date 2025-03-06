@@ -1,0 +1,19 @@
+{
+  "version": "2025.0",
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Low Corner to Reef 6"
+          }
+        }
+      ]
+    }
+  },
+  "resetOdom": true,
+  "folder": "Lil Addy's Bigger Booms",
+  "choreoAuto": false
+}
