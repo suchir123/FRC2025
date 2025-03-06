@@ -104,8 +104,10 @@ public class RobotContainer {
         NamedCommands.registerCommand("ResetGyro", this.elevatorAutonManager.resetGyroCommand());
 
         NamedCommands.registerCommand("FollowApriltagForward4Seconds", new FollowApriltagForwardCommand(driveTrain, 4.0, true));
+        NamedCommands.registerCommand("FollowApriltagForward3Seconds", new FollowApriltagForwardCommand(driveTrain, 2.5, true));
         NamedCommands.registerCommand("FollowApriltagForward2Seconds", new FollowApriltagForwardCommand(driveTrain, 2.0, true));
         NamedCommands.registerCommand("FollowApriltagForward1Second", new FollowApriltagForwardCommand(driveTrain, 1.0, true));
+        NamedCommands.registerCommand("ResetPoseToReef6", this.elevatorAutonManager.resetPositionToReef6Command());
 
         
         // Deprecated -- specify duration

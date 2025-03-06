@@ -2,10 +2,13 @@ package frc.robot.commands.autons;
 
 import java.util.function.BooleanSupplier;
 
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
+import frc.robot.RobotContainer;
 import frc.robot.commands.elevator.ElevatorStateManager;
 import frc.robot.subsystems.CoralIntakeSubsystem;
 import frc.robot.subsystems.ElevatorSubsystem;
@@ -25,6 +28,11 @@ public class ElevatorAutonManager {
         this.driveTrain = driveTrain;
     }
 
+    public Command resetPositionToReef6Command() {
+        Pose2d reef6Pose = new Pose2d(5.143, 2.875, Rotation2d.fromDegrees(120));
+        return new InstantCommand(() -> driveTrain.setPose(reef6Pose));
+    }
+
     public Command resetGyroCommand() {
         return new InstantCommand(() -> {
                     if (Util.onBlueTeam()) {
@@ -38,15 +46,15 @@ public class ElevatorAutonManager {
 
     public Command getPlaceCoralCommand() {
         return 
-            new WaitCommand(0.3)
-            .andThen(
+            // new WaitCommand(0.0)
+            // .andThen(
                 new InstantCommand(() -> {
                     System.out.println("PlaceCoralCommand InstantCommand ran!");
                     ElevatorStateManager.INSTANCE.cloneState()
                         .setCoralIntakeState(ElevatorStateManager.CoralIntakeState.INTAKE_FORCE_02)
                         .setAsCurrent();
                 }
-            )).andThen(
+            ).andThen(
                 new WaitCommand(0.6)
             );
     }
@@ -130,7 +138,7 @@ public class ElevatorAutonManager {
         return new InstantCommand(() -> {
             System.out.println("InstantCommand L4 ran!");
             ElevatorStateManager.INSTANCE.cloneState()
-                .setHeight(0.99)
+                .setHeight(1.02)
                 .setPivotAngle(Rotation2d.fromRotations(0.42))
                 .setCoralIntakeState(ElevatorStateManager.CoralIntakeState.STOPPED)
                 .setRunAlgaeRemover(false)

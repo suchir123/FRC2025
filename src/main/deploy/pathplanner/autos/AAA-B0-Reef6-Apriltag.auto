@@ -43,15 +43,34 @@
           }
         },
         {
-          "type": "path",
+          "type": "named",
           "data": {
-            "pathName": "Reef6ToRetreatFromReef6"
+            "name": "ResetPoseToReef6"
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "Reef6ToHumanPlayer1"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "GoToIntakeAngle"
+                }
+              }
+            ]
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "GoToIntakeAngle"
+            "name": "CoralIntake"
           }
         }
       ]

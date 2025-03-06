@@ -22,6 +22,7 @@ public class FollowApriltagForwardCommand extends Command {
     private final DriveTrainSubsystem driveTrain;
     private final Timer timer;
     private final double duration;
+    // private boolean endNow;
     private boolean taperSpeed;
 
     // 0.6 is a made up constant - tune it!!!
@@ -40,6 +41,7 @@ public class FollowApriltagForwardCommand extends Command {
         this.timer = new Timer();
         this.duration = duration;
         this.taperSpeed = taperSpeed;
+        // this.endNow = false;
         // this.aprilTagHandler = aprilTagHandler;
         // this.autoAimSubwoofer = ControlHandler.get(joystick, ControllerConstants.AUTO_AIM_FOR_SHOOT);
 
@@ -70,25 +72,25 @@ public class FollowApriltagForwardCommand extends Command {
         double flip = flipFactor();
         // System.out.println("vert: " + this.joystick.getRightVerticalMovement() + ", hor: " + this.joystick.getRightHorizontalMovement());
         // this.driveTrain.drive(this.joystick.getVerticalMovement());
-        final double kPTranslation = 0.1;
+        final double kPTranslation = 0.2;
         final double kPRotation = 0.1;
         //double flip = flipFactor();
         double pixelDiff = -NetworkTablesUtil.getLimelightTX();
         int tagId = NetworkTablesUtil.getLimeyTargetTag();
         // double ySpeedError = -Util.squareKeepSign(this.ySpeedLimiter.calculate(this.joystick.getLeftVerticalMovement() * flip)) * MAX_SPEED_METERS_PER_SEC;
-        double xSpeedError = MathUtil.clamp(kPTranslation * pixelDiff, -0.45, 0.45);
+        double xSpeedError = MathUtil.clamp(kPTranslation * pixelDiff, -0.3, 0.3);
         // System.out.println("xSpeed = " + xSpeed);
         // System.out.println("ySpeed = " + ySpeed);
 
         Optional<Pose3d> tagPose = AprilTagUtil.getTagPose(tagId);
         double rotSpeed = 0;
-        if(tagPose.isPresent()) {
-            Rotation2d targetAngle = AprilTagUtil.getTagPose(tagId).orElseGet(Pose3d::new).getRotation().toRotation2d();
-            Rotation2d currentAngle = RobotGyro.getRotation2d();
+        // if(tagPose.isPresent()) {
+        //     Rotation2d targetAngle = AprilTagUtil.getTagPose(tagId).orElseGet(Pose3d::new).getRotation().toRotation2d();
+        //     Rotation2d currentAngle = RobotGyro.getRotation2d();
 
-            double angleDiff = MathUtil.inputModulus(targetAngle.minus(currentAngle).plus(Rotation2d.k180deg).getDegrees(), -180, 180);
-            // rotSpeed = MathUtil.clamp(angleDiff * kPRotation, -0.5, 0.5);
-        }
+        //     double angleDiff = MathUtil.inputModulus(targetAngle.minus(currentAngle).plus(Rotation2d.k180deg).getDegrees(), -180, 180);
+        //     // rotSpeed = MathUtil.clamp(angleDiff * kPRotation, -0.5, 0.5);
+        // }
 
         // System.out.println("forward speed: " + ySpeed + ", x speed: " + xSpeed);
         // System.out.println("y: " + RobotMathUtil.roundNearestHundredth(this.joystick.getLeftVerticalMovement()) + ", x: " + RobotMathUtil.roundNearestHundredth(this.joystick.getLeftHorizontalMovement()));
@@ -98,11 +100,16 @@ public class FollowApriltagForwardCommand extends Command {
             double timeLeft = this.duration - this.timer.get();
             double speedModifier = timeLeft / this.duration;
             forwardSpeed = speedModifier * AUTO_SPEED;
+            // System.out.println(timeLeft + "<" + this.duration * 0.25 + " : " + (timeLeft < this.duration * 0.25));
+            // if (timeLeft < this.duration * 0.25) {
+            //     endNow = true;
+            // }
         } else {
             // uhhhh go slower i guess
             forwardSpeed = AUTO_SPEED / 2;
         }
 
+        System.out.println("xSpeedError=" + xSpeedError);
         this.driveTrain.drive(forwardSpeed, xSpeedError, rotSpeed, false);
     }
     // Called once the command ends or is interrupted.
@@ -114,6 +121,6 @@ public class FollowApriltagForwardCommand extends Command {
     // Returns true when the command should end.
     @Override
     public boolean isFinished() {
-        return this.timer.hasElapsed(this.duration);
+        return this.timer.hasElapsed(this.duration * 0.75);
     }
 }
