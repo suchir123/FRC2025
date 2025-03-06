@@ -23,7 +23,7 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "FollowApriltagForward4Seconds"
+                  "name": "FollowApriltagForward3Seconds"
                 }
               }
             ]
@@ -44,7 +44,7 @@
         {
           "type": "named",
           "data": {
-            "name": "ElevatorDown"
+            "name": "GoToIntakeAngle"
           }
         }
       ]
