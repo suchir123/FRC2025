@@ -8,24 +8,24 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 4.88018189102691,
-        "y": 3.089999254269898
+        "x": 5.164544964502144,
+        "y": 3.1387426184541436
       },
       "isLocked": false,
       "linkedName": "Reef2"
     },
     {
       "anchor": {
-        "x": 4.368,
-        "y": 5.819
+        "x": 4.6,
+        "y": 5.8
       },
       "prevControl": {
-        "x": 4.681449551266391,
-        "y": 5.643392721278468
+        "x": 5.398897835686665,
+        "y": 5.409581975879782
       },
       "nextControl": {
-        "x": 2.7495000000000003,
-        "y": 6.725750000000001
+        "x": 4.157514883911521,
+        "y": 6.0162406217778575
       },
       "isLocked": false,
       "linkedName": null
@@ -36,15 +36,24 @@
         "y": 7.3595
       },
       "prevControl": {
-        "x": 1.8404142958912195,
-        "y": 7.200187511196577
+        "x": 2.3890839041120335,
+        "y": 6.924957191784431
       },
       "nextControl": null,
       "isLocked": false,
       "linkedName": "HumanPlayer2"
     }
   ],
-  "rotationTargets": [],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 0.5,
+      "rotationDegrees": -119.99999999999999
+    },
+    {
+      "waypointRelativePos": 0.6,
+      "rotationDegrees": 125.00000000000001
+    }
+  ],
   "constraintZones": [],
   "pointTowardsZones": [],
   "eventMarkers": [],
@@ -61,7 +70,7 @@
     "rotation": 126.634
   },
   "reversed": false,
-  "folder": "FourBigBooms",
+  "folder": "Lil Addy's Bigger Booms",
   "idealStartingState": {
     "velocity": 0,
     "rotation": 119.99999999999999

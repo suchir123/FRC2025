@@ -3,48 +3,57 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 5.13825,
-        "y": 2.88
+        "x": 7.084733606557376,
+        "y": 7.56
       },
       "prevControl": null,
       "nextControl": {
-        "x": 4.88018189102691,
-        "y": 3.089999254269898
+        "x": 7.107148972602739,
+        "y": 7.075214041095891
       },
       "isLocked": false,
-      "linkedName": "Reef2"
+      "linkedName": "High Corner"
     },
     {
       "anchor": {
-        "x": 4.368,
-        "y": 5.819
+        "x": 6.96,
+        "y": 6.65
       },
       "prevControl": {
-        "x": 4.681449551266391,
-        "y": 5.643392721278468
+        "x": 7.13975139695953,
+        "y": 6.858920116035399
       },
       "nextControl": {
-        "x": 2.7495000000000003,
-        "y": 6.725750000000001
+        "x": 6.796948420979278,
+        "y": 6.460489624086572
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 1.64775,
-        "y": 7.3595
+        "x": 5.13825,
+        "y": 2.88
       },
       "prevControl": {
-        "x": 1.8404142958912195,
-        "y": 7.200187511196577
+        "x": 5.694734589041096,
+        "y": 3.3620239726027403
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "HumanPlayer2"
+      "linkedName": "Reef2"
     }
   ],
-  "rotationTargets": [],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 0.55,
+      "rotationDegrees": 180.0
+    },
+    {
+      "waypointRelativePos": 0.65,
+      "rotationDegrees": -119.99999999999999
+    }
+  ],
   "constraintZones": [],
   "pointTowardsZones": [],
   "eventMarkers": [],
@@ -58,13 +67,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 126.634
+    "rotation": 119.99999999999999
   },
   "reversed": false,
-  "folder": "FourBigBooms",
+  "folder": "Lil Addy's Bigger Booms",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 119.99999999999999
+    "rotation": 180.0
   },
   "useDefaultConstraints": true
 }

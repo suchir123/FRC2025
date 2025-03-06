@@ -146,7 +146,7 @@ public class SwerveModule {
 
         driveConfig.closedLoop
                 .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
-                .pidf(0.3, 0, 0.2, 0.25) // p0.3, d 0.2 ff0.25
+                .pidf(0.6, 0, 0.2, 0.33) // p0.3, d 0.2 ff0.25
                 .outputRange(-1, 1);
 
         // These numbers are recently made up and subject to change.
@@ -168,7 +168,7 @@ public class SwerveModule {
                 .positionWrappingEnabled(true)
                 .positionWrappingMinInput(-Math.PI)
                 .positionWrappingMaxInput(Math.PI)
-                .pidf(0.55, 0, 0.3, 0) //Do not use ff because it will cause the motors to spin in the wrong direction :)
+                .pidf(0.575, 0, 0.3, 0) //Do not use ff because it will cause the motors to spin in the wrong direction :)
                 .outputRange(-1, 1);// used to be 0.55 0 0.3
         // TODO: add some more config for MAXMOTION
 
@@ -489,7 +489,7 @@ public class SwerveModule {
         if (Math.abs(tar) > 0.01) {
             ratio = vel / tar;
         }
-        //System.out.println(this.name + " velocity: " + nearestHundredth(driveEncoder.getVelocity()) + " target speed: " + nearestHundredth(optimizedDesiredState.speedMetersPerSecond) + ", ratio: " + nearestHundredth(ratio));
+        System.out.println(this.name + " velocity: " + nearestHundredth(driveEncoder.getVelocity()) + " target speed: " + nearestHundredth(optimizedDesiredState.speedMetersPerSecond) + ", ratio: " + nearestHundredth(ratio));
         //System.out.println(this.name + ", position: " + this.driveEncoder.getPosition());
     }
 

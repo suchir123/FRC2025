@@ -152,8 +152,8 @@ public class DriveTrainSubsystem extends SubsystemBase {
             this::getRobotRelativeChassisSpeeds,
             this::consumeChassisSpeeds,
             new PPHolonomicDriveController(
-                new PIDConstants(1, 0, 0),
-                new PIDConstants(1, 0, 0)
+                new PIDConstants(2, 0, 0),
+                new PIDConstants(1.5, 0, 0)
             ),
             config, // womp womp if its null
             () -> !Util.onBlueTeam(),
