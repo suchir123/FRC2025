@@ -41,6 +41,10 @@ public final class QuestNav {
 		return questBatteryPercent.get();
 	}
 	
+	public boolean oculusLowBattery() {
+		return connected() && getBatteryPercent() < 25;
+	}
+	
 	// Returns if the Quest is connected.
 	public boolean connected() {
 		return ((RobotController.getFPGATime() - questBatteryPercent.getLastChange()) / 1000) < 250;

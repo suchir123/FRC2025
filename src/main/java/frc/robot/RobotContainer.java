@@ -4,6 +4,7 @@ import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -30,6 +31,7 @@ import frc.robot.controllers.PS4Controller;
 import frc.robot.controllers.PS5Controller;
 import frc.robot.subsystems.*;
 import frc.robot.subsystems.staticsubsystems.LimeLight;
+import frc.robot.subsystems.staticsubsystems.QuestNav;
 import frc.robot.subsystems.staticsubsystems.RobotGyro;
 import frc.robot.subsystems.swerve.DriveTrainSubsystem;
 import frc.robot.util.ControlHandler;
@@ -126,40 +128,40 @@ public class RobotContainer {
     private void configureBindings() {
         if (Flags.Elevator.IS_ATTACHED && !Flags.Elevator.USE_TEST_ELEVATOR_COMMAND && !Flags.Elevator.USE_TEST_PID_COMMAND && !Flags.CoralIntake.USE_TEST_PID_COMMAND) {
             ControlHandler.get(this.ps4Controller, OperatorConstants.SecondaryControllerConstants.INTAKE_STATE).onTrue(new InstantCommand(() -> elevatorStateManager.cloneState()
-                    .setHeight(0)
-                    .setPivotAngle(Rotation2d.fromRotations(0.14))
-                    .setCoralIntakeState(ElevatorStateManager.CoralIntakeState.INTAKE)
-                    .setRunAlgaeRemover(false)
-                    .setAsCurrent()));
+                .setHeight(0)
+                .setPivotAngle(Rotation2d.fromRotations(0.14))
+                .setCoralIntakeState(ElevatorStateManager.CoralIntakeState.INTAKE)
+                .setRunAlgaeRemover(false)
+                .setAsCurrent()));
 
             ControlHandler.get(this.ps4Controller, OperatorConstants.SecondaryControllerConstants.L1).onTrue(new InstantCommand(() -> elevatorStateManager.cloneState()
-                    .setHeight(0)
-                    .setPivotAngle(Rotation2d.fromRotations(0.03))
-                    .setCoralIntakeState(ElevatorStateManager.CoralIntakeState.STOPPED)
-                    .setRunAlgaeRemover(false)
-                    .primeAsNext()));
+                .setHeight(0)
+                .setPivotAngle(Rotation2d.fromRotations(0.03))
+                .setCoralIntakeState(ElevatorStateManager.CoralIntakeState.STOPPED)
+                .setRunAlgaeRemover(false)
+                .primeAsNext()));
 
             ControlHandler.get(this.ps4Controller, OperatorConstants.SecondaryControllerConstants.L2).onTrue(new InstantCommand(() -> elevatorStateManager.cloneState()
-                    .setHeight(0)
-                    .setPivotAngle(Rotation2d.fromRotations(0.46))
-                    .setCoralIntakeState(ElevatorStateManager.CoralIntakeState.STOPPED)
-                    .setRunAlgaeRemover(false)
-                    .primeAsNext()));
+                .setHeight(0)
+                .setPivotAngle(Rotation2d.fromRotations(0.46))
+                .setCoralIntakeState(ElevatorStateManager.CoralIntakeState.STOPPED)
+                .setRunAlgaeRemover(false)
+                .primeAsNext()));
 
             ControlHandler.get(this.ps4Controller, OperatorConstants.SecondaryControllerConstants.L3).onTrue(new InstantCommand(() -> elevatorStateManager.cloneState()
-                    .setHeight(0.35)
-                    .setPivotAngle(Rotation2d.fromRotations(0.46))
-                    .setCoralIntakeState(ElevatorStateManager.CoralIntakeState.STOPPED)
-                    .setRunAlgaeRemover(false)
-                    .primeAsNext()));
+                .setHeight(0.35)
+                .setPivotAngle(Rotation2d.fromRotations(0.46))
+                .setCoralIntakeState(ElevatorStateManager.CoralIntakeState.STOPPED)
+                .setRunAlgaeRemover(false)
+                .primeAsNext()));
 
             // MAKE SURE TO ALSO UPDATE THE AUTONOMOUS VERSION!!!!!!!
             ControlHandler.get(this.ps4Controller, OperatorConstants.SecondaryControllerConstants.L4).onTrue(new InstantCommand(() -> elevatorStateManager.cloneState()
-                    .setHeight(0.99)
-                    .setPivotAngle(Rotation2d.fromRotations(0.42))
-                    .setCoralIntakeState(ElevatorStateManager.CoralIntakeState.STOPPED)
-                    .setRunAlgaeRemover(false)
-                    .primeAsNext()));
+                .setHeight(0.99)
+                .setPivotAngle(Rotation2d.fromRotations(0.42))
+                .setCoralIntakeState(ElevatorStateManager.CoralIntakeState.STOPPED)
+                .setRunAlgaeRemover(false)
+                .primeAsNext()));
 
             ControlHandler.get(this.primaryController, OperatorConstants.PrimaryControllerConstants.CLIMB_PIVOT_ANGLE_PRIMARY)
                 .or(ControlHandler.get(this.ps4Controller, OperatorConstants.SecondaryControllerConstants.CLIMB_PIVOT_ANGLE_SECONDARY))
@@ -171,17 +173,17 @@ public class RobotContainer {
                     .setAsCurrent()));
 
             ControlHandler.get(this.primaryController, OperatorConstants.PrimaryControllerConstants.CORAL_INTAKE_MOTOR).onTrue(new InstantCommand(() -> elevatorStateManager.cloneState()
-                    .setCoralIntakeState(ElevatorStateManager.CoralIntakeState.INTAKE)
-                    .setAsCurrent()));
+                .setCoralIntakeState(ElevatorStateManager.CoralIntakeState.INTAKE)
+                .setAsCurrent()));
 
             ControlHandler.get(this.ps4Controller, OperatorConstants.SecondaryControllerConstants.DROP_L1).onTrue(new InstantCommand(() -> elevatorStateManager.cloneState()
-                    .setCoralIntakeState(CoralIntakeState.OUTTAKE)
-                    .setAsCurrent()));
+                .setCoralIntakeState(CoralIntakeState.OUTTAKE)
+                .setAsCurrent()));
 
             ControlHandler.get(this.primaryController, OperatorConstants.PrimaryControllerConstants.ALGAE_REMOVER).onTrue(new InstantCommand(() -> elevatorStateManager.cloneState()
-                    .setHeight(elevatorStateManager.getHeight() + (!this.elevatorStateManager.getRunAlgaeRemover() ? 0.11 : -0.11))
-                    .setRunAlgaeRemover(!this.elevatorStateManager.getRunAlgaeRemover())
-                    .setAsCurrent()));
+                .setHeight(elevatorStateManager.getHeight() + (!this.elevatorStateManager.getRunAlgaeRemover() ? 0.11 : -0.11))
+                .setRunAlgaeRemover(!this.elevatorStateManager.getRunAlgaeRemover())
+                .setAsCurrent()));
                 // .alongWith(new InstantCommand(() -> this.algaeGroundIntake.setIntakeSpeed(-0.5), this.algaeGroundIntake))).onFalse(new InstantCommand(() -> this.algaeGroundIntake.setIntakeSpeed(0), this.algaeGroundIntake));
 
             ControlHandler.get(this.primaryController, OperatorConstants.PrimaryControllerConstants.ACTIVATE_ELEVATORS).onTrue(new InstantCommand(elevatorStateManager::pushNextState));
@@ -260,8 +262,6 @@ public class RobotContainer {
     }
 
     public Command getAutonomousCommand() {
-        // This method will return an actual auton path once we implement it & switch in the comment.
-        // return new InstantCommand();
         if(this.autonChooser != null) {
             auto = this.autonChooser.getSelected();
             auto.schedule();
@@ -277,6 +277,11 @@ public class RobotContainer {
 
     public void onTeleopPeriodic() {
         // this.powerHandler.updateNT();
+        Robot.INSTANCE.addPeriodic(() -> {
+            if(QuestNav.INSTANCE.oculusLowBattery()) {
+                DriverStation.reportWarning("Oculus battery low! Go charge it or something.", false);
+            }
+        }, 30); // every 30 seconds, check oculus battery
     }
 
     public void onRobotPeriodic() {
