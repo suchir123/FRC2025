@@ -6,10 +6,12 @@ import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.Pose3d;
 
-public class AprilTagUtil {
+public final class AprilTagUtil {
     private static final AprilTagFieldLayout FIELD_LAYOUT = AprilTagFieldLayout.loadField(AprilTagFields.k2025Reefscape);
 
-    public static final Optional<Pose3d> getTagPose(int tagId) {
+    public static Optional<Pose3d> getTagPose(int tagId) {
         return FIELD_LAYOUT.getTagPose(tagId);
     }
+    
+    private AprilTagUtil() {}
 }

@@ -6,7 +6,7 @@ import frc.robot.Constants.NetworkTablesConstants;
 import java.util.HashMap;
 import java.util.Map;
 
-public class NetworkTablesUtil {
+public final class NetworkTablesUtil {
     private static final NetworkTableInstance INSTANCE = NetworkTableInstance.getDefault();
     public static final NetworkTable MAIN_ROBOT_TABLE = INSTANCE.getTable(NetworkTablesConstants.MAIN_TABLE_NAME);
     private static final Map<String, GenericPublisher> publishers = new HashMap<>();
@@ -30,84 +30,11 @@ public class NetworkTablesUtil {
     public static NetworkTable getTable(String tableName) {
         return INSTANCE.getTable(tableName);
     }
-
-    public static void setLimelightPipeline(int pipeline) {
-        NetworkTable table = INSTANCE.getTable("limelight");
-        table.getEntry("pipeline").setNumber(pipeline);
-    }
-
-    public static int getLimeLightPipeline() {
-        NetworkTable table = INSTANCE.getTable("limelight");
-        return table.getEntry("getpipe").getNumber(1).intValue();
-    }
-
-    public static float getLimeLightErrorX() {
-        NetworkTable table = INSTANCE.getTable("limelight");
-        if (getLimeLightPipeline() == 1) {
-            return table.getEntry("llpython").getNumberArray(new Number[]{0, 0, 0, 0})[1].floatValue() - 160.0f;
-        } else {
-            return table.getEntry("tx").getNumber(0.0).floatValue() * 5.369f;
-        }
-
-    }
-
-    public static float getLimelightTX() {
-        return getEntry("limelight", "tx").getNumber(0.0).floatValue();
-    }
-
-    public static float getLimeLightErrorY() {
-        NetworkTable table = INSTANCE.getTable("limelight");
-        if (getLimeLightPipeline() == 1) {
-            return table.getEntry("llpython").getNumberArray(new Number[]{0, 0, 0, 0})[2].floatValue() - 120.0f;
-        } else {
-            return table.getEntry("ty").getNumber(0.0).floatValue() * 5.2516f;
-        }
-    }
-
-    public static String getLimeyJson() {
-        return INSTANCE.getTable("limelight").getEntry("json").getString("");
-    }
-
-    public static int getLimeyTargetTag() {
-        return INSTANCE.getTable("limelight").getEntry("tid").getNumber(0).intValue();
-    }
-
-    public static float getJetsonTripleCam() {
-        NetworkTable table = INSTANCE.getTable("jetson");
-        return table.getEntry("tag_center_diff").getNumber(0.0).floatValue();
-    }
-
-    public static float getJetsonAlgaeCenter() {
-        NetworkTable table = INSTANCE.getTable("jetson");
-        return table.getEntry("algae_pixel_diff").getNumber(0.0).floatValue();
-    }
-
-    public static float getLimeLightArea() {
-        NetworkTable table = INSTANCE.getTable("limelight");
-        return table.getEntry("llpython").getNumberArray(new Number[]{0, 0, 0, 0})[3].floatValue();
-    }
-
-    public static float getConeOrientation() {
-        NetworkTable table = INSTANCE.getTable("limelight");
-        return table.getEntry("llpython").getNumberArray(new Number[]{0, 0, 0, 0})[0].floatValue();
-    }
-
-    // Gets key from keyboard
-    public static String getKeyString() {
-        NetworkTable table = INSTANCE.getTable("robogui");
-        return table.getEntry("key_string").getString("default");
-    }
-
-    // Gets key from keyboard
-    public static int getKeyInteger() {
-        NetworkTable table = INSTANCE.getTable("robogui");
-        return table.getEntry("key_int").getNumber(0).intValue();
-    }
-
+    
     public static double[] getAprilTagEntry() {
         return INSTANCE.getTable("jetson").getEntry("apriltags_pose").getDoubleArray(new double[]{0.0});
     }
-
+    
     /**
      * Returns the entry reference from NetworkTablesConstants
      *
@@ -166,5 +93,15 @@ public class NetworkTablesUtil {
         if (timeDiff > 1000) {
             System.out.println(timeDiff - 1000);
         }
+    }
+    
+    public static float getJetsonTripleCam() {
+        NetworkTable table = getNTInstance().getTable("jetson");
+        return table.getEntry("tag_center_diff").getNumber(0.0).floatValue();
+    }
+    
+    public static float getJetsonAlgaeCenter() {
+        NetworkTable table = getNTInstance().getTable("jetson");
+        return table.getEntry("algae_pixel_diff").getNumber(0.0).floatValue();
     }
 }

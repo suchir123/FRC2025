@@ -1,11 +1,10 @@
-package frc.robot.commands;
+package frc.robot.commands.drive;
 
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Flags;
 import frc.robot.controllers.AbstractController;
 import frc.robot.subsystems.swerve.DriveTrainSubsystem;
-import frc.robot.util.NetworkTablesUtil;
 import frc.robot.util.Util;
 
 public class ManualDriveCommand extends Command {
@@ -50,8 +49,8 @@ public class ManualDriveCommand extends Command {
         // this.driveTrain.drive(this.joystick.getVerticalMovement());
         double flip = flipFactor();
         // We need a negative sign here because the robot starts facing in the other direction
-        double ySpeed = -Util.squareKeepSign(this.ySpeedLimiter.calculate(this.joystick.getLeftVerticalMovement() * flip)) * MAX_SPEED_METERS_PER_SEC;
-        double xSpeed = Util.squareKeepSign(this.xSpeedLimiter.calculate(this.joystick.getLeftHorizontalMovement() * flip)) * MAX_SPEED_METERS_PER_SEC;
+        double ySpeed = Util.squareKeepSign(this.ySpeedLimiter.calculate(this.joystick.getLeftVerticalMovement() * flip)) * MAX_SPEED_METERS_PER_SEC;
+        double xSpeed = -Util.squareKeepSign(this.xSpeedLimiter.calculate(this.joystick.getLeftHorizontalMovement() * flip)) * MAX_SPEED_METERS_PER_SEC;
         // System.out.println("xSpeed = " + xSpeed);
         // System.out.println("ySpeed = " + ySpeed);
 

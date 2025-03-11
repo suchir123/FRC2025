@@ -96,6 +96,7 @@ public final class RobotGyro {
     public static void resetGyroAngle() {
         gyro.reset();
         gyro.setGyroAngle(IMUAxis.kZ, 0);
+        QuestNav.INSTANCE.resetHeading(new Rotation2d());
         angleAdjust = 0;
     }
 
@@ -106,6 +107,7 @@ public final class RobotGyro {
      */
     public static void setGyroAngle(double deg) {
         resetGyroAngle();
+        QuestNav.INSTANCE.resetHeading(Rotation2d.fromDegrees(deg));
         angleAdjust = deg;
     }
 

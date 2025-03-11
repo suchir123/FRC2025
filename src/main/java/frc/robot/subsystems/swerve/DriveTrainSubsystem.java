@@ -35,13 +35,13 @@ import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.PortConstants;
 import frc.robot.Constants.RobotConstants;
-import frc.robot.Constants;
 import frc.robot.Flags;
 import frc.robot.Robot;
-import frc.robot.commands.ManualDriveCommand;
+import frc.robot.commands.drive.ManualDriveCommand;
+import frc.robot.subsystems.staticsubsystems.LimeLight;
 import frc.robot.subsystems.staticsubsystems.RobotGyro;
 import frc.robot.util.NetworkTablesUtil;
-import frc.robot.util.QuestNav;
+import frc.robot.subsystems.staticsubsystems.QuestNav;
 
 import static edu.wpi.first.units.Units.RadiansPerSecond;
 
@@ -104,6 +104,7 @@ public class DriveTrainSubsystem extends SubsystemBase {
 
     private final Field2d field = new Field2d();
     private final Field2d estimatedField = new Field2d();
+    private final Field2d questNavField = new Field2d();
     private final Field2d limelightField = new Field2d();
     // uploads the intended, estimated, and actual states of the robot.
     StructArrayPublisher<SwerveModuleState> targetSwerveStatePublisher = NetworkTablesUtil.MAIN_ROBOT_TABLE.getStructArrayTopic("TargetStates", SwerveModuleState.struct).publish();
@@ -114,6 +115,8 @@ public class DriveTrainSubsystem extends SubsystemBase {
     StructPublisher<Pose2d> posePositionPublisher = NetworkTablesUtil.MAIN_ROBOT_TABLE.getStructTopic("estimatedOdometryPosition", Pose2d.struct).publish();
     StructPublisher<Rotation2d> robotRotationPublisher = NetworkTablesUtil.MAIN_ROBOT_TABLE.getStructTopic("rotation", Rotation2d.struct).publish();
     StructPublisher<Pose2d> questNavPublisher = NetworkTablesUtil.MAIN_ROBOT_TABLE.getStructTopic("questnav", Pose2d.struct).publish();
+    StructPublisher<Pose2d> limeyPosePublisher = NetworkTablesUtil.MAIN_ROBOT_TABLE.getStructTopic("limeyPose", Pose2d.struct).publish();
+
     DoublePublisher fLAmp = NetworkTablesUtil.MAIN_ROBOT_TABLE.getDoubleTopic("fl_amp").publish();
     DoublePublisher fRAmp = NetworkTablesUtil.MAIN_ROBOT_TABLE.getDoubleTopic("fr_amp").publish();
     DoublePublisher bLAmp = NetworkTablesUtil.MAIN_ROBOT_TABLE.getDoubleTopic("bl_amp").publish();
@@ -126,12 +129,16 @@ public class DriveTrainSubsystem extends SubsystemBase {
         // this.aprilTagHandler = aprilTagHandler;
 
         RobotGyro.resetGyroAngle();
+        RobotGyro.setGyroAngle(180);
 
         SmartDashboard.putData("Field", field);
+        SmartDashboard.putData("quest field", questNavField);
         SmartDashboard.putData("estimated field", estimatedField);
+        SmartDashboard.putData("limey field", limelightField);
 
-        QuestNav.INSTANCE.setPose(new Pose2d());
-        QuestNav.INSTANCE.zeroHeading();
+        QuestNav.INSTANCE.resetPose(new Pose2d());
+        QuestNav.INSTANCE.resetHeading(Rotation2d.k180deg);
+        // QuestNav.INSTANCE.resetHeading();
         
         this.configureAutoBuilder();
     }
@@ -152,8 +159,8 @@ public class DriveTrainSubsystem extends SubsystemBase {
             this::getRobotRelativeChassisSpeeds,
             this::consumeChassisSpeeds,
             new PPHolonomicDriveController(
-                new PIDConstants(2, 0, 0),
-                new PIDConstants(1.5, 0, 0)
+                new PIDConstants(10, 0.5, 0),
+                new PIDConstants(3, 0, 0)
             ),
             config, // womp womp if its null
             () -> !Util.onBlueTeam(),
@@ -197,7 +204,9 @@ public class DriveTrainSubsystem extends SubsystemBase {
         RobotGyro.setGyroAngle(pose.getRotation().getDegrees());
         System.out.println(RobotGyro.getRotation2d());
         poseEstimator.resetPosition(pose.getRotation(), this.getAbsoluteModulePositions(), pose);
-        QuestNav.INSTANCE.setPose(pose);
+
+        QuestNav.INSTANCE.resetPose(pose);
+        QuestNav.INSTANCE.resetHeading(pose.getRotation());
     }
 
     /**
@@ -389,6 +398,7 @@ public class DriveTrainSubsystem extends SubsystemBase {
         posePositionPublisher.set(this.getPose());
         robotRotationPublisher.set(RobotGyro.getRotation2d());
         questNavPublisher.set(QuestNav.INSTANCE.getPose());
+        limeyPosePublisher.set(LimeLight.getLimeyApriltagPose());
 
         //noinspection StatementWithEmptyBody
         // for (SwerveModule module : swerveModules) {
@@ -402,6 +412,8 @@ public class DriveTrainSubsystem extends SubsystemBase {
         this.updateOdometry();
         // this.updateOdometryWithJetsonVision();
         field.setRobotPose(getPose());
+        questNavField.setRobotPose(QuestNav.INSTANCE.getPose());
+        limelightField.setRobotPose(LimeLight.getLimeyApriltagPose());
         // System.out.println(this.getPose());
 
         //fLAmp.set(frontLeft.getDriveAmperage());
@@ -442,14 +454,27 @@ public class DriveTrainSubsystem extends SubsystemBase {
         if(Flags.DriveTrain.ENABLE_OCULUS_ODOMETRY_FUSING) {
             updateOdometryWithOculus(); 
         }
+        if(Flags.DriveTrain.ENABLE_LIMEY_APRILTAGS_ODOMETRY_FUSING) {
+            updateOdometryWithLimeyApriltags();
+        }
     }
 
     public void updateOdometryWithOculus() {
         if(QuestNav.INSTANCE.connected()) {
             Pose2d oculus = QuestNav.INSTANCE.getPose();
-            this.poseEstimator.addVisionMeasurement(oculus, QuestNav.INSTANCE.timestamp(), VecBuilder.fill(0.1, 0.1, 1));
+            this.poseEstimator.addVisionMeasurement(oculus, QuestNav.INSTANCE.timestamp(), VecBuilder.fill(0.01, 0.01, 1));
         } else {
             DriverStation.reportWarning("Oculus not connected!", false);
+        }
+    }
+
+    public void updateOdometryWithLimeyApriltags() {
+        if(LimeLight.isLimeyConnected()) {
+            Pose2d limey = LimeLight.getLimeyApriltagPose();
+            double tagDist = LimeLight.getLimeyTagDistance();
+            this.poseEstimator.addVisionMeasurement(limey, LimeLight.getLimeyTimestamp(), VecBuilder.fill(0.2 * tagDist, 0.2 * tagDist, 1 * tagDist));
+        } else {
+            DriverStation.reportWarning("Limey not connected!", false);
         }
     }
 

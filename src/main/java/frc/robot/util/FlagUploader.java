@@ -1,11 +1,11 @@
-package frc.robot;
+package frc.robot.util;
 
-import frc.robot.util.NetworkTablesUtil;
+import frc.robot.Flags;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 
-public class FlagUploader {
+public final class FlagUploader {
     private FlagUploader() {
         throw new UnsupportedOperationException("This is a utility class and cannot be instantiated");
     }

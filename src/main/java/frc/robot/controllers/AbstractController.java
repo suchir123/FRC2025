@@ -105,7 +105,7 @@ public abstract class AbstractController {
      * Gets the POV value (the arrows on the left).
      * 
      * @return the POV
-     * @see {@link #getPOV()}
+     * @see #getPOV()
      */
     public abstract Trigger lowerButton();
 

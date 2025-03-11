@@ -1,10 +1,7 @@
 package frc.robot.util;
 
-import edu.wpi.first.apriltag.AprilTagFieldLayout;
-import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.CoordinateAxis;
 import edu.wpi.first.math.geometry.CoordinateSystem;
-import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 
@@ -15,7 +12,6 @@ import java.util.function.Supplier;
  */
 public final class Util {
     public static final CoordinateSystem JETSON_APRILTAGS_COORD_SYSTEM = new CoordinateSystem(CoordinateAxis.U(), CoordinateAxis.E(), CoordinateAxis.N());
-    public static final AprilTagFieldLayout TAG_FIELD_LAYOUT = AprilTagFields.k2024Crescendo.loadAprilTagLayoutField();
 
     private Util() {
         throw new UnsupportedOperationException("Util is a utility class and should not be instantiated!");
@@ -175,24 +171,8 @@ public final class Util {
         if (alliance.isPresent()) {
             return alliance.get().equals(Alliance.Blue);
         }
-        System.out.println("Alliance not present!");
+        // System.out.println("Alliance not present!");
         DriverStation.reportError("Alliance not present!", true);
         return true;
-    }
-
-    public static Pose3d getTagPose(int tagId) {
-        return TAG_FIELD_LAYOUT.getTagPose(tagId).orElse(new Pose3d());
-    }
-
-    public static int getTargetTagId() {
-        if (onBlueTeam()) {
-            return 7;
-        } else {
-            return 4;
-        }
-    }
-
-    public static Pose3d getTargetPose() {
-        return getTagPose(getTargetTagId());
     }
 }

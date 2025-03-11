@@ -2,7 +2,6 @@ package frc.robot.commands.testers;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.elevator.ElevatorStateManager;
 import frc.robot.commands.elevator.ElevatorStateManager.CoralIntakeState;
@@ -29,7 +28,6 @@ public class TestClimbPIDCommand extends Command {
 
     @Override
     public void initialize() {
-        
     }
 
     private boolean wasPID = false;

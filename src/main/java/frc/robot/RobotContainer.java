@@ -1,7 +1,5 @@
 package frc.robot;
 
-import java.util.function.Supplier;
-
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 
@@ -10,7 +8,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandPS4Controller;
 import edu.wpi.first.wpilibj2.command.button.CommandPS5Controller;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -18,6 +15,11 @@ import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.*;
 import frc.robot.commands.autons.ElevatorAutonManager;
 import frc.robot.commands.autons.FollowApriltagForwardCommand;
+import frc.robot.commands.climb.ClimbCommand;
+import frc.robot.commands.drive.BalanceClimberCommand;
+import frc.robot.commands.drive.ManualDriveCommand;
+import frc.robot.commands.drive.ReefAprilTagCenterCommand;
+import frc.robot.commands.drive.SlowerManualDriveCommand;
 import frc.robot.commands.elevator.ElevatorControlCommand;
 import frc.robot.commands.elevator.ElevatorStateManager;
 import frc.robot.commands.elevator.ElevatorStateManager.CoralIntakeState;
@@ -31,7 +33,7 @@ import frc.robot.subsystems.staticsubsystems.LimeLight;
 import frc.robot.subsystems.staticsubsystems.RobotGyro;
 import frc.robot.subsystems.swerve.DriveTrainSubsystem;
 import frc.robot.util.ControlHandler;
-import frc.robot.util.ControlHandler.TriggerType;
+import frc.robot.util.FlagUploader;
 import frc.robot.util.NetworkTablesUtil;
 import frc.robot.util.Util;
 
@@ -50,6 +52,7 @@ public class RobotContainer {
     private final AbstractController primaryController = Flags.Operator.NINTENDO_SWITCH_CONTROLLER_AS_PRIMARY ? this.nintendoProController : this.ps5Controller;
     private final PS4Controller ps4Controller = new PS4Controller(new CommandPS4Controller(OperatorConstants.PS4_CONTROLLER));
     private final PowerHandler powerHandler = new PowerHandler();
+    // private final VisionIO visionIO = new VisionIO();
     // private final AprilTagHandler aprilTagHandler = new AprilTagHandler();
 
     private final SendableChooser<Command> autonChooser;
@@ -185,7 +188,7 @@ public class RobotContainer {
 
             if (Flags.DriveTrain.IS_ATTACHED) {
                 ControlHandler.get(this.ps4Controller, OperatorConstants.SecondaryControllerConstants.RESET_GYRO).onTrue(new InstantCommand(() -> {
-                    if (Util.onBlueTeam()) {
+                    if (!Util.onBlueTeam()) {
                         RobotGyro.resetGyroAngle();
                     } else {
                         RobotGyro.setGyroAngle(180);

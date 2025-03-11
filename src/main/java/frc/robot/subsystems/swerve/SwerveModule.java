@@ -396,7 +396,7 @@ public class SwerveModule {
      * Sets the module's target state to absolute zero. This method accepts a debug index.
      *
      * @param debugIdx The debug index of the array.
-     * @see DriveTrainSubsystemOld#optimizedTargetStates
+     * @see DriveTrainSubsystem#optimizedTargetStates
      */
     public void rotateToAbsoluteZero(int debugIdx) {
         SwerveModuleState zeroedState = new SwerveModuleState();

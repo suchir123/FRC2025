@@ -1,4 +1,4 @@
-package frc.robot.commands;
+package frc.robot.commands.drive;
 
 import java.util.Optional;
 
@@ -9,10 +9,10 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Flags;
 import frc.robot.controllers.AbstractController;
+import frc.robot.subsystems.staticsubsystems.LimeLight;
 import frc.robot.subsystems.staticsubsystems.RobotGyro;
 import frc.robot.subsystems.swerve.DriveTrainSubsystem;
 import frc.robot.util.AprilTagUtil;
-import frc.robot.util.NetworkTablesUtil;
 import frc.robot.util.Util;
 
 public class ReefAprilTagCenterCommand extends Command {
@@ -53,9 +53,9 @@ public class ReefAprilTagCenterCommand extends Command {
     @Override
     public void execute() {
         if(Util.onBlueTeam()) {
-            NetworkTablesUtil.setLimelightPipeline(1);
+            LimeLight.setLimelightPipeline(1);
         } else {
-            NetworkTablesUtil.setLimelightPipeline(0);
+            LimeLight.setLimelightPipeline(0);
         }
         double flip = flipFactor();
         // System.out.println("vert: " + this.joystick.getRightVerticalMovement() + ", hor: " + this.joystick.getRightHorizontalMovement());
@@ -63,9 +63,9 @@ public class ReefAprilTagCenterCommand extends Command {
         final double kPTranslation = 0.02;
         final double kPRotation = 0.1;
         //double flip = flipFactor();
-        double pixelDiff = -NetworkTablesUtil.getLimelightTX();
-        int tagId = NetworkTablesUtil.getLimeyTargetTag();
-        double ySpeedError = -Util.squareKeepSign(this.ySpeedLimiter.calculate(this.joystick.getLeftVerticalMovement() * flip)) * MAX_SPEED_METERS_PER_SEC;
+        double pixelDiff = -LimeLight.getLimelightTX();
+        int tagId = LimeLight.getLimeyTargetTag();
+        double ySpeedError = Util.squareKeepSign(this.ySpeedLimiter.calculate(this.joystick.getLeftVerticalMovement() * flip)) * MAX_SPEED_METERS_PER_SEC;
         double xSpeedError = MathUtil.clamp(kPTranslation * pixelDiff, -0.1, 0.1);
         // System.out.println("xSpeed = " + xSpeed);
         // System.out.println("ySpeed = " + ySpeed);

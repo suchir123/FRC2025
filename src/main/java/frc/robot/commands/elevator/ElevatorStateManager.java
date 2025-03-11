@@ -1,11 +1,6 @@
 package frc.robot.commands.elevator;
 
-import java.util.function.Supplier;
-
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
-import frc.robot.RobotContainer;
 
 public class ElevatorStateManager {
     /**
@@ -21,10 +16,10 @@ public class ElevatorStateManager {
         this.nextState = null;
 
         this.currentState
-                .setHeight(height)
-                .setPivotAngle(pivotAngle)
-                .setCoralIntakeState(coralIntakeState)
-                .setRunAlgaeRemover(runAlgaeRemover);
+            .setHeight(height)
+            .setPivotAngle(pivotAngle)
+            .setCoralIntakeState(coralIntakeState)
+            .setRunAlgaeRemover(runAlgaeRemover);
     }
 
     public double getHeight() {
@@ -147,10 +142,10 @@ public class ElevatorStateManager {
         public ElevatorState copy() {
             ElevatorState copy = new ElevatorState();
             copy
-                    .setHeight(this.height)
-                    .setPivotAngle(this.pivotAngle)
-                    .setCoralIntakeState(this.coralIntakeState)
-                    .setRunAlgaeRemover(this.runAlgaeRemover);
+                .setHeight(this.height)
+                .setPivotAngle(this.pivotAngle)
+                .setCoralIntakeState(this.coralIntakeState)
+                .setRunAlgaeRemover(this.runAlgaeRemover);
             return copy;
         }
 
@@ -167,7 +162,6 @@ public class ElevatorStateManager {
         public void setAsCurrent() {
             this.primeAsNext();
             ElevatorStateManager.this.pushNextState();
-
         }
 
         /**
