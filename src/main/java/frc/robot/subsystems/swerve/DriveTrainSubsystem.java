@@ -10,8 +10,6 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.Nat;
 import edu.wpi.first.math.VecBuilder;
-import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -20,8 +18,6 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
-import edu.wpi.first.math.trajectory.Trajectory;
-import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.networktables.DoublePublisher;
 import edu.wpi.first.networktables.StructArrayPublisher;
 import edu.wpi.first.networktables.StructPublisher;
@@ -31,8 +27,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
-import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.PortConstants;
 import frc.robot.Constants.RobotConstants;
 import frc.robot.Flags;
@@ -56,7 +50,7 @@ import frc.robot.util.Util;
 public class DriveTrainSubsystem extends SubsystemBase {
     // public static final double MAX_SPEED = 3.0; // 3 meters per second
     // public static final double MAX_ANGULAR_SPEED = Math.PI; // 1/2 rotation per second
-    final double LOCK_HEADING_THRESHOLD = 0.1; // TODO: test if when rotate without translating
+    private static final double LOCK_HEADING_THRESHOLD = 0.1; // TODO: test if when rotate without translating
     private static final double SMART_OPTIMIZATION_THRESH_M_PER_SEC = 2;
 
     private static final boolean INVERT_DRIVE_MOTORS = true;
@@ -160,7 +154,7 @@ public class DriveTrainSubsystem extends SubsystemBase {
             this::getRobotRelativeChassisSpeeds,
             this::consumeChassisSpeeds,
             new PPHolonomicDriveController(
-                new PIDConstants(1.69, 0, 0),
+                new PIDConstants(1.69, 0, 0), // note: do NOT set this to 20. or 10. or anything big. if you need to do that it just means you have horrible localization and probably want to use the limelight better
                 new PIDConstants(1, 0, 0)
             ),
             config, // womp womp if its null
