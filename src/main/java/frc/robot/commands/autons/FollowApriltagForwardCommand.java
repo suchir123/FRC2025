@@ -62,9 +62,9 @@ public class FollowApriltagForwardCommand extends Command {
     @Override
     public void execute() {
         if(Util.onBlueTeam()) {
-            LimeLight.setLimelightPipeline(1);
+            LimeLight.setLimeyPipeline(1);
         } else {
-            LimeLight.setLimelightPipeline(0);
+            LimeLight.setLimeyPipeline(0);
         }
         double flip = flipFactor();
         // System.out.println("vert: " + this.joystick.getRightVerticalMovement() + ", hor: " + this.joystick.getRightHorizontalMovement());
@@ -72,7 +72,7 @@ public class FollowApriltagForwardCommand extends Command {
         final double kPTranslation = 0.2;
         final double kPRotation = 0.1;
         //double flip = flipFactor();
-        double pixelDiff = -LimeLight.getLimelightTX();
+        double pixelDiff = -LimeLight.getLimeyTX();
         int tagId = LimeLight.getLimeyTargetTag();
         // double ySpeedError = -Util.squareKeepSign(this.ySpeedLimiter.calculate(this.joystick.getLeftVerticalMovement() * flip)) * MAX_SPEED_METERS_PER_SEC;
         double xSpeedError = MathUtil.clamp(kPTranslation * pixelDiff, -0.3, 0.3);

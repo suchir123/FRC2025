@@ -146,7 +146,7 @@ public class SwerveModule {
 
         driveConfig.closedLoop
                 .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
-                .pidf(0.6, 0, 0.2, 0.33) // p0.3, d 0.2 ff0.25
+                .pidf(0.6, 0, 0.3, 0.33) // p0.3, d 0.2 ff0.25
                 .outputRange(-1, 1);
 
         // These numbers are recently made up and subject to change.

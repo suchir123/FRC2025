@@ -40,6 +40,7 @@ import frc.robot.Robot;
 import frc.robot.commands.drive.ManualDriveCommand;
 import frc.robot.subsystems.staticsubsystems.LimeLight;
 import frc.robot.subsystems.staticsubsystems.RobotGyro;
+import frc.robot.subsystems.staticsubsystems.LimeLight.LimeyApriltagReading;
 import frc.robot.util.NetworkTablesUtil;
 import frc.robot.subsystems.staticsubsystems.QuestNav;
 
@@ -159,8 +160,8 @@ public class DriveTrainSubsystem extends SubsystemBase {
             this::getRobotRelativeChassisSpeeds,
             this::consumeChassisSpeeds,
             new PPHolonomicDriveController(
-                new PIDConstants(10, 0.5, 0),
-                new PIDConstants(3, 0, 0)
+                new PIDConstants(1.69, 0, 0),
+                new PIDConstants(1, 0, 0)
             ),
             config, // womp womp if its null
             () -> !Util.onBlueTeam(),
@@ -398,7 +399,9 @@ public class DriveTrainSubsystem extends SubsystemBase {
         posePositionPublisher.set(this.getPose());
         robotRotationPublisher.set(RobotGyro.getRotation2d());
         questNavPublisher.set(QuestNav.INSTANCE.getPose());
-        limeyPosePublisher.set(LimeLight.getLimeyApriltagPose());
+
+        Pose2d limeyPose = LimeLight.getLimeyApriltagReading().pose();
+        limeyPosePublisher.set(limeyPose);
 
         //noinspection StatementWithEmptyBody
         // for (SwerveModule module : swerveModules) {
@@ -413,37 +416,13 @@ public class DriveTrainSubsystem extends SubsystemBase {
         // this.updateOdometryWithJetsonVision();
         field.setRobotPose(getPose());
         questNavField.setRobotPose(QuestNav.INSTANCE.getPose());
-        limelightField.setRobotPose(LimeLight.getLimeyApriltagPose());
+        limelightField.setRobotPose(limeyPose);
         // System.out.println(this.getPose());
 
         //fLAmp.set(frontLeft.getDriveAmperage());
         //fRAmp.set(frontRight.getDriveAmperage());
         //bLAmp.set(backLeft.getDriveAmperage());
         //bRAmp.set(backRight.getDriveAmperage());
-    }
-
-    /**
-     * Generates a command to follow a given trajectory, then stops at the end if desired.
-     *
-     * @param trajectory The desired trajectory to follow.
-     * @param stopOnEnd  Whether to set speeds to 0 at the end.
-     * @return A command to follow the trajectory. This command must be scheduled manually.
-     */
-    public Command generateTrajectoryFollowerCommand(Trajectory trajectory, boolean stopOnEnd) {
-        return new SwerveControllerCommand(
-                trajectory,
-                this::getPose,
-                this.kinematics,
-                new PIDController(DriveConstants.TRAJ_X_CONTROLLER_KP, 0, 0),
-                new PIDController(DriveConstants.TRAJ_Y_CONTROLLER_KP, 0, 0),
-                new ProfiledPIDController(DriveConstants.TRAJ_THETA_CONTROLLER_KP, 0, 0, new TrapezoidProfile.Constraints(DriveConstants.TRAJ_MAX_ANG_VELO, DriveConstants.TRAJ_MAX_ANG_ACCEL)),
-                this::consumeRawModuleStates,
-                this
-        ).andThen(() -> {
-            if (stopOnEnd) {
-                drive(0, 0, 0, false);
-            }
-        });
     }
 
     /**
@@ -462,7 +441,7 @@ public class DriveTrainSubsystem extends SubsystemBase {
     public void updateOdometryWithOculus() {
         if(QuestNav.INSTANCE.connected()) {
             Pose2d oculus = QuestNav.INSTANCE.getPose();
-            this.poseEstimator.addVisionMeasurement(oculus, QuestNav.INSTANCE.timestamp(), VecBuilder.fill(0.01, 0.01, 1));
+            this.poseEstimator.addVisionMeasurement(oculus, QuestNav.INSTANCE.timestamp(), VecBuilder.fill(0.5, 0.5, 0.2));
         } else {
             DriverStation.reportWarning("Oculus not connected!", false);
         }
@@ -470,9 +449,20 @@ public class DriveTrainSubsystem extends SubsystemBase {
 
     public void updateOdometryWithLimeyApriltags() {
         if(LimeLight.isLimeyConnected()) {
-            Pose2d limey = LimeLight.getLimeyApriltagPose();
-            double tagDist = LimeLight.getLimeyTagDistance();
-            this.poseEstimator.addVisionMeasurement(limey, LimeLight.getLimeyTimestamp(), VecBuilder.fill(0.2 * tagDist, 0.2 * tagDist, 1 * tagDist));
+            LimeyApriltagReading reading = LimeLight.getLimeyApriltagReading();
+            double correction = Double.POSITIVE_INFINITY;
+            if(reading.exists()) {
+                if(reading.distance() < 0.6) {
+                    correction = 0.001; // 0.05 * Math.pow(reading.distance() / 0.61, 6);// Math.pow(0.3 * reading.distance(), 10 / reading.distance());
+                } else if(reading.distance() < 0.75) {
+                    correction = 0.005;
+                } else if(reading.distance() < 1) {
+                    correction = 0.01;
+                } else if(reading.distance() < 1.5) {
+                    correction = 0.02;
+                }
+            }
+            this.poseEstimator.addVisionMeasurement(reading.pose(), reading.timestamp(), VecBuilder.fill(correction, correction, correction));
         } else {
             DriverStation.reportWarning("Limey not connected!", false);
         }

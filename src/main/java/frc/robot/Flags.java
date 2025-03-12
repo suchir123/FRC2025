@@ -125,6 +125,6 @@ public final class Flags {
 
         public static final boolean ENABLE_OCULUS_ODOMETRY_FUSING = true;
 
-        public static final boolean ENABLE_LIMEY_APRILTAGS_ODOMETRY_FUSING = false;
+        public static final boolean ENABLE_LIMEY_APRILTAGS_ODOMETRY_FUSING = true;
     }
 }
