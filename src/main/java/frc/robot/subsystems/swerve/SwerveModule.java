@@ -151,8 +151,8 @@ public class SwerveModule {
 
         // These numbers are recently made up and subject to change.
         driveConfig.closedLoop.maxMotion
-                .maxVelocity(4.0)
-                .maxAcceleration(6.0)
+                .maxVelocity(3.5)
+                .maxAcceleration(4.0)
                 // TODO: tune closed loop error constant
                 .allowedClosedLoopError(0.1);
 
