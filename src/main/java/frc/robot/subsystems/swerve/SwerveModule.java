@@ -489,7 +489,7 @@ public class SwerveModule {
         if (Math.abs(tar) > 0.01) {
             ratio = vel / tar;
         }
-        System.out.println(this.name + " velocity: " + nearestHundredth(driveEncoder.getVelocity()) + " target speed: " + nearestHundredth(optimizedDesiredState.speedMetersPerSecond) + ", ratio: " + nearestHundredth(ratio));
+        // System.out.println(this.name + " velocity: " + nearestHundredth(driveEncoder.getVelocity()) + " target speed: " + nearestHundredth(optimizedDesiredState.speedMetersPerSecond) + ", ratio: " + nearestHundredth(ratio));
         //System.out.println(this.name + ", position: " + this.driveEncoder.getPosition());
     }
 

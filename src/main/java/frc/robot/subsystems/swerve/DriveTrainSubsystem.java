@@ -160,8 +160,8 @@ public class DriveTrainSubsystem extends SubsystemBase {
             this::getRobotRelativeChassisSpeeds,
             this::consumeChassisSpeeds,
             new PPHolonomicDriveController(
-                new PIDConstants(1.69, 0, 0),
-                new PIDConstants(1, 0, 0)
+                new PIDConstants(1.9, 0, 0),
+                new PIDConstants(1.4, 0, 0)
             ),
             config, // womp womp if its null
             () -> !Util.onBlueTeam(),
@@ -430,18 +430,18 @@ public class DriveTrainSubsystem extends SubsystemBase {
      */
     public void updateOdometry() {
         this.poseEstimator.update(RobotGyro.getRotation2d(), new SwerveModulePosition[]{frontLeft.getAbsoluteModulePosition(), frontRight.getAbsoluteModulePosition(), backLeft.getAbsoluteModulePosition(), backRight.getAbsoluteModulePosition()});
-        if(Flags.DriveTrain.ENABLE_OCULUS_ODOMETRY_FUSING) {
-            updateOdometryWithOculus(); 
-        }
         if(Flags.DriveTrain.ENABLE_LIMEY_APRILTAGS_ODOMETRY_FUSING) {
             updateOdometryWithLimeyApriltags();
+        }
+        if(Flags.DriveTrain.ENABLE_OCULUS_ODOMETRY_FUSING) {
+            updateOdometryWithOculus(); 
         }
     }
 
     public void updateOdometryWithOculus() {
         if(QuestNav.INSTANCE.connected()) {
             Pose2d oculus = QuestNav.INSTANCE.getPose();
-            this.poseEstimator.addVisionMeasurement(oculus, QuestNav.INSTANCE.timestamp(), VecBuilder.fill(0.5, 0.5, 0.2));
+            this.poseEstimator.addVisionMeasurement(oculus, QuestNav.INSTANCE.timestamp(), VecBuilder.fill(0.005, 0.005, 0.1));
         } else {
             DriverStation.reportWarning("Oculus not connected!", false);
         }
@@ -449,20 +449,33 @@ public class DriveTrainSubsystem extends SubsystemBase {
 
     public void updateOdometryWithLimeyApriltags() {
         if(LimeLight.isLimeyConnected()) {
+            boolean shouldResetOculus = false;
             LimeyApriltagReading reading = LimeLight.getLimeyApriltagReading();
             double correction = Double.POSITIVE_INFINITY;
             if(reading.exists()) {
                 if(reading.distance() < 0.6) {
                     correction = 0.001; // 0.05 * Math.pow(reading.distance() / 0.61, 6);// Math.pow(0.3 * reading.distance(), 10 / reading.distance());
+                    shouldResetOculus = true;
                 } else if(reading.distance() < 0.75) {
-                    correction = 0.005;
+                    correction = 0.0025;
+                    shouldResetOculus = true;
                 } else if(reading.distance() < 1) {
-                    correction = 0.01;
+                    correction = 0.0075;
+                    shouldResetOculus = true;
+                } else if(reading.distance() < 1.3) {
+                    correction = 0.005;
+                    shouldResetOculus = true;
                 } else if(reading.distance() < 1.5) {
-                    correction = 0.02;
+                    correction = 0.01;
+                } else if(reading.distance() < 2) {
+                    correction = 0.015;
                 }
             }
             this.poseEstimator.addVisionMeasurement(reading.pose(), reading.timestamp(), VecBuilder.fill(correction, correction, correction));
+            if(shouldResetOculus) {
+                // System.out.println("Resetting oculus with limey input");
+                QuestNav.INSTANCE.resetPose(getPose());
+            }
         } else {
             DriverStation.reportWarning("Limey not connected!", false);
         }

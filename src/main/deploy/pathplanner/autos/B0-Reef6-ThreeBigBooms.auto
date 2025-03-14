@@ -41,6 +41,25 @@
               }
             ]
           }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "CoralIntake"
+          }
+        },
+        {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "HumanPlayer1ToReef5"
+                }
+              }
+            ]
+          }
         }
       ]
     }

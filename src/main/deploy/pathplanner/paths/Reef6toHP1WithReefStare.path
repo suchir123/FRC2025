@@ -8,36 +8,52 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 5.398779191148604,
-        "y": 2.815942604188247
+        "x": 5.044754008019318,
+        "y": 2.653639612934219
       },
       "isLocked": false,
       "linkedName": "Reef6"
     },
     {
       "anchor": {
-        "x": 3.696318493150685,
-        "y": 2.0115582191780823
+        "x": 4.447056056697977,
+        "y": 2.4826446567624645
       },
       "prevControl": {
-        "x": 4.6198906578580194,
-        "y": 2.5291983232831017
+        "x": 4.697014074882278,
+        "y": 2.4780632655571
       },
       "nextControl": {
-        "x": 3.4782362646399,
-        "y": 1.8893283471836726
+        "x": 4.197098038513675,
+        "y": 2.4872260479678294
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 1.49,
-        "y": 0.8
+        "x": 3.125342465753425,
+        "y": 2.3270976027397263
       },
       "prevControl": {
-        "x": 1.6867010426975377,
-        "y": 1.2518587662194431
+        "x": 4.9230617580842075,
+        "y": 2.457269859754168
+      },
+      "nextControl": {
+        "x": 2.3070920431988235,
+        "y": 2.267848361347398
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 1.41,
+        "y": 0.85
+      },
+      "prevControl": {
+        "x": 1.6151903450857774,
+        "y": 0.9928177940019364
       },
       "nextControl": null,
       "isLocked": false,
@@ -46,8 +62,8 @@
   ],
   "rotationTargets": [
     {
-      "waypointRelativePos": 0.8288770053475937,
-      "rotationDegrees": 90.0
+      "waypointRelativePos": 1.8128342245989304,
+      "rotationDegrees": 69.0
     }
   ],
   "constraintZones": [],
@@ -55,7 +71,7 @@
   "eventMarkers": [],
   "globalConstraints": {
     "maxVelocity": 3.0,
-    "maxAcceleration": 1.75,
+    "maxAcceleration": 2.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 540.0,
     "nominalVoltage": 12.0,
@@ -63,7 +79,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -126.15800000000002
+    "rotation": -126.0
   },
   "reversed": false,
   "folder": "FourBigBooms",

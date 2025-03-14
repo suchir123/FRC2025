@@ -3,13 +3,13 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.49,
-        "y": 0.8
+        "x": 1.41,
+        "y": 0.85
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.2115,
-        "y": 1.1022500000000002
+        "x": 2.1315,
+        "y": 1.15225
       },
       "isLocked": false,
       "linkedName": "HumanPlayer1"
@@ -34,7 +34,7 @@
   "eventMarkers": [],
   "globalConstraints": {
     "maxVelocity": 3.0,
-    "maxAcceleration": 1.75,
+    "maxAcceleration": 2.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 540.0,
     "nominalVoltage": 12.0,
@@ -48,7 +48,7 @@
   "folder": "FourBigBooms",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": -126.15800000000002
+    "rotation": -126.0
   },
   "useDefaultConstraints": true
 }

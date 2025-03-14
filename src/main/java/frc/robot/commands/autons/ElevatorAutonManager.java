@@ -44,8 +44,7 @@ public class ElevatorAutonManager {
 
     public Command getPlaceCoralCommand() {
         return 
-            // new WaitCommand(0.0)
-            // .andThen(
+            new WaitCommand(0.3).andThen(
                 new InstantCommand(() -> {
                     System.out.println("PlaceCoralCommand InstantCommand ran!");
                     ElevatorStateManager.INSTANCE.cloneState()
@@ -54,7 +53,7 @@ public class ElevatorAutonManager {
                 }
             ).andThen(
                 new WaitCommand(0.6)
-            );
+            ));
     }
 
     public Command getStopIntakeCommand() {
@@ -83,7 +82,7 @@ public class ElevatorAutonManager {
     }
     
     public Command getGoToIntakeStateCommand() {
-        return new InstantCommand(() -> {
+        return new WaitCommand(0.25).andThen(new InstantCommand(() -> {
             System.out.println("getGoToIntakeState InstantCommand ran!");
             ElevatorStateManager.INSTANCE.cloneState()
                 .setHeight(0)
@@ -91,7 +90,7 @@ public class ElevatorAutonManager {
                 .setCoralIntakeState(ElevatorStateManager.CoralIntakeState.STOPPED)
                 .setRunAlgaeRemover(false)
                 .setAsCurrent();
-        }).andThen(
+        })).andThen(
             new WaitUntilCommand(getAtSetpoint)
         );
     }
@@ -141,8 +140,8 @@ public class ElevatorAutonManager {
                 .setCoralIntakeState(ElevatorStateManager.CoralIntakeState.STOPPED)
                 .setRunAlgaeRemover(false)
                 .setAsCurrent();
-        }).andThen(
-            new WaitUntilCommand(getAtSetpoint)
-        );
+        })//.andThen(
+            //new WaitUntilCommand(getAtSetpoint)
+        ;//);
     }
 }
