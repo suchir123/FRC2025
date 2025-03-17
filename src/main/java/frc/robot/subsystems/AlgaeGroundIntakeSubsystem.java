@@ -23,6 +23,9 @@ public class AlgaeGroundIntakeSubsystem extends SubsystemBase {
         // leaving these undefined seems better than adding them with bad values
         algaeLeftServo = new Servo(PortConstants.PWM.ALGAE_LEFT_SERVO_PORT);
         algaeRightServo = new Servo(PortConstants.PWM.ALGAE_RIGHT_SERVO_PORT);
+        
+        algaeLeftServo.setBoundsMicroseconds(2500, 0, 0, 0, 500);
+        algaeRightServo.setBoundsMicroseconds(2500, 0, 0, 0, 500);
 
         SparkMaxConfig algaeMotorConfig = new SparkMaxConfig();
 
