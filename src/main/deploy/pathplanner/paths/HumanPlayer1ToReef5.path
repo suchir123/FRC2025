@@ -3,25 +3,25 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.41,
-        "y": 0.85
+        "x": 1.427,
+        "y": 0.8245291095890411
       },
       "prevControl": null,
       "nextControl": {
-        "x": 3.005136986308606,
-        "y": 0.8545804794567493
+        "x": 4.541215804769455,
+        "y": 2.4096835529346863
       },
       "isLocked": false,
       "linkedName": "HumanPlayer1"
     },
     {
       "anchor": {
-        "x": 3.84,
-        "y": 2.88
+        "x": 3.83,
+        "y": 2.93
       },
       "prevControl": {
-        "x": 2.998361301369863,
-        "y": 1.4054794520547942
+        "x": 2.672940392970546,
+        "y": 2.601067863411647
       },
       "nextControl": null,
       "isLocked": false,
@@ -30,13 +30,25 @@
   ],
   "rotationTargets": [
     {
-      "waypointRelativePos": 0.8208556149732626,
+      "waypointRelativePos": 0.60427807486631,
       "rotationDegrees": 59.99999999999999
     }
   ],
   "constraintZones": [],
   "pointTowardsZones": [],
-  "eventMarkers": [],
+  "eventMarkers": [
+    {
+      "name": "GoToL4",
+      "waypointRelativePos": 0.4203389830508465,
+      "endWaypointRelativePos": null,
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "GoToL4"
+        }
+      }
+    }
+  ],
   "globalConstraints": {
     "maxVelocity": 3.0,
     "maxAcceleration": 2.0,

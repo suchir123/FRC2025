@@ -107,9 +107,15 @@ public final class Constants {
             public static final int ALGAE_GROUND_INTAKE_MOTOR_ID = 23;
         }
 //ivan is very smart and he is our very bestest diversity hire as the only white man in our team besides mr. reid and mr. goodman and we all love ivan because we have asianified him real good because he loves eating rice and filters his water at home instead of drinking tap water and hes real good coder ivan also cant eat wheat because hes celiac so as a white guy he cant eat white bread ivan can also use chopsticks real good when we eate food at like 12 that time he matched his photo with a frog (but he didnt want to match with the girl frog) he also has lots of good shimp photos which make him look very shrimpy with his long shrimpy nose and large shrimpy eyes
+        
+        /**
+         *
+         */
         public static class PWM {
             public static final int ALGAE_LEFT_SERVO_PORT = 1;
             public static final int ALGAE_RIGHT_SERVO_PORT = 0;
+            
+            public static final int LED_PORT= 2;
         }
 
         /**
@@ -118,10 +124,6 @@ public final class Constants {
          * DIOs USED:
          * 0 (ELE)
          * 1 (ELE)
-         * 2 (ELE)
-         * 3 (ELE)
-         * 4 (ELE)
-         * 5 (ELE)
          */
         public static class DIO {
             public static final int LEFT_ELEVATOR_LIMIT = 0;
@@ -141,6 +143,8 @@ public final class Constants {
     }
 
     public static class RobotConstants {
+        public static final int LED_LENGTH = 60;
+        
         public static final double SIDE_LENGTH_INCHES = 15; // square
 
         public static final double DIAGONAL_LENGTH_INCHES = 1.41421356 * SIDE_LENGTH_INCHES; // sqrt(2)

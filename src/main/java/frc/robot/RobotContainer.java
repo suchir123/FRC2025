@@ -4,9 +4,12 @@ import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.AddressableLEDBufferView;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.LEDPattern;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandPS4Controller;
@@ -34,12 +37,12 @@ import frc.robot.subsystems.staticsubsystems.LimeLight;
 import frc.robot.subsystems.staticsubsystems.QuestNav;
 import frc.robot.subsystems.staticsubsystems.RobotGyro;
 import frc.robot.subsystems.swerve.DriveTrainSubsystem;
-import frc.robot.util.ControlHandler;
-import frc.robot.util.FlagUploader;
-import frc.robot.util.NetworkTablesUtil;
-import frc.robot.util.Util;
+import frc.robot.util.*;
 
+@SuppressWarnings("ConstantValue")
 public class RobotContainer {
+    
+    
     //private static final GenericPublisher COLOR_SENSOR_PUB = NetworkTablesUtil.getPublisher("robot", "color_sensor_sees_note", NetworkTableType.kBoolean);
 
     /*YAGSL Variables 
@@ -77,15 +80,18 @@ public class RobotContainer {
         this.coralIntake = Util.createIfFlagElseNull(CoralIntakeSubsystem::new, Flags.CoralIntake.IS_ATTACHED);
         this.algaeReefRemover = Util.createIfFlagElseNull(AlgaeReefRemoverSubsystem::new, Flags.AlgaeReefRemover.IS_ATTACHED);
         this.algaeGroundIntake = Util.createIfFlagElseNull(AlgaeGroundIntakeSubsystem::new, Flags.AlgaeGroundIntake.IS_ATTACHED);
-        this.elevatorAutonManager = new ElevatorAutonManager(elevators, coralIntake, driveTrain);
+        this.elevatorAutonManager = Util.createIfFlagElseNull(() -> new ElevatorAutonManager(elevators, coralIntake, driveTrain), Flags.Elevator.IS_ATTACHED && Flags.CoralIntake.IS_ATTACHED && Flags.DriveTrain.IS_ATTACHED);
 
-        configureNamedCommands();
+        if(elevatorAutonManager != null) {
+            configureNamedCommands();
+        }
 
         configureBindings();
 
         // Initialize static subsystems (this is a Java thing don't worry about it just copy it so that static blocks run on startup)
         LimeLight.poke();
         RobotGyro.poke();
+        LEDStrip.poke();
         // ColorSensor.poke();
 
         if (Flags.DriveTrain.IS_ATTACHED && Flags.DriveTrain.ENABLE_AUTON_CHOOSER) {
@@ -208,6 +214,7 @@ public class RobotContainer {
 
     public void onRobotInit() {
         FlagUploader.uploadFlagsClass();
+        
     }
 
     public void onTeleopInit() {
@@ -285,6 +292,6 @@ public class RobotContainer {
     }
 
     public void onRobotPeriodic() {
-
+        LEDStrip.update();
     }
 }

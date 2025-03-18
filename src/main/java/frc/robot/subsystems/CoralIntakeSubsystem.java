@@ -16,9 +16,11 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.networktables.GenericPublisher;
 import edu.wpi.first.networktables.NetworkTableType;
+import edu.wpi.first.wpilibj.AddressableLEDBufferView;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Flags;
+import frc.robot.util.LEDStrip;
 import frc.robot.util.NetworkTablesUtil;
 
 public class CoralIntakeSubsystem extends SubsystemBase {
@@ -29,6 +31,9 @@ public class CoralIntakeSubsystem extends SubsystemBase {
     private final RelativeEncoder coralPivotEncoder;
     private final AbsoluteEncoder coralPivotAbsoluteEncoder;
     private final SparkLimitSwitch coralLimitSwitch;
+    
+    private final LEDStrip ledStrip;
+//    private final AddressableLEDBufferView leftLEDView;
 
     private final SparkClosedLoopController coralPivotPIDController;
 
@@ -43,7 +48,10 @@ public class CoralIntakeSubsystem extends SubsystemBase {
         coralPivotAbsoluteEncoder = coralPivotMotor.getAbsoluteEncoder();
         // throughboreEncoder = new ThroughboreEncoder(Constants.PortConstants.DIO.CORAL_ABSOLUTE_ENCODER_ABS_ID, 0, false);
         coralPivotPIDController = coralPivotMotor.getClosedLoopController();
-
+        
+        ledStrip = new LEDStrip();
+//        leftLEDView = this.ledStrip.createBufferView(0, 0);
+        
         SparkMaxConfig coralPivotMotorConfig = new SparkMaxConfig();
 
         coralPivotMotorConfig
@@ -93,6 +101,8 @@ public class CoralIntakeSubsystem extends SubsystemBase {
         // throughboreEncoder.periodic();
         // System.out.println(this.coralLimitSwitch.isPressed());
         pivotAnglePublisher.setDouble(this.coralPivotAbsoluteEncoder.getPosition());
+        
+        
     }
 
     public boolean hasCoral() {

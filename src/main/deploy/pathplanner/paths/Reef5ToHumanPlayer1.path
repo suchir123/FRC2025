@@ -3,32 +3,37 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 3.84,
-        "y": 2.88
+        "x": 3.83,
+        "y": 2.93
       },
       "prevControl": null,
       "nextControl": {
-        "x": 3.4482432038695117,
-        "y": 1.9349085622745987
+        "x": 2.6126483524094395,
+        "y": 1.821815659953527
       },
       "isLocked": false,
       "linkedName": "Reef5"
     },
     {
       "anchor": {
-        "x": 1.41,
-        "y": 0.85
+        "x": 1.4274400684931507,
+        "y": 0.8245291095890411
       },
       "prevControl": {
-        "x": 2.071992211447375,
-        "y": 1.75617725865397
+        "x": 2.231637213672478,
+        "y": 1.6243602361451572
       },
       "nextControl": null,
       "isLocked": false,
       "linkedName": "HumanPlayer1"
     }
   ],
-  "rotationTargets": [],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 0.2005347593582884,
+      "rotationDegrees": 59.99999999999999
+    }
+  ],
   "constraintZones": [],
   "pointTowardsZones": [],
   "eventMarkers": [],

@@ -3,45 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 5.829965753424658,
-        "y": 4.025
+        "x": 5.15,
+        "y": 2.9
       },
       "prevControl": null,
       "nextControl": {
-        "x": 6.2595,
-        "y": 3.6837499999999994
+        "x": 4.92900936554719,
+        "y": 2.7831105672691323
       },
       "isLocked": false,
-      "linkedName": "Reef1"
+      "linkedName": "Reef6"
     },
     {
       "anchor": {
-        "x": 6.162000000000001,
-        "y": 3.0012499999999993
+        "x": 3.8014982876712327,
+        "y": 2.1317636986301376
       },
       "prevControl": {
-        "x": 6.2600342465753425,
-        "y": 3.4302499999999996
+        "x": 4.0390825440927545,
+        "y": 2.2095693610245446
       },
       "nextControl": {
-        "x": 6.036239313135079,
-        "y": 2.450918492901725
-      },
-      "isLocked": false,
-      "linkedName": null
-    },
-    {
-      "anchor": {
-        "x": 4.0365,
-        "y": 1.5972499999999992
-      },
-      "prevControl": {
-        "x": 4.847592505194277,
-        "y": 1.8697425855834136
-      },
-      "nextControl": {
-        "x": 3.225407494805724,
-        "y": 1.3247574144165835
+        "x": 2.935692669935278,
+        "y": 1.8482239531630544
       },
       "isLocked": false,
       "linkedName": null
@@ -52,18 +36,35 @@
         "y": 0.8245291095890411
       },
       "prevControl": {
-        "x": 2.481299900581684,
-        "y": 1.0020161413137005
+        "x": 2.178964261254313,
+        "y": 1.7703922461928443
       },
       "nextControl": null,
       "isLocked": false,
       "linkedName": "HumanPlayer1"
     }
   ],
-  "rotationTargets": [],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 0.7005347593582891,
+      "rotationDegrees": 119.99999999999999
+    }
+  ],
   "constraintZones": [],
   "pointTowardsZones": [],
-  "eventMarkers": [],
+  "eventMarkers": [
+    {
+      "name": "ElevatorDown",
+      "waypointRelativePos": 0.5016949152542372,
+      "endWaypointRelativePos": null,
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "ElevatorDown"
+        }
+      }
+    }
+  ],
   "globalConstraints": {
     "maxVelocity": 3.0,
     "maxAcceleration": 2.0,
@@ -80,7 +81,7 @@
   "folder": "FourBigBooms",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 180.0
+    "rotation": 119.99999999999999
   },
   "useDefaultConstraints": true
 }

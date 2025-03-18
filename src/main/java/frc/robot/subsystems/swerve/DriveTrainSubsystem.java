@@ -160,8 +160,8 @@ public class DriveTrainSubsystem extends SubsystemBase {
             this::getRobotRelativeChassisSpeeds,
             this::consumeChassisSpeeds,
             new PPHolonomicDriveController(
-                new PIDConstants(1.9, 0, 0),
-                new PIDConstants(1.4, 0, 0)
+                new PIDConstants(1.769, 0, 0),
+                new PIDConstants(1.5, 0, 0)
             ),
             config, // womp womp if its null
             () -> !Util.onBlueTeam(),
@@ -441,7 +441,7 @@ public class DriveTrainSubsystem extends SubsystemBase {
     public void updateOdometryWithOculus() {
         if(QuestNav.INSTANCE.connected()) {
             Pose2d oculus = QuestNav.INSTANCE.getPose();
-            this.poseEstimator.addVisionMeasurement(oculus, QuestNav.INSTANCE.timestamp(), VecBuilder.fill(0.005, 0.005, 0.1));
+            this.poseEstimator.addVisionMeasurement(oculus, QuestNav.INSTANCE.timestamp(), VecBuilder.fill(0.0069, 0.0069, 0.1));
         } else {
             DriverStation.reportWarning("Oculus not connected!", false);
         }
@@ -460,15 +460,15 @@ public class DriveTrainSubsystem extends SubsystemBase {
                     correction = 0.0025;
                     shouldResetOculus = true;
                 } else if(reading.distance() < 1) {
-                    correction = 0.0075;
-                    shouldResetOculus = true;
-                } else if(reading.distance() < 1.3) {
-                    correction = 0.005;
+                    correction = 0.0069;
                     shouldResetOculus = true;
                 } else if(reading.distance() < 1.5) {
-                    correction = 0.01;
+                    correction = 0.008;
+                    if(reading.distance() < 1.25) {
+                        shouldResetOculus = true;
+                    }
                 } else if(reading.distance() < 2) {
-                    correction = 0.015;
+                    correction = 0.01269;
                 }
             }
             this.poseEstimator.addVisionMeasurement(reading.pose(), reading.timestamp(), VecBuilder.fill(correction, correction, correction));
@@ -480,39 +480,4 @@ public class DriveTrainSubsystem extends SubsystemBase {
             DriverStation.reportWarning("Limey not connected!", false);
         }
     }
-
-    /**
-     * Updates the field relative position of the robot using vision measurements.
-     */
-    // public void updateOdometryWithJetsonVision() {
-        // ArrayList<AprilTagHandler.RobotPoseAndTagDistance> tags = aprilTagHandler.getJetsonAprilTagPoses();
-        // double timestamp = Timer.getFPGATimestamp() - 0.5;
-        // Pose2d robotPose = this.getPose();
-        // Rotation2d robotRotation = RobotGyro.getRotation2d();
-        // for(AprilTagHandler.RobotPoseAndTagDistance poseAndTag : tags) {
-        //     Pose2d estimatedPose = poseAndTag.fieldRelativePose();
-        //     double poseDiff = estimatedPose.getTranslation().getDistance(robotPose.getTranslation());
-        //     if(poseDiff < 1 || (poseAndTag.tagDistanceFromRobot() < 2 && poseDiff < 2)) { // make sure our pose is somewhat close to where we think we are. If we're quite close to the tag we can allow for a slightly higher error since we'll likely be a bit off anyways
-        //         if(Math.random() > 0.3) return; // attempt to filter out false values using the "pure luck" strategy.
-        //         double distanceToTag = poseAndTag.tagDistanceFromRobot();
-        //         Matrix<N3, N1> stdevs;
-        //         ChassisSpeeds chassisSpeeds = this.getRobotRelativeChassisSpeeds();
-        //         boolean bruh = chassisSpeeds.vxMetersPerSecond > 1 || chassisSpeeds.vyMetersPerSecond > 1 || chassisSpeeds.omegaRadiansPerSecond > 0.15;
-        //         double mult = bruh ? 10 : 1;
-        //         if(distanceToTag < 2) {
-        //             stdevs = VecBuilder.fill(0.4 * mult, 0.4 * mult, 1); // basically exact
-        //         } else if(distanceToTag < 4) {
-        //             stdevs = VecBuilder.fill(1 * mult, 1 * mult, 1); // pretty accurate
-        //         } else {
-        //             stdevs = VecBuilder.fill(1.5 * mult, 1.5 * mult, 1); // less accurate
-        //         }
-        //         this.poseEstimator.addVisionMeasurement(estimatedPose, timestamp, stdevs);
-        //         if(!bruh) {
-        //             this.poseEstimator.addVisionMeasurement(estimatedPose, timestamp, stdevs);
-        //         }
-        //         estimatedField.setRobotPose(estimatedPose); // debugging
-        //     }
-        //     // System.out.println("psoe: " + estimatedPose);
-        // }
-    // }
 }

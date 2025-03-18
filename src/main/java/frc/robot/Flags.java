@@ -23,34 +23,34 @@ public final class Flags {
     }
 
     public static class Elevator {
-        public static final boolean IS_ATTACHED = true;
+        public static final boolean IS_ATTACHED = false;
         public static final boolean ENABLED = true;
         public static final boolean USE_TEST_ELEVATOR_COMMAND = false;
         public static final boolean USE_TEST_PID_COMMAND = false;
     }
 
     public static class Climber {
-        public static final boolean IS_ATTACHED = true;
-        public static final boolean ENABLED = true;
+        public static final boolean IS_ATTACHED = false;
+        public static final boolean ENABLED = false;
         public static final boolean USE_TEST_CLIMBER_COMMAND = false;
         public static final boolean USE_TEST_PID_COMMAND = true;
     }
 
     public static class CoralIntake {
-        public static final boolean IS_ATTACHED = true;
+        public static final boolean IS_ATTACHED = false;
         public static final boolean ENABLED = true;
         public static final boolean USE_TEST_CORAL_COMMAND = false;
         public static final boolean USE_TEST_PID_COMMAND = false;
     }
 
     public static class AlgaeGroundIntake {
-        public static final boolean IS_ATTACHED = true;
+        public static final boolean IS_ATTACHED = false;
         public static final boolean ENABLED = true;
         public static final boolean USE_TEST_ALGAE_GROUND_COMMAND = false;
     }
 
     public static class AlgaeReefRemover {
-        public static final boolean IS_ATTACHED = true;
+        public static final boolean IS_ATTACHED = false;
         public static final boolean ENABLED = true;
         public static final boolean USE_TEST_ALGAE_REMOVER_COMMAND = false;
     }
@@ -62,7 +62,7 @@ public final class Flags {
         /**
          * Whether the drive train is physically attached and existing. If false, no motor controllers are initialized since they are assumed to be nonexistent.
          */
-        public static final boolean IS_ATTACHED = true;
+        public static final boolean IS_ATTACHED = false;
 
         /**
          * Whether the drive train should be allowed to send power to motor controllers. If false, motors will not be set to any power and PID requests will not be sent.
@@ -127,4 +127,6 @@ public final class Flags {
 
         public static final boolean ENABLE_LIMEY_APRILTAGS_ODOMETRY_FUSING = true;
     }
+    
+    private Flags() {};
 }
