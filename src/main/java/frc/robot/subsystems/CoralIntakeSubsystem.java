@@ -32,7 +32,7 @@ public class CoralIntakeSubsystem extends SubsystemBase {
     private final AbsoluteEncoder coralPivotAbsoluteEncoder;
     private final SparkLimitSwitch coralLimitSwitch;
     
-    private final LEDStrip ledStrip;
+    // private final LEDStrip ledStrip;
 //    private final AddressableLEDBufferView leftLEDView;
 
     private final SparkClosedLoopController coralPivotPIDController;
@@ -49,7 +49,7 @@ public class CoralIntakeSubsystem extends SubsystemBase {
         // throughboreEncoder = new ThroughboreEncoder(Constants.PortConstants.DIO.CORAL_ABSOLUTE_ENCODER_ABS_ID, 0, false);
         coralPivotPIDController = coralPivotMotor.getClosedLoopController();
         
-        ledStrip = new LEDStrip();
+        // ledStrip = new LEDStrip();
 //        leftLEDView = this.ledStrip.createBufferView(0, 0);
         
         SparkMaxConfig coralPivotMotorConfig = new SparkMaxConfig();
