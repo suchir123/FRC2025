@@ -6,14 +6,34 @@ import com.pathplanner.lib.path.PathPlannerPath;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj2.command.Command;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
-import java.util.Map;
 
+/**
+ * A class to manage selecting the best path to follow in order to reach a desired target.
+ * The path's start point will be routed to using dynamic pathfinding, meaning that the selection of the best path should hinge on selecting the most optimal pre-planned path to seek towards.
+ */
 public class PathfindingManager {
 	/**
-	 * A default heuristic for path selection preference. It only takes into account the Euclidean distance between the two poses (no preference for going towards the end goal, or for rotation targets).
+	 * A default heuristic for path selection preference.
+	 * Based on {@link Pose2d#nearest(List)}
 	 */
-	private static final PathPreferenceHeuristic defaultHeuristic = ((currentPose, pathStartPose, pathEndPose) -> Math.pow((pathStartPose.getX() - currentPose.getX()), 2) + Math.pow((pathStartPose.getY() - currentPose.getY()), 2));
+	private static final PathChooser defaultChooser = (currentPose, paths) -> Collections.min(
+		paths,
+		Comparator.<PathPlannerPath, Double>comparing( // sob emoji. https://stackoverflow.com/questions/24436871/very-confused-by-java-8-comparator-type-inference
+			(pathPlannerPath -> currentPose.getTranslation().getDistance(extractStartPose(pathPlannerPath).getTranslation()))
+		).thenComparing(
+			(pathPlannerPath -> currentPose.getRotation().minus(extractStartPose(pathPlannerPath).getRotation()).getRadians())
+		)
+	);
+	
+	public static Pose2d extractStartPose(PathPlannerPath p) {
+		return p.getStartingHolonomicPose().orElse(p.getStartingDifferentialPose());
+	}
+	
+	// private static final PathPreferenceHeuristic defaultHeuristic = ((currentPose, pathStartPose, pathEndPose) -> 999999 - (Math.pow((pathStartPose.getX() - currentPose.getX()), 2) + Math.pow((pathStartPose.getY() - currentPose.getY()), 2)));
 	private static final PathConstraints CONSTRAINTS = new PathConstraints(3, 2, 540, 540, 12);
 	// General idea:
 	// pre-generate enough PathPlanner paths from various start positions -> each reef location
@@ -23,61 +43,53 @@ public class PathfindingManager {
 	// We want to avoid high changes in velocity (both magnitude and direction)
 	// We also want to avoid being overly inefficient (trade-off between efficiency and # of pregens)
 	
-	/**
-	 * A map of reef indices (1 -> 6) to a list of paths
-	 */
-	private final Map<Integer, List<PathPlannerPath>> reefIndexToPathList;
-	private PathPreferenceHeuristic preferenceHeuristic;
-	
-	public PathfindingManager(Map<Integer, List<PathPlannerPath>> reefIndexToPathList, PathPreferenceHeuristic h) {
-		this.reefIndexToPathList = reefIndexToPathList;
-		this.preferenceHeuristic = h;
-	}
-	
-	public PathfindingManager(Map<Integer, List<PathPlannerPath>> reefIndexToPathList) {
-		this(reefIndexToPathList, defaultHeuristic);
-	}
-	
-	public List<PathPlannerPath> getPathsForReef(int reefIdx) {
-		return reefIndexToPathList.get(reefIdx);
-	}
-	
-	public PathPlannerPath getPathForReef(int reefIdx, Pose2d currentPose, PathPreferenceHeuristic heuristic) {
-		List<PathPlannerPath> paths = getPathsForReef(reefIdx);
-		PathPlannerPath bestPath = null;
-		double bestScore = Double.NEGATIVE_INFINITY;
-		for(PathPlannerPath path : paths) {
-			Pose2d pose = path.getStartingHolonomicPose().orElse(path.getStartingDifferentialPose());
-			if(pose != null) {
-				List<Pose2d> pathPoses = path.getPathPoses();
-				double score = heuristic.score(currentPose, pose, pathPoses.get(pathPoses.size() - 1));
-				if(score > bestScore) {
-					bestScore = score;
-					bestPath = path;
-				}
+	private static List<PathPlannerPath> importPaths(List<String> pathNames) {
+		List<PathPlannerPath> paths = new ArrayList<>(pathNames.size());
+		for (String pathName : pathNames) {
+			try {
+				paths.add(PathPlannerPath.fromPathFile(pathName));
+			} catch(Exception e) {
+				System.out.println("Failed to add path " + pathName + " to pathfinding list");
+				e.printStackTrace();
 			}
 		}
-		return bestPath;
+		
+		return paths;
 	}
 	
-	public PathPlannerPath getPathForReef(int reefIdx, Pose2d currentPose) {
-		return this.getPathForReef(reefIdx, currentPose, this.preferenceHeuristic);
+	private final List<PathPlannerPath> pathList;
+	private PathChooser pathChooser;
+	
+	private PathfindingManager(List<PathPlannerPath> pathList, PathChooser pathChooser, Void ignored) {
+		this.pathList = pathList;
+		this.pathChooser = pathChooser;
 	}
 	
-	public Command getCommandForReef(int reefIdx, Pose2d currentPose, PathPreferenceHeuristic h) {
-		return AutoBuilder.pathfindThenFollowPath(getPathForReef(reefIdx, currentPose, h), CONSTRAINTS);
+	public PathfindingManager(List<String> pathNameList, PathChooser pathChooser) {
+		this(importPaths(pathNameList), pathChooser, null);
 	}
 	
-	public Command getCommandForReef(int reefIdx, Pose2d currentPose) {
-		return this.getCommandForReef(reefIdx, currentPose, this.preferenceHeuristic);
+	public PathfindingManager(List<String> pathNameList) {
+		this(pathNameList, defaultChooser);
 	}
 	
-	public void setPreferenceHeuristic(PathPreferenceHeuristic h) {
-		this.preferenceHeuristic = h;
+	public PathPlannerPath getBestPath(Pose2d currentPose, PathChooser pathChooser) {
+		return pathChooser.bestPath(currentPose, this.pathList);
 	}
 	
-	@FunctionalInterface
-	public interface PathPreferenceHeuristic {
-		double score(Pose2d currentPose, Pose2d pathStartPose, Pose2d pathEndPose);
+	public PathPlannerPath getBestPath(Pose2d currentPose) {
+		return this.getBestPath(currentPose, this.pathChooser);
+	}
+	
+	public Command getFullCommand(Pose2d currentPose, PathChooser h) {
+		return AutoBuilder.pathfindThenFollowPath(this.getBestPath(currentPose, h), CONSTRAINTS);
+	}
+	
+	public Command getFullCommand(Pose2d currentPose) {
+		return this.getFullCommand(currentPose, this.pathChooser);
+	}
+	
+	public void setPreferenceHeuristic(PathChooser h) {
+		this.pathChooser = h;
 	}
 }

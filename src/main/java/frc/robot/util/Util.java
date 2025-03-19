@@ -3,6 +3,7 @@ package frc.robot.util;
 import edu.wpi.first.math.geometry.CoordinateAxis;
 import edu.wpi.first.math.geometry.CoordinateSystem;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 
 import java.util.function.Supplier;
@@ -174,5 +175,9 @@ public final class Util {
         // System.out.println("Alliance not present!");
         DriverStation.reportError("Alliance not present!", true);
         return true;
+    }
+
+    public static boolean isSim() {
+        return RobotBase.isSimulation();
     }
 }

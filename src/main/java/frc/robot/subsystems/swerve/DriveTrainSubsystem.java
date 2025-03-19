@@ -10,8 +10,6 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.Nat;
 import edu.wpi.first.math.VecBuilder;
-import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -20,8 +18,6 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
-import edu.wpi.first.math.trajectory.Trajectory;
-import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.networktables.DoublePublisher;
 import edu.wpi.first.networktables.StructArrayPublisher;
 import edu.wpi.first.networktables.StructPublisher;
@@ -31,13 +27,12 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
-import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.PortConstants;
 import frc.robot.Constants.RobotConstants;
 import frc.robot.Flags;
 import frc.robot.Robot;
 import frc.robot.commands.drive.ManualDriveCommand;
+import frc.robot.commands.drive.PathfindingManager;
 import frc.robot.subsystems.staticsubsystems.LimeLight;
 import frc.robot.subsystems.staticsubsystems.RobotGyro;
 import frc.robot.subsystems.staticsubsystems.LimeLight.LimeyApriltagReading;
@@ -49,6 +44,8 @@ import static edu.wpi.first.units.Units.RadiansPerSecond;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.config.RobotConfig;
 import frc.robot.util.Util;
+
+import java.util.List;
 
 /**
  * Represents a swerve drive style drivetrain.
@@ -108,25 +105,37 @@ public class DriveTrainSubsystem extends SubsystemBase {
     private final Field2d questNavField = new Field2d();
     private final Field2d limelightField = new Field2d();
     // uploads the intended, estimated, and actual states of the robot.
-    StructArrayPublisher<SwerveModuleState> targetSwerveStatePublisher = NetworkTablesUtil.MAIN_ROBOT_TABLE.getStructArrayTopic("TargetStates", SwerveModuleState.struct).publish();
-    StructArrayPublisher<SwerveModuleState> realSwerveStatePublisher = NetworkTablesUtil.MAIN_ROBOT_TABLE.getStructArrayTopic("ActualStates", SwerveModuleState.struct).publish();
-    StructArrayPublisher<SwerveModuleState> absoluteAbsoluteSwerveStatePublisher = NetworkTablesUtil.MAIN_ROBOT_TABLE.getStructArrayTopic("AbsoluteAbsolute", SwerveModuleState.struct).publish();
-    StructArrayPublisher<SwerveModuleState> relativeSwerveStatePublisher = NetworkTablesUtil.MAIN_ROBOT_TABLE.getStructArrayTopic("RelativeStates", SwerveModuleState.struct).publish();
+    private final StructArrayPublisher<SwerveModuleState> targetSwerveStatePublisher = NetworkTablesUtil.MAIN_ROBOT_TABLE.getStructArrayTopic("TargetStates", SwerveModuleState.struct).publish();
+    private final StructArrayPublisher<SwerveModuleState> realSwerveStatePublisher = NetworkTablesUtil.MAIN_ROBOT_TABLE.getStructArrayTopic("ActualStates", SwerveModuleState.struct).publish();
+    private final StructArrayPublisher<SwerveModuleState> absoluteAbsoluteSwerveStatePublisher = NetworkTablesUtil.MAIN_ROBOT_TABLE.getStructArrayTopic("AbsoluteAbsolute", SwerveModuleState.struct).publish();
+    private final StructArrayPublisher<SwerveModuleState> relativeSwerveStatePublisher = NetworkTablesUtil.MAIN_ROBOT_TABLE.getStructArrayTopic("RelativeStates", SwerveModuleState.struct).publish();
     // publish robot position relative to field
-    StructPublisher<Pose2d> posePositionPublisher = NetworkTablesUtil.MAIN_ROBOT_TABLE.getStructTopic("estimatedOdometryPosition", Pose2d.struct).publish();
-    StructPublisher<Rotation2d> robotRotationPublisher = NetworkTablesUtil.MAIN_ROBOT_TABLE.getStructTopic("rotation", Rotation2d.struct).publish();
-    StructPublisher<Pose2d> questNavPublisher = NetworkTablesUtil.MAIN_ROBOT_TABLE.getStructTopic("questnav", Pose2d.struct).publish();
-    StructPublisher<Pose2d> limeyPosePublisher = NetworkTablesUtil.MAIN_ROBOT_TABLE.getStructTopic("limeyPose", Pose2d.struct).publish();
+    private final StructPublisher<Pose2d> posePositionPublisher = NetworkTablesUtil.MAIN_ROBOT_TABLE.getStructTopic("estimatedOdometryPosition", Pose2d.struct).publish();
+    private final StructPublisher<Rotation2d> robotRotationPublisher = NetworkTablesUtil.MAIN_ROBOT_TABLE.getStructTopic("rotation", Rotation2d.struct).publish();
+    private final StructPublisher<Pose2d> questNavPublisher = NetworkTablesUtil.MAIN_ROBOT_TABLE.getStructTopic("questnav", Pose2d.struct).publish();
+    private final StructPublisher<Pose2d> limeyPosePublisher = NetworkTablesUtil.MAIN_ROBOT_TABLE.getStructTopic("limeyPose", Pose2d.struct).publish();
 
-    DoublePublisher fLAmp = NetworkTablesUtil.MAIN_ROBOT_TABLE.getDoubleTopic("fl_amp").publish();
-    DoublePublisher fRAmp = NetworkTablesUtil.MAIN_ROBOT_TABLE.getDoubleTopic("fr_amp").publish();
-    DoublePublisher bLAmp = NetworkTablesUtil.MAIN_ROBOT_TABLE.getDoubleTopic("bl_amp").publish();
-    DoublePublisher bRAmp = NetworkTablesUtil.MAIN_ROBOT_TABLE.getDoubleTopic("br_amp").publish();
+    private final DoublePublisher fLAmp = NetworkTablesUtil.MAIN_ROBOT_TABLE.getDoubleTopic("fl_amp").publish();
+    private final DoublePublisher fRAmp = NetworkTablesUtil.MAIN_ROBOT_TABLE.getDoubleTopic("fr_amp").publish();
+    private final DoublePublisher bLAmp = NetworkTablesUtil.MAIN_ROBOT_TABLE.getDoubleTopic("bl_amp").publish();
+    private final DoublePublisher bRAmp = NetworkTablesUtil.MAIN_ROBOT_TABLE.getDoubleTopic("br_amp").publish();
+    
     private boolean lockedHeadingMode = false;
     private Rotation2d lockedHeading;
+    
+    private final List<PathfindingManager> reefedPathfindingManagers;
 
     // private final AprilTagHandler aprilTagHandler;
     public DriveTrainSubsystem(/*AprilTagHandler aprilTagHandler*/) {
+        this.reefedPathfindingManagers = Util.createIfFlagElseNull(() -> List.of(
+            new PathfindingManager( // reef 1
+                List.of(
+                    "parallel into reef 1",
+                    "up to reef 1",
+                    "down to reef 1"
+                )
+            )
+        ), Flags.DriveTrain.ENABLE_DYNAMIC_PATHFINDING);
         // this.aprilTagHandler = aprilTagHandler;
 
         RobotGyro.resetGyroAngle();
@@ -142,6 +151,9 @@ public class DriveTrainSubsystem extends SubsystemBase {
         // QuestNav.INSTANCE.resetHeading();
         
         this.configureAutoBuilder();
+        
+        System.out.println("Initialized DriveTrainSubsystem");
+        
     }
     
     private void configureAutoBuilder() {
@@ -423,6 +435,13 @@ public class DriveTrainSubsystem extends SubsystemBase {
         //fRAmp.set(frontRight.getDriveAmperage());
         //bLAmp.set(backLeft.getDriveAmperage());
         //bRAmp.set(backRight.getDriveAmperage());
+        if(Flags.DriveTrain.ENABLE_DYNAMIC_PATHFINDING && Util.isSim()) {
+            // System.out.println("pathplanner test");
+            setPose(new Pose2d(5.83, 6, new Rotation2d()));
+            var poses = reefedPathfindingManagers.get(0).getBestPath(getPose()).getPathPoses();
+            System.out.println(poses);
+            field.getRobotObject().setPoses(poses);
+        }
     }
 
     /**
