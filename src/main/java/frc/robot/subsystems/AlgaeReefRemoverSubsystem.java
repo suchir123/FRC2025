@@ -9,6 +9,7 @@ import com.revrobotics.spark.config.SparkMaxConfig;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Flags;
+import frc.robot.util.Util;
 
 public class AlgaeReefRemoverSubsystem extends SubsystemBase {
     private final SparkMax algaeRemoverMotor;
@@ -23,8 +24,9 @@ public class AlgaeReefRemoverSubsystem extends SubsystemBase {
                 .idleMode(SparkBaseConfig.IdleMode.kCoast)
                 .smartCurrentLimit(20)
                 .voltageCompensation(12);
-
-        algaeRemoverMotor.configure(algaeMotorConfig, SparkBase.ResetMode.kResetSafeParameters, SparkBase.PersistMode.kPersistParameters);
+        
+        Util.configureSparkMotor(algaeRemoverMotor, algaeMotorConfig);
+        // algaeRemoverMotor.configure(algaeMotorConfig, SparkBase.ResetMode.kResetSafeParameters, SparkBase.PersistMode.kPersistParameters);
     }
 
     @Override

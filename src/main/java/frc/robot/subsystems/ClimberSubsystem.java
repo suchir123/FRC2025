@@ -21,6 +21,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Flags;
 import frc.robot.util.NetworkTablesUtil;
+import frc.robot.util.Util;
 
 public class ClimberSubsystem extends SubsystemBase {
     public static final ADIS16470_IMU.IMUAxis ROBOT_TILT_AXIS = IMUAxis.kYaw;
@@ -70,9 +71,11 @@ public class ClimberSubsystem extends SubsystemBase {
         
         rightClimbMotorConfig
             .follow(leftClimbMotor, true);
-
-        leftClimbMotor.configure(leftClimbMotorConfig, SparkBase.ResetMode.kResetSafeParameters, SparkBase.PersistMode.kPersistParameters);
-        rightClimbMotor.configure(rightClimbMotorConfig, SparkBase.ResetMode.kResetSafeParameters, SparkBase.PersistMode.kPersistParameters);
+        
+        Util.configureSparkMotor(leftClimbMotor, leftClimbMotorConfig);
+        Util.configureSparkMotor(rightClimbMotor, rightClimbMotorConfig);
+        // leftClimbMotor.configure(leftClimbMotorConfig, SparkBase.ResetMode.kResetSafeParameters, SparkBase.PersistMode.kPersistParameters);
+        // rightClimbMotor.configure(rightClimbMotorConfig, SparkBase.ResetMode.kResetSafeParameters, SparkBase.PersistMode.kPersistParameters);
         // throughboreEncoder.name = "climber";
     }
 

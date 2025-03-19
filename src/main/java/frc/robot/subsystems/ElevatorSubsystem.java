@@ -19,6 +19,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Flags;
 import frc.robot.util.NetworkTablesUtil;
+import frc.robot.util.Util;
 
 public class ElevatorSubsystem extends SubsystemBase {
     public static final GenericPublisher leftHeightAbsRotPub = NetworkTablesUtil.getPublisher("robot", "leftElevAR", NetworkTableType.kDouble);
@@ -91,9 +92,12 @@ public class ElevatorSubsystem extends SubsystemBase {
         rightConfig.closedLoop
                 .pidf(2, 0, 0, 0.1)
                 .outputRange(-MAX_OUTPUT_LEFT_ELEVATOR_PIDS, MAX_OUTPUT_LEFT_ELEVATOR_PIDS);
+        
+        Util.configureSparkMotor(leftMotor, leftConfig);
+        Util.configureSparkMotor(rightMotor, rightConfig);
 
-        leftMotor.configure(leftConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-        rightMotor.configure(rightConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+        // leftMotor.configure(leftConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+        // rightMotor.configure(rightConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
         rightMotorEncoder.setPosition(0);
         leftMotorEncoder.setPosition(0);

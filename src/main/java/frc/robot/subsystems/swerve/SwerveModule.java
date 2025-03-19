@@ -24,6 +24,7 @@ import edu.wpi.first.networktables.NetworkTableType;
 import frc.robot.Constants.NetworkTablesConstants;
 import frc.robot.Flags;
 import frc.robot.util.NetworkTablesUtil;
+import frc.robot.util.Util;
 
 import static frc.robot.util.Util.bringAngleWithinUnitCircle;
 import static frc.robot.util.Util.nearestHundredth;
@@ -171,9 +172,11 @@ public class SwerveModule {
                 .pidf(0.575, 0, 0.3, 0) //Do not use ff because it will cause the motors to spin in the wrong direction :)
                 .outputRange(-1, 1);// used to be 0.55 0 0.3
         // TODO: add some more config for MAXMOTION
-
-        driveMotor.configure(driveConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-        turnMotor.configure(turnConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+        
+        Util.configureSparkMotor(driveMotor, driveConfig);
+        Util.configureSparkMotor(turnMotor, turnConfig);
+        //driveMotor.configure(driveConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+        //turnMotor.configure(turnConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
         //System.out.println(this.name + " inverts drive: " + this.driveMotor.getInverted() + " turn: " + this.turnMotor.getInverted());
         // System.out.println(this.name + " abs pos " + RobotMathUtil.roundNearestHundredth(this.turnAbsoluteEncoder.getAbsolutePosition().getValueAsDouble()));

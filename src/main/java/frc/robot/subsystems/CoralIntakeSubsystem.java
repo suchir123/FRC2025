@@ -22,6 +22,7 @@ import frc.robot.Constants;
 import frc.robot.Flags;
 import frc.robot.util.LEDStrip;
 import frc.robot.util.NetworkTablesUtil;
+import frc.robot.util.Util;
 
 public class CoralIntakeSubsystem extends SubsystemBase {
     private static final double VERY_HARD_BACK_LIMIT = 0.03; // to make sure we don't roll-over the intake
@@ -73,7 +74,9 @@ public class CoralIntakeSubsystem extends SubsystemBase {
                 .maxAcceleration(0.5 * 60);
 
         coralPivotEncoder.setPosition(coralPivotAbsoluteEncoder.getPosition());
-        coralPivotMotor.configure(coralPivotMotorConfig, SparkBase.ResetMode.kResetSafeParameters, SparkBase.PersistMode.kPersistParameters);
+        
+        Util.configureSparkMotor(coralPivotMotor, coralPivotMotorConfig);
+        // coralPivotMotor.configure(coralPivotMotorConfig, SparkBase.ResetMode.kResetSafeParameters, SparkBase.PersistMode.kPersistParameters);
 
 
         coralIntakeMotor = new SparkMax(Constants.PortConstants.CAN.CORAL_INTAKE_MOTOR_ID, MotorType.kBrushless);
@@ -87,7 +90,9 @@ public class CoralIntakeSubsystem extends SubsystemBase {
                 .reverseLimitSwitchEnabled(false)
                 .reverseLimitSwitchType(LimitSwitchConfig.Type.kNormallyOpen);
         this.coralLimitSwitch = coralIntakeMotor.getReverseLimitSwitch();
-        coralIntakeMotor.configure(coralIntakeMotorConfig, SparkBase.ResetMode.kResetSafeParameters, SparkBase.PersistMode.kPersistParameters);
+        
+        Util.configureSparkMotor(coralIntakeMotor, coralIntakeMotorConfig);
+        //coralIntakeMotor.configure(coralIntakeMotorConfig, SparkBase.ResetMode.kResetSafeParameters, SparkBase.PersistMode.kPersistParameters);
 
         // throughboreEncoder.name = "climber";
         // front limit 0.55 rot

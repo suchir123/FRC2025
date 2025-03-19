@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj.Servo;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.PortConstants;
 import frc.robot.Flags;
+import frc.robot.util.Util;
 
 public class AlgaeGroundIntakeSubsystem extends SubsystemBase {
     private final SparkMax algaeIntakeMotor;
@@ -34,8 +35,9 @@ public class AlgaeGroundIntakeSubsystem extends SubsystemBase {
                 .idleMode(SparkBaseConfig.IdleMode.kCoast)
                 .smartCurrentLimit(20)
                 .voltageCompensation(12);
-
-        algaeIntakeMotor.configure(algaeMotorConfig, SparkBase.ResetMode.kResetSafeParameters, SparkBase.PersistMode.kPersistParameters);
+        
+        Util.configureSparkMotor(algaeIntakeMotor, algaeMotorConfig);
+        // algaeIntakeMotor.configure(algaeMotorConfig, SparkBase.ResetMode.kResetSafeParameters, SparkBase.PersistMode.kPersistParameters);
     }
 
     @Override

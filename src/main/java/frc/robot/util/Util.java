@@ -1,5 +1,7 @@
 package frc.robot.util;
 
+import com.revrobotics.spark.SparkBase;
+import com.revrobotics.spark.config.SparkBaseConfig;
 import edu.wpi.first.math.geometry.CoordinateAxis;
 import edu.wpi.first.math.geometry.CoordinateSystem;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -179,5 +181,9 @@ public final class Util {
 
     public static boolean isSim() {
         return RobotBase.isSimulation();
+    }
+    
+    public static void configureSparkMotor(SparkBase motor, SparkBaseConfig config) {
+        motor.configure(config, SparkBase.ResetMode.kResetSafeParameters, SparkBase.PersistMode.kPersistParameters);
     }
 }
