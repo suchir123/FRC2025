@@ -33,7 +33,6 @@ public class PathfindingManager {
 		return p.getStartingHolonomicPose().orElse(p.getStartingDifferentialPose());
 	}
 	
-	// private static final PathPreferenceHeuristic defaultHeuristic = ((currentPose, pathStartPose, pathEndPose) -> 999999 - (Math.pow((pathStartPose.getX() - currentPose.getX()), 2) + Math.pow((pathStartPose.getY() - currentPose.getY()), 2)));
 	private static final PathConstraints CONSTRAINTS = new PathConstraints(3, 2, 540, 540, 12);
 	// General idea:
 	// pre-generate enough PathPlanner paths from various start positions -> each reef location
