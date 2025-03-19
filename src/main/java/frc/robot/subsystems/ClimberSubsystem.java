@@ -27,45 +27,67 @@ public class ClimberSubsystem extends SubsystemBase {
     private static final double UPPER_HARD_LIMIT = 0.82;
     // private final ThroughboreEncoder throughboreEncoder;
 
-    private final SparkMax climbMotor;
-    private final RelativeEncoder climbMotorEncoder;
+    private final SparkMax leftClimbMotor;
+    private final SparkMax rightClimbMotor;
+    
     private final AbsoluteEncoder climbMotorAbsoluteEncoder;
-
-    private static final GenericPublisher climbMotorEncoderVelocityPublisher = NetworkTablesUtil.getPublisher("robot", "climbMotorVelocity", NetworkTableType.kDouble);
-    private static final GenericPublisher climbMotorEncoderPositionPublisher = NetworkTablesUtil.getPublisher("robot", "climbMotorPosition", NetworkTableType.kDouble);
-
+    
+    private final RelativeEncoder leftClimbMotorEncoder;
+    private final RelativeEncoder rightClimbMotorEncoder;
+    
+    private static final GenericPublisher lClimbMotorEncoderVelocityPublisher = NetworkTablesUtil.getPublisher("robot", "lClimbMotorVelocity", NetworkTableType.kDouble);
+    private static final GenericPublisher lClimbMotorEncoderPositionPublisher = NetworkTablesUtil.getPublisher("robot", "lClimbMotorPosition", NetworkTableType.kDouble);
+    
+    private static final GenericPublisher rClimbMotorEncoderVelocityPublisher = NetworkTablesUtil.getPublisher("robot", "rClimbMotorVelocity", NetworkTableType.kDouble);
+    private static final GenericPublisher rClimbMotorEncoderPositionPublisher = NetworkTablesUtil.getPublisher("robot", "rClimbMotorPosition", NetworkTableType.kDouble);
+    
+    
     private final SparkClosedLoopController pidController;
 
     public ClimberSubsystem() {
-        climbMotor = new SparkMax(Constants.PortConstants.CAN.CLIMBER_MOTOR_ID, MotorType.kBrushless);
-        climbMotorEncoder = climbMotor.getEncoder();
-        climbMotorAbsoluteEncoder = climbMotor.getAbsoluteEncoder();
+        leftClimbMotor = new SparkMax(Constants.PortConstants.CAN.LEFT_CLIMBER_MOTOR_ID, MotorType.kBrushless);
+        leftClimbMotorEncoder = leftClimbMotor.getEncoder();
+        
+        rightClimbMotor = new SparkMax(Constants.PortConstants.CAN.RIGHT_CLIMBER_MOTOR_ID, MotorType.kBrushless);
+        rightClimbMotorEncoder = rightClimbMotor.getEncoder();
+        
+        climbMotorAbsoluteEncoder = leftClimbMotor.getAbsoluteEncoder();
         // throughboreEncoder = new ThroughboreEncoder(Constants.PortConstants.DIO.CLIMBER_ABSOLUTE_ENCODER_ABS_PORT, 0, false);
-        pidController = climbMotor.getClosedLoopController();
+        pidController = leftClimbMotor.getClosedLoopController();
 
-        SparkMaxConfig climbMotorConfig = new SparkMaxConfig();
+        SparkMaxConfig leftClimbMotorConfig = new SparkMaxConfig();
 
-        climbMotorConfig
-                .inverted(false)
-                .idleMode(SparkBaseConfig.IdleMode.kBrake)
-                .voltageCompensation(12);
-        climbMotorConfig.closedLoop
-                .pidf(7, 0, 0, 0)
-                .outputRange(-0.6, 0.6)
-                .feedbackSensor(FeedbackSensor.kAbsoluteEncoder);
+        leftClimbMotorConfig
+            .inverted(false)
+            .idleMode(SparkBaseConfig.IdleMode.kBrake)
+            .voltageCompensation(12);
+        leftClimbMotorConfig.closedLoop
+            .pidf(7, 0, 0, 0)
+            .outputRange(-0.6, 0.6)
+            .feedbackSensor(FeedbackSensor.kPrimaryEncoder);
+        
+        SparkMaxConfig rightClimbMotorConfig = new SparkMaxConfig();
+        
+        rightClimbMotorConfig
+            .follow(leftClimbMotor, true);
 
-        climbMotor.configure(climbMotorConfig, SparkBase.ResetMode.kResetSafeParameters, SparkBase.PersistMode.kPersistParameters);
+        leftClimbMotor.configure(leftClimbMotorConfig, SparkBase.ResetMode.kResetSafeParameters, SparkBase.PersistMode.kPersistParameters);
+        rightClimbMotor.configure(rightClimbMotorConfig, SparkBase.ResetMode.kResetSafeParameters, SparkBase.PersistMode.kPersistParameters);
         // throughboreEncoder.name = "climber";
     }
 
     @Override
     public void periodic() {
-        climbMotorEncoderVelocityPublisher.setDouble(climbMotorEncoder.getVelocity());
-        climbMotorEncoderPositionPublisher.setDouble(climbMotorEncoder.getPosition());
+        lClimbMotorEncoderVelocityPublisher.setDouble(leftClimbMotorEncoder.getVelocity());
+        lClimbMotorEncoderPositionPublisher.setDouble(leftClimbMotorEncoder.getPosition());
+        
+        rClimbMotorEncoderVelocityPublisher.setDouble(rightClimbMotorEncoder.getVelocity());
+        rClimbMotorEncoderPositionPublisher.setDouble(rightClimbMotorEncoder.getPosition());
+        
         //System.out.println("climbMotorAbsoluteEncoder.getPosition() is " + climbMotorAbsoluteEncoder.getPosition());
         
-        if(this.climbMotor.get() > 0 && this.climbMotorAbsoluteEncoder.getPosition() >= UPPER_HARD_LIMIT - 0.01) {
-            climbMotor.set(0);
+        if(this.leftClimbMotor.get() > 0 && this.climbMotorAbsoluteEncoder.getPosition() >= UPPER_HARD_LIMIT - 0.01) {
+            leftClimbMotor.set(0);
         }
         // throughboreEncoder.periodic();
     }
@@ -82,7 +104,7 @@ public class ClimberSubsystem extends SubsystemBase {
             if(speed > 0 && this.climbMotorAbsoluteEncoder.getPosition() >= UPPER_HARD_LIMIT - 0.01) {
                 return;
             }
-            climbMotor.set(speed);
+            leftClimbMotor.set(speed);
         }
     }
 
