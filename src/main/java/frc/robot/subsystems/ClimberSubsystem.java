@@ -65,12 +65,14 @@ public class ClimberSubsystem extends SubsystemBase {
         leftClimbMotorConfig.closedLoop
             .pidf(7, 0, 0, 0)
             .outputRange(-0.6, 0.6)
-            .feedbackSensor(FeedbackSensor.kPrimaryEncoder);
+            .feedbackSensor(FeedbackSensor.kAbsoluteEncoder);
         
         SparkMaxConfig rightClimbMotorConfig = new SparkMaxConfig();
         
         rightClimbMotorConfig
-            .follow(leftClimbMotor, true);
+            .idleMode(SparkBaseConfig.IdleMode.kBrake)
+            .follow(leftClimbMotor, true)
+            .voltageCompensation(12);
         
         Util.configureSparkMotor(leftClimbMotor, leftClimbMotorConfig);
         Util.configureSparkMotor(rightClimbMotor, rightClimbMotorConfig);
