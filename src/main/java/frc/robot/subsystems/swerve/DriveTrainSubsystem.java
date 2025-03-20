@@ -32,7 +32,7 @@ import frc.robot.Constants.RobotConstants;
 import frc.robot.Flags;
 import frc.robot.Robot;
 import frc.robot.commands.drive.ManualDriveCommand;
-import frc.robot.commands.drive.PathfindingManager;
+import frc.robot.commands.drive.pathfinding.PathfindingManager;
 import frc.robot.subsystems.staticsubsystems.LimeLight;
 import frc.robot.subsystems.staticsubsystems.RobotGyro;
 import frc.robot.subsystems.staticsubsystems.LimeLight.LimeyApriltagReading;
@@ -439,7 +439,7 @@ public class DriveTrainSubsystem extends SubsystemBase {
             // System.out.println("pathplanner test");
             setPose(new Pose2d(5.83, 6, new Rotation2d()));
             var poses = reefedPathfindingManagers.get(0).getBestPath(getPose()).getPathPoses();
-            System.out.println(poses);
+            // System.out.println(poses);
             field.getRobotObject().setPoses(poses);
         }
     }
