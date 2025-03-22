@@ -6,6 +6,8 @@ package frc.robot.subsystems.swerve;
 
 import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
+import com.pathplanner.lib.path.PathPlannerPath;
+import com.pathplanner.lib.pathfinding.Pathfinding;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.Nat;
@@ -18,6 +20,7 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.networktables.DoubleArrayPublisher;
 import edu.wpi.first.networktables.DoublePublisher;
 import edu.wpi.first.networktables.StructArrayPublisher;
 import edu.wpi.first.networktables.StructPublisher;
@@ -101,6 +104,7 @@ public class DriveTrainSubsystem extends SubsystemBase {
     private final SwerveDrivePoseEstimator poseEstimator = new SwerveDrivePoseEstimator(kinematics, RobotGyro.getRotation2d(), this.getAbsoluteModulePositions(), new Pose2d(), new Matrix<>(Nat.N3(), Nat.N1(), new double[]{0.1, 0.1, 0.1}), new Matrix<>(Nat.N3(), Nat.N1(), new double[]{0.01, 0.01, 0.1}));
 
     private final Field2d field = new Field2d();
+    private final Field2d pfField = new Field2d();
     private final Field2d estimatedField = new Field2d();
     private final Field2d questNavField = new Field2d();
     private final Field2d limelightField = new Field2d();
@@ -119,6 +123,8 @@ public class DriveTrainSubsystem extends SubsystemBase {
     private final DoublePublisher fRAmp = NetworkTablesUtil.MAIN_ROBOT_TABLE.getDoubleTopic("fr_amp").publish();
     private final DoublePublisher bLAmp = NetworkTablesUtil.MAIN_ROBOT_TABLE.getDoubleTopic("bl_amp").publish();
     private final DoublePublisher bRAmp = NetworkTablesUtil.MAIN_ROBOT_TABLE.getDoubleTopic("br_amp").publish();
+    
+    private final DoubleArrayPublisher rawPosePub = NetworkTablesUtil.MAIN_ROBOT_TABLE.getDoubleArrayTopic("raw_pose").publish();
     
     private boolean lockedHeadingMode = false;
     private Rotation2d lockedHeading;
@@ -142,6 +148,7 @@ public class DriveTrainSubsystem extends SubsystemBase {
         RobotGyro.setGyroAngle(180);
 
         SmartDashboard.putData("Field", field);
+        SmartDashboard.putData("pfField", pfField);
         SmartDashboard.putData("quest field", questNavField);
         SmartDashboard.putData("estimated field", estimatedField);
         SmartDashboard.putData("limey field", limelightField);
@@ -154,6 +161,13 @@ public class DriveTrainSubsystem extends SubsystemBase {
         
         System.out.println("Initialized DriveTrainSubsystem");
         
+        if(Flags.DriveTrain.ENABLE_DYNAMIC_PATHFINDING && Util.isSim()) {
+            // System.out.println("pathplanner test");
+            setPose(new Pose2d(2, 2, Rotation2d.fromDegrees(120)));
+            
+            // System.out.println(poses);
+            reefedPathfindingManagers.get(0).getFullCommand(getPose()).schedule();
+        }
     }
     
     private void configureAutoBuilder() {
@@ -215,7 +229,7 @@ public class DriveTrainSubsystem extends SubsystemBase {
      */
     public void setPose(Pose2d pose) {
         RobotGyro.setGyroAngle(pose.getRotation().getDegrees());
-        System.out.println(RobotGyro.getRotation2d());
+        // System.out.println(RobotGyro.getRotation2d());
         poseEstimator.resetPosition(pose.getRotation(), this.getAbsoluteModulePositions(), pose);
 
         QuestNav.INSTANCE.resetPose(pose);
@@ -403,14 +417,17 @@ public class DriveTrainSubsystem extends SubsystemBase {
 
     @Override
     public void periodic() {
+        Pose2d current = this.getPose();
         //publishes each wheel information to network table for debugging
         realSwerveStatePublisher.set(new SwerveModuleState[]{frontLeft.getAbsoluteModuleState(), frontRight.getAbsoluteModuleState(), backLeft.getAbsoluteModuleState(), backRight.getAbsoluteModuleState()});
         // absoluteAbsoluteSwerveStatePublisher.set(new SwerveModuleState[]{frontLeft.getAbsoluteAbsoluteModuleState(), frontRight.getAbsoluteAbsoluteModuleState(), backLeft.getAbsoluteAbsoluteModuleState(), backRight.getAbsoluteAbsoluteModuleState()});
         relativeSwerveStatePublisher.set(new SwerveModuleState[]{frontLeft.getRelativeModuleState(), frontRight.getRelativeModuleState(), backLeft.getRelativeModuleState(), backRight.getRelativeModuleState()});
         //posts robot position to network table
-        posePositionPublisher.set(this.getPose());
+        posePositionPublisher.set(current);
         robotRotationPublisher.set(RobotGyro.getRotation2d());
         questNavPublisher.set(QuestNav.INSTANCE.getPose());
+        
+        rawPosePub.set(new double[] {current.getX(), current.getY(), current.getRotation().getDegrees()});
 
         Pose2d limeyPose = LimeLight.getLimeyApriltagReading().pose();
         limeyPosePublisher.set(limeyPose);
@@ -435,12 +452,16 @@ public class DriveTrainSubsystem extends SubsystemBase {
         //fRAmp.set(frontRight.getDriveAmperage());
         //bLAmp.set(backLeft.getDriveAmperage());
         //bRAmp.set(backRight.getDriveAmperage());
+        
         if(Flags.DriveTrain.ENABLE_DYNAMIC_PATHFINDING && Util.isSim()) {
-            // System.out.println("pathplanner test");
-            setPose(new Pose2d(5.83, 6, new Rotation2d()));
             var poses = reefedPathfindingManagers.get(0).getBestPath(getPose()).getPathPoses();
-            // System.out.println(poses);
             field.getRobotObject().setPoses(poses);
+            PathPlannerPath p = PathfindingManager.getNewestPathfindingPath();
+            if (p != null) {
+                pfField.getRobotObject().setPoses(p.getPathPoses());
+            } else {
+                System.out.println("null path");
+            }
         }
     }
 

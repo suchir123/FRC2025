@@ -105,7 +105,7 @@ public final class Constants {
 			
 			// (2025) Climber (CLI)
 			public static final int LEFT_CLIMBER_MOTOR_ID = 5;
-			public static final int RIGHT_CLIMBER_MOTOR_ID = -1;
+			public static final int RIGHT_CLIMBER_MOTOR_ID = 4;
 			
 			// (2025) Coral Intake (SKY)
 			public static final int CORAL_PIVOT_MOTOR_ID = 13;

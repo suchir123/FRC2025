@@ -71,7 +71,8 @@ public class ClimberSubsystem extends SubsystemBase {
         
         rightClimbMotorConfig
             .idleMode(SparkBaseConfig.IdleMode.kBrake)
-            .follow(leftClimbMotor, true)
+            // .follow(leftClimbMotor, true)
+            .disableFollowerMode()
             .voltageCompensation(12);
         
         Util.configureSparkMotor(leftClimbMotor, leftClimbMotorConfig);

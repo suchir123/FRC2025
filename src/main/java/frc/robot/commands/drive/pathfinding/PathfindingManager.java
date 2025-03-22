@@ -1,21 +1,42 @@
 package frc.robot.commands.drive.pathfinding;
 
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.config.RobotConfig;
+import com.pathplanner.lib.controllers.PathFollowingController;
+import com.pathplanner.lib.path.GoalEndState;
 import com.pathplanner.lib.path.PathConstraints;
 import com.pathplanner.lib.path.PathPlannerPath;
+import com.pathplanner.lib.path.PathPoint;
+import com.pathplanner.lib.pathfinding.Pathfinding;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.Subsystem;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.function.BiConsumer;
+import java.util.function.BooleanSupplier;
+import java.util.function.Supplier;
 
 /**
  * A class to manage selecting the best path to follow in order to reach a desired target.
  * The path's start point will be routed to using dynamic pathfinding, meaning that the selection of the best path should hinge on selecting the most optimal pre-planned path to seek towards.
  */
 public class PathfindingManager {
+	private static GoalEndState mostRecentSet = new GoalEndState(0, new Rotation2d());
+	
+	public static PathPlannerPath getNewestPathfindingPath() {
+		if(mostRecentSet == null) {
+			System.out.println("No path being run");
+			return null;
+		}
+		return Pathfinding.getCurrentPath(CONSTRAINTS, mostRecentSet);
+	}
+	
 	/**
 	 * A default heuristic for path selection preference.
 	 * Based on {@link Pose2d#nearest(List)}
@@ -80,8 +101,22 @@ public class PathfindingManager {
 		return this.getBestPath(currentPose, this.pathChooser);
 	}
 	
+	/**
+	 *
+	 * @see com.pathplanner.lib.commands.PathfindingCommand#PathfindingCommand(PathPlannerPath, PathConstraints, Supplier, Supplier, BiConsumer, PathFollowingController, RobotConfig, BooleanSupplier, Subsystem...)
+	 */
 	public Command getFullCommand(Pose2d currentPose, PathChooser h) {
-		return AutoBuilder.pathfindThenFollowPath(this.getBestPath(currentPose, h), CONSTRAINTS);
+		PathPlannerPath bestPath = this.getBestPath(currentPose, h);
+		Rotation2d targetRotation = Rotation2d.kZero;
+		for (PathPoint p : bestPath.getAllPathPoints()) {
+			if (p.rotationTarget != null) {
+				targetRotation = p.rotationTarget.rotation();
+				break;
+			}
+		}
+		GoalEndState goalEndState = new GoalEndState(bestPath.getGlobalConstraints().maxVelocityMPS(), targetRotation); // copied from the linked constructor above
+		// System.out.println(goalEndState);
+		return new InstantCommand(() -> mostRecentSet = goalEndState).andThen(AutoBuilder.pathfindThenFollowPath(bestPath, CONSTRAINTS)).andThen(new InstantCommand(() -> mostRecentSet = null));
 	}
 	
 	public Command getFullCommand(Pose2d currentPose) {
