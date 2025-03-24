@@ -23,7 +23,7 @@ public final class Flags {
     }
 
     public static class Elevator {
-        public static final boolean IS_ATTACHED = false;
+        public static final boolean IS_ATTACHED = true;
         public static final boolean ENABLED = true;
         public static final boolean USE_TEST_ELEVATOR_COMMAND = false;
         public static final boolean USE_TEST_PID_COMMAND = false;
@@ -32,25 +32,25 @@ public final class Flags {
     public static class Climber {
         public static final boolean IS_ATTACHED = true;
         public static final boolean ENABLED = true;
-        public static final boolean USE_TEST_CLIMBER_COMMAND = true;
-        public static final boolean USE_TEST_PID_COMMAND = false;
+        public static final boolean USE_TEST_CLIMBER_COMMAND = false;
+        public static final boolean USE_TEST_PID_COMMAND = true;
     }
 
     public static class CoralIntake {
-        public static final boolean IS_ATTACHED = false;
+        public static final boolean IS_ATTACHED = true;
         public static final boolean ENABLED = true;
         public static final boolean USE_TEST_CORAL_COMMAND = false;
         public static final boolean USE_TEST_PID_COMMAND = false;
     }
 
     public static class AlgaeGroundIntake {
-        public static final boolean IS_ATTACHED = false;
-        public static final boolean ENABLED = true;
+        public static final boolean IS_ATTACHED = true;
+        public static final boolean ENABLED = false;
         public static final boolean USE_TEST_ALGAE_GROUND_COMMAND = false;
     }
 
     public static class AlgaeReefRemover {
-        public static final boolean IS_ATTACHED = false;
+        public static final boolean IS_ATTACHED = true;
         public static final boolean ENABLED = true;
         public static final boolean USE_TEST_ALGAE_REMOVER_COMMAND = false;
     }
@@ -127,7 +127,7 @@ public final class Flags {
 
         public static final boolean ENABLE_LIMEY_APRILTAGS_ODOMETRY_FUSING = false;
 
-        public static final boolean ENABLE_DYNAMIC_PATHFINDING = true;
+        public static final boolean ENABLE_DYNAMIC_PATHFINDING = false;
     }
     
     private Flags() {}

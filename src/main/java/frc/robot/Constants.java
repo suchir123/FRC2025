@@ -75,9 +75,9 @@ public final class Constants {
 		 *
 		 * 14 (DRI)
 		 * 15 (ROT)
-		 * 16 (ELE)
+		 * 
 		 * 17 (ELE)
-		 *
+		 * 18 (ELE)
 		 * 19 (DRI)
 		 * 20 (ROT)
 		 * 21 (DRI)
@@ -85,37 +85,40 @@ public final class Constants {
 		 * 23 (GRD)
 		 */
 		public static class CAN {
-			// Drive Train (COD, DRI, ROT)
+			// Swerve Drive Train (COD, DRI, ROT)
 			public static final int DTRAIN_FRONT_LEFT_DRIVE_MOTOR_ID = 11;
-			public static final int DTRAIN_FRONT_RIGHT_DRIVE_MOTOR_ID = 21;
-			public static final int DTRAIN_BACK_LEFT_DRIVE_MOTOR_ID = 14;
-			public static final int DTRAIN_BACK_RIGHT_DRIVE_MOTOR_ID = 19;
-			public static final int DTRAIN_FRONT_LEFT_ROTATION_MOTOR_ID = 10;
-			public static final int DTRAIN_FRONT_RIGHT_ROTATION_MOTOR_ID = 22;
-			public static final int DTRAIN_BACK_LEFT_ROTATION_MOTOR_ID = 15;
-			public static final int DTRAIN_BACK_RIGHT_ROTATION_MOTOR_ID = 20;
+			public static final int DTRAIN_FRONT_LEFT_ROTATION_MOTOR_ID = 23;
 			public static final int DTRAIN_FRONT_LEFT_CANCODER_ID = 12;
+
+			public static final int DTRAIN_FRONT_RIGHT_DRIVE_MOTOR_ID = 21;
+			public static final int DTRAIN_FRONT_RIGHT_ROTATION_MOTOR_ID = 22;
 			public static final int DTRAIN_FRONT_RIGHT_CANCODER_ID = 3;
+
+			public static final int DTRAIN_BACK_LEFT_DRIVE_MOTOR_ID = 14;
+			public static final int DTRAIN_BACK_LEFT_ROTATION_MOTOR_ID = 15;
 			public static final int DTRAIN_BACK_LEFT_CANCODER_ID = 6;
+
+			public static final int DTRAIN_BACK_RIGHT_DRIVE_MOTOR_ID = 19;
+			public static final int DTRAIN_BACK_RIGHT_ROTATION_MOTOR_ID = 20;
 			public static final int DTRAIN_BACK_RIGHT_CANCODER_ID = 1;
 			
 			// (2025) Elevators (ELE)
 			public static final int RIGHT_ELEVATOR_MOTOR_ID = 7;
-			public static final int LEFT_ELEVATOR_MOTOR_ID = 16;
+			public static final int LEFT_ELEVATOR_MOTOR_ID = 18;
 			
 			// (2025) Climber (CLI)
-			public static final int LEFT_CLIMBER_MOTOR_ID = 5;
-			public static final int RIGHT_CLIMBER_MOTOR_ID = 4;
+			public static final int LEFT_CLIMBER_MOTOR_ID = 4;
+			public static final int RIGHT_CLIMBER_MOTOR_ID = 5;
 			
 			// (2025) Coral Intake (SKY)
 			public static final int CORAL_PIVOT_MOTOR_ID = 13;
-			public static final int CORAL_INTAKE_MOTOR_ID = 4;
+			public static final int CORAL_INTAKE_MOTOR_ID = 2;
 			
 			// (2025) Algae Remover mounted on elevator (SKY)
-			public static final int ALGAE_REMOVER_MOTOR_ID = 2;
+			public static final int ALGAE_REMOVER_MOTOR_ID = 24;
 			
 			// (2025) Algae Ground Intake (GRD)
-			public static final int ALGAE_GROUND_INTAKE_MOTOR_ID = 23;
+			public static final int ALGAE_GROUND_INTAKE_MOTOR_ID = 10;
 		}
 //ivan is very smart and he is our very bestest diversity hire as the only white man in our team besides mr. reid and mr. goodman and we all love ivan because we have asianified him real good because he loves eating rice and filters his water at home instead of drinking tap water and hes real good coder ivan also cant eat wheat because hes celiac so as a white guy he cant eat white bread ivan can also use chopsticks real good when we eate food at like 12 that time he matched his photo with a frog (but he didnt want to match with the girl frog) he also has lots of good shimp photos which make him look very shrimpy with his long shrimpy nose and large shrimpy eyes
 		

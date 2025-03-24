@@ -28,6 +28,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.PortConstants;
@@ -125,6 +126,8 @@ public class DriveTrainSubsystem extends SubsystemBase {
     private final DoublePublisher bRAmp = NetworkTablesUtil.MAIN_ROBOT_TABLE.getDoubleTopic("br_amp").publish();
     
     private final DoubleArrayPublisher rawPosePub = NetworkTablesUtil.MAIN_ROBOT_TABLE.getDoubleArrayTopic("raw_pose").publish();
+    private final DoubleArrayPublisher chosenPathPub = NetworkTablesUtil.MAIN_ROBOT_TABLE.getDoubleArrayTopic("chosen_path").publish();
+    private final DoubleArrayPublisher pathfinderPathPub = NetworkTablesUtil.MAIN_ROBOT_TABLE.getDoubleArrayTopic("pathfinder").publish();
     
     private boolean lockedHeadingMode = false;
     private Rotation2d lockedHeading;
@@ -162,11 +165,10 @@ public class DriveTrainSubsystem extends SubsystemBase {
         System.out.println("Initialized DriveTrainSubsystem");
         
         if(Flags.DriveTrain.ENABLE_DYNAMIC_PATHFINDING && Util.isSim()) {
-            // System.out.println("pathplanner test");
+            System.out.println("pathplanner test");
             setPose(new Pose2d(2, 2, Rotation2d.fromDegrees(120)));
-            
+            c=reefedPathfindingManagers.get(0).getFullCommand(getPose());
             // System.out.println(poses);
-            reefedPathfindingManagers.get(0).getFullCommand(getPose()).schedule();
         }
     }
     
@@ -415,6 +417,8 @@ public class DriveTrainSubsystem extends SubsystemBase {
         this.backRight.stop();
     }
 
+    Command c = new InstantCommand();
+
     @Override
     public void periodic() {
         Pose2d current = this.getPose();
@@ -454,13 +458,22 @@ public class DriveTrainSubsystem extends SubsystemBase {
         //bRAmp.set(backRight.getDriveAmperage());
         
         if(Flags.DriveTrain.ENABLE_DYNAMIC_PATHFINDING && Util.isSim()) {
+            // System.out.println("pp init: " + AutoBuilder.isConfigured() + " " + AutoBuilder.isPathfindingConfigured());
+            if(!c.isScheduled()) {
+                c.schedule();
+            } else {
+                // System.out.println("command running");
+            }
             var poses = reefedPathfindingManagers.get(0).getBestPath(getPose()).getPathPoses();
             field.getRobotObject().setPoses(poses);
             PathPlannerPath p = PathfindingManager.getNewestPathfindingPath();
             if (p != null) {
-                pfField.getRobotObject().setPoses(p.getPathPoses());
+                var pathfindPoses = p.getPathPoses();
+                pfField.getRobotObject().setPoses(pathfindPoses);
+                chosenPathPub.set(Util.convertPoseListToDoubleArray(poses));
+                pathfinderPathPub.set(Util.convertPoseListToDoubleArray(pathfindPoses));
             } else {
-                System.out.println("null path");
+                // System.out.println("null path");
             }
         }
     }

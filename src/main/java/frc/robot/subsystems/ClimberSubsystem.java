@@ -25,7 +25,7 @@ import frc.robot.util.Util;
 
 public class ClimberSubsystem extends SubsystemBase {
     public static final ADIS16470_IMU.IMUAxis ROBOT_TILT_AXIS = IMUAxis.kYaw;
-    private static final double UPPER_HARD_LIMIT = 0.82;
+    private static final double UPPER_HARD_LIMIT = 0.663; // start cnf = 0.535
     // private final ThroughboreEncoder throughboreEncoder;
 
     private final SparkMax leftClimbMotor;
@@ -52,28 +52,31 @@ public class ClimberSubsystem extends SubsystemBase {
         rightClimbMotor = new SparkMax(Constants.PortConstants.CAN.RIGHT_CLIMBER_MOTOR_ID, MotorType.kBrushless);
         rightClimbMotorEncoder = rightClimbMotor.getEncoder();
         
-        climbMotorAbsoluteEncoder = leftClimbMotor.getAbsoluteEncoder();
+        climbMotorAbsoluteEncoder = rightClimbMotor.getAbsoluteEncoder();
         // throughboreEncoder = new ThroughboreEncoder(Constants.PortConstants.DIO.CLIMBER_ABSOLUTE_ENCODER_ABS_PORT, 0, false);
-        pidController = leftClimbMotor.getClosedLoopController();
+        pidController = rightClimbMotor.getClosedLoopController();
 
         SparkMaxConfig leftClimbMotorConfig = new SparkMaxConfig();
 
         leftClimbMotorConfig
-            .inverted(false)
+            // .inverted(false)
+            .follow(rightClimbMotor, true)
             .idleMode(SparkBaseConfig.IdleMode.kBrake)
             .voltageCompensation(12);
-        leftClimbMotorConfig.closedLoop
-            .pidf(7, 0, 0, 0)
-            .outputRange(-0.6, 0.6)
-            .feedbackSensor(FeedbackSensor.kAbsoluteEncoder);
         
         SparkMaxConfig rightClimbMotorConfig = new SparkMaxConfig();
         
         rightClimbMotorConfig
+            .inverted(false)
             .idleMode(SparkBaseConfig.IdleMode.kBrake)
             // .follow(leftClimbMotor, true)
             .disableFollowerMode()
             .voltageCompensation(12);
+
+        rightClimbMotorConfig.closedLoop
+            .pidf(5, 0, 0, 0)
+            .outputRange(-0.5, 0.5)
+            .feedbackSensor(FeedbackSensor.kAbsoluteEncoder);
         
         Util.configureSparkMotor(leftClimbMotor, leftClimbMotorConfig);
         Util.configureSparkMotor(rightClimbMotor, rightClimbMotorConfig);
@@ -90,10 +93,10 @@ public class ClimberSubsystem extends SubsystemBase {
         rClimbMotorEncoderVelocityPublisher.setDouble(rightClimbMotorEncoder.getVelocity());
         rClimbMotorEncoderPositionPublisher.setDouble(rightClimbMotorEncoder.getPosition());
         
-        //System.out.println("climbMotorAbsoluteEncoder.getPosition() is " + climbMotorAbsoluteEncoder.getPosition());
+        // System.out.println("climbMotorAbsoluteEncoder.getPosition() is " + climbMotorAbsoluteEncoder.getPosition());
         
-        if(this.leftClimbMotor.get() > 0 && this.climbMotorAbsoluteEncoder.getPosition() >= UPPER_HARD_LIMIT - 0.01) {
-            leftClimbMotor.set(0);
+        if(this.rightClimbMotor.get() > 0 && this.climbMotorAbsoluteEncoder.getPosition() >= UPPER_HARD_LIMIT - 0.01) {
+            rightClimbMotor.set(0);
         }
         // throughboreEncoder.periodic();
     }
@@ -110,7 +113,7 @@ public class ClimberSubsystem extends SubsystemBase {
             if(speed > 0 && this.climbMotorAbsoluteEncoder.getPosition() >= UPPER_HARD_LIMIT - 0.01) {
                 return;
             }
-            leftClimbMotor.set(speed);
+            rightClimbMotor.set(speed);
         }
     }
 

@@ -26,7 +26,7 @@ import frc.robot.util.Util;
 
 public class CoralIntakeSubsystem extends SubsystemBase {
     private static final double VERY_HARD_BACK_LIMIT = 0.03; // to make sure we don't roll-over the intake
-    private static final double FRONT_LIMIT = 0.55;
+    private static final double FRONT_LIMIT = 0.53;
 
     private final SparkMax coralPivotMotor;
     private final RelativeEncoder coralPivotEncoder;
@@ -38,7 +38,8 @@ public class CoralIntakeSubsystem extends SubsystemBase {
 
     private final SparkClosedLoopController coralPivotPIDController;
 
-    private static final GenericPublisher pivotAnglePublisher = NetworkTablesUtil.getPublisher("robot", "coralPivotAbsoluteEncoderPosition", NetworkTableType.kDouble);
+    private static final GenericPublisher pivotRelativeEncoderPublisher = NetworkTablesUtil.getPublisher("robot", "coralPivotRelativeEncoderPosition", NetworkTableType.kDouble);
+    private static final GenericPublisher pivotAbsoluteEncoderPublisher = NetworkTablesUtil.getPublisher("robot", "coralPivotAbsoluteEncoderPosition", NetworkTableType.kDouble);
     //private static final GenericPublisher coralIntakeMotorPublisher = NetworkTablesUtil.getPublisher("robot", "coralIntakeMotorPosition", NetworkTableType.kDouble);
 
     private final SparkMax coralIntakeMotor;
@@ -61,7 +62,8 @@ public class CoralIntakeSubsystem extends SubsystemBase {
                 .voltageCompensation(12);
         coralPivotMotorConfig.absoluteEncoder
                 .setSparkMaxDataPortConfig()
-                .zeroOffset(0.6);
+                .inverted(true)
+                .zeroOffset(1-0.35);
         coralPivotMotorConfig.encoder
                 .positionConversionFactor(1d / 48)
                 .velocityConversionFactor(1d / 48 / 60);
@@ -82,7 +84,7 @@ public class CoralIntakeSubsystem extends SubsystemBase {
         coralIntakeMotor = new SparkMax(Constants.PortConstants.CAN.CORAL_INTAKE_MOTOR_ID, MotorType.kBrushless);
         SparkMaxConfig coralIntakeMotorConfig = new SparkMaxConfig();
         coralIntakeMotorConfig
-                .inverted(true)
+                .inverted(false)
                 .idleMode(SparkBaseConfig.IdleMode.kBrake)
                 .smartCurrentLimit(20)
                 .voltageCompensation(12);
@@ -105,9 +107,8 @@ public class CoralIntakeSubsystem extends SubsystemBase {
         // System.out.println(this.coralPivotAbsoluteEncoder.getPosition());
         // throughboreEncoder.periodic();
         // System.out.println(this.coralLimitSwitch.isPressed());
-        pivotAnglePublisher.setDouble(this.coralPivotAbsoluteEncoder.getPosition());
-        
-        
+        pivotAbsoluteEncoderPublisher.setDouble(this.coralPivotAbsoluteEncoder.getPosition());
+        pivotRelativeEncoderPublisher.setDouble(this.coralPivotEncoder.getPosition());
     }
 
     public boolean hasCoral() {
@@ -132,8 +133,9 @@ public class CoralIntakeSubsystem extends SubsystemBase {
         }
     }
 
-    public void setRawSpeed(double speed) {
+    public void setRawPivotSpeed(double speed) {
         if (Flags.CoralIntake.ENABLED) {
+            // System.out.println(speed);
             coralPivotMotor.set(speed);
         }
     }

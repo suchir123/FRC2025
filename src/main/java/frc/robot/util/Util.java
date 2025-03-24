@@ -4,10 +4,12 @@ import com.revrobotics.spark.SparkBase;
 import com.revrobotics.spark.config.SparkBaseConfig;
 import edu.wpi.first.math.geometry.CoordinateAxis;
 import edu.wpi.first.math.geometry.CoordinateSystem;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 
+import java.util.List;
 import java.util.function.Supplier;
 
 /**
@@ -185,5 +187,17 @@ public final class Util {
     
     public static void configureSparkMotor(SparkBase motor, SparkBaseConfig config) {
         motor.configure(config, SparkBase.ResetMode.kResetSafeParameters, SparkBase.PersistMode.kPersistParameters);
+    }
+
+    public static double[] convertPoseListToDoubleArray(List<Pose2d> poses) {
+        double[] ret = new double[poses.size() * 3];
+        for(int i = 0; i < poses.size(); i++) {
+            Pose2d pose = poses.get(i);
+            ret[3 * i + 0] = pose.getX();
+            ret[3 * i + 1] = pose.getY();
+            ret[3 * i + 2] = pose.getRotation().getDegrees();
+        }
+
+        return ret;
     }
 }

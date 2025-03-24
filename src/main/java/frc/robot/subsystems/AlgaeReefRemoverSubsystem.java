@@ -20,8 +20,8 @@ public class AlgaeReefRemoverSubsystem extends SubsystemBase {
         SparkMaxConfig algaeMotorConfig = new SparkMaxConfig();
 
         algaeMotorConfig
-                .inverted(false)
-                .idleMode(SparkBaseConfig.IdleMode.kCoast)
+                .inverted(true)
+                .idleMode(SparkBaseConfig.IdleMode.kBrake)
                 .smartCurrentLimit(20)
                 .voltageCompensation(12);
         
@@ -38,5 +38,4 @@ public class AlgaeReefRemoverSubsystem extends SubsystemBase {
             algaeRemoverMotor.set(speed);
         }
     }
-
 }

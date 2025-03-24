@@ -3,20 +3,20 @@ package frc.robot.commands.testers;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.controllers.AbstractController;
-import frc.robot.subsystems.CoralIntakeSubsystem;
+import frc.robot.subsystems.AlgaeReefRemoverSubsystem;
 
-public class TestCoralIntakeCommand extends Command {
-    private final CoralIntakeSubsystem coralIntake;
+public class TestAlgaeReefRemoverCommand extends Command {
+    private final AlgaeReefRemoverSubsystem algaeReefRemover;
     private final AbstractController joystick;
 
     private final Trigger r;
-    public TestCoralIntakeCommand(CoralIntakeSubsystem coralIntake, AbstractController joystick) {
-        this.coralIntake = coralIntake;
+    public TestAlgaeReefRemoverCommand(AlgaeReefRemoverSubsystem algaeReefRemover, AbstractController joystick) {
+        this.algaeReefRemover = algaeReefRemover;
         this.joystick = joystick;
 
         r = joystick.rightButton();
 
-        addRequirements(coralIntake);
+        addRequirements(algaeReefRemover);
     }
 
     @Override
@@ -25,11 +25,10 @@ public class TestCoralIntakeCommand extends Command {
 
     @Override
     public void execute() {
-        coralIntake.setRawPivotSpeed(joystick.getRightVerticalMovement());
         if(r.getAsBoolean()) {
-            coralIntake.setIntakeSpeed(0.3);
+            algaeReefRemover.setIntakeSpeed(0.3);
         } else {
-            coralIntake.setIntakeSpeed(0);
+            algaeReefRemover.setIntakeSpeed(0);
         }
     }
 

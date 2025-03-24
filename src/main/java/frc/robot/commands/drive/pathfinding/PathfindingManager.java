@@ -3,10 +3,7 @@ package frc.robot.commands.drive.pathfinding;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PathFollowingController;
-import com.pathplanner.lib.path.GoalEndState;
-import com.pathplanner.lib.path.PathConstraints;
-import com.pathplanner.lib.path.PathPlannerPath;
-import com.pathplanner.lib.path.PathPoint;
+import com.pathplanner.lib.path.*;
 import com.pathplanner.lib.pathfinding.Pathfinding;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -27,11 +24,11 @@ import java.util.function.Supplier;
  * The path's start point will be routed to using dynamic pathfinding, meaning that the selection of the best path should hinge on selecting the most optimal pre-planned path to seek towards.
  */
 public class PathfindingManager {
-	private static GoalEndState mostRecentSet = new GoalEndState(0, new Rotation2d());
+	private static GoalEndState mostRecentSet = null;
 	
 	public static PathPlannerPath getNewestPathfindingPath() {
 		if(mostRecentSet == null) {
-			System.out.println("No path being run");
+			// System.out.println("No path being run");
 			return null;
 		}
 		return Pathfinding.getCurrentPath(CONSTRAINTS, mostRecentSet);
@@ -107,16 +104,28 @@ public class PathfindingManager {
 	 */
 	public Command getFullCommand(Pose2d currentPose, PathChooser h) {
 		PathPlannerPath bestPath = this.getBestPath(currentPose, h);
-		Rotation2d targetRotation = Rotation2d.kZero;
-		for (PathPoint p : bestPath.getAllPathPoints()) {
-			if (p.rotationTarget != null) {
-				targetRotation = p.rotationTarget.rotation();
-				break;
-			}
-		}
-		GoalEndState goalEndState = new GoalEndState(bestPath.getGlobalConstraints().maxVelocityMPS(), targetRotation); // copied from the linked constructor above
+		GoalEndState goalEndState = getGoalEndState(bestPath);
 		// System.out.println(goalEndState);
-		return new InstantCommand(() -> mostRecentSet = goalEndState).andThen(AutoBuilder.pathfindThenFollowPath(bestPath, CONSTRAINTS)).andThen(new InstantCommand(() -> mostRecentSet = null));
+		return new InstantCommand(() -> {
+			mostRecentSet = goalEndState;
+			System.out.println("setting most recent\nsetting most recent\nsetting most recent\nsetting most recent\nsetting most recent\nsetting most recent\nsetting most recent\nsetting most recent\n");
+		}).andThen(AutoBuilder.pathfindThenFollowPath(bestPath, CONSTRAINTS));//.andThen(new InstantCommand(() -> mostRecentSet = null));
+	}
+	
+	private static GoalEndState getGoalEndState(PathPlannerPath bestPath) {
+		IdealStartingState s = bestPath.getIdealStartingState();
+		Rotation2d targetRotation = Rotation2d.kZero;
+		if(s == null) {
+			for (PathPoint p : bestPath.getAllPathPoints()) {
+				if (p.rotationTarget != null) {
+					targetRotation = p.rotationTarget.rotation();
+					break;
+				}
+			}
+		} else {
+			targetRotation = bestPath.getIdealStartingState().rotation();
+		}
+		return new GoalEndState(bestPath.getGlobalConstraints().maxVelocityMPS(), targetRotation);
 	}
 	
 	public Command getFullCommand(Pose2d currentPose) {

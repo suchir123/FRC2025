@@ -53,6 +53,7 @@ public class AlgaeGroundIntakeSubsystem extends SubsystemBase {
 
     public void setIntakeSpeed(double speed) {
         if(Flags.AlgaeGroundIntake.ENABLED) {
+            System.out.println("setting intake to " + speed);
             algaeIntakeMotor.set(speed);
         }
     }
@@ -68,6 +69,7 @@ public class AlgaeGroundIntakeSubsystem extends SubsystemBase {
     /**
      * @param left  Value [0,1]
      * @param right Value [0,1]
+     * @note Logically, left + right = 1.0
      */
     public void flapToValue(double left, double right) {
         // System.out.println("left: " + this.leftServo.getAngle() + ", right: " + this.rightServo.getAngle());

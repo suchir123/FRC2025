@@ -260,6 +260,12 @@ public class RobotContainer {
             }
         }
 
+        if(Flags.AlgaeReefRemover.IS_ATTACHED) {
+            if(Flags.AlgaeReefRemover.USE_TEST_ALGAE_REMOVER_COMMAND) {
+                this.algaeReefRemover.setDefaultCommand(new TestAlgaeReefRemoverCommand(this.algaeReefRemover, this.primaryController));
+            }
+        }
+
         if (Flags.Elevator.IS_ATTACHED && Flags.CoralIntake.IS_ATTACHED && Flags.AlgaeReefRemover.IS_ATTACHED && !Flags.Elevator.USE_TEST_PID_COMMAND && !Flags.Elevator.USE_TEST_ELEVATOR_COMMAND && !Flags.CoralIntake.USE_TEST_PID_COMMAND && !Flags.CoralIntake.USE_TEST_CORAL_COMMAND && !Flags.AlgaeReefRemover.USE_TEST_ALGAE_REMOVER_COMMAND) {
             this.elevators.setDefaultCommand(new ElevatorControlCommand(this.elevators, this.coralIntake, this.algaeReefRemover));
         }
