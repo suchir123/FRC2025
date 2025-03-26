@@ -3,42 +3,35 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 7.084733606557376,
-        "y": 7.507428278688524
+        "x": 3.232894736842105,
+        "y": 6.170641447368421
       },
       "prevControl": null,
       "nextControl": {
-        "x": 6.44366054247188,
-        "y": 6.707984755267806
+        "x": 3.3868421052631574,
+        "y": 5.843503289473685
       },
       "isLocked": false,
-      "linkedName": "B3"
+      "linkedName": null
     },
     {
       "anchor": {
-        "x": 5.157236842105262,
-        "y": 5.150740131578948
+        "x": 3.8203199999999997,
+        "y": 5.155999999999999
       },
       "prevControl": {
-        "x": 5.7189523089698975,
-        "y": 6.067365604888762
+        "x": 3.6754934210526313,
+        "y": 5.391282894736841
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "Reef2"
+      "linkedName": "Reef3"
     }
   ],
   "rotationTargets": [],
   "constraintZones": [],
   "pointTowardsZones": [],
-  "eventMarkers": [
-    {
-      "name": "GoToL4",
-      "waypointRelativePos": 0.49727047146401643,
-      "endWaypointRelativePos": null,
-      "command": null
-    }
-  ],
+  "eventMarkers": [],
   "globalConstraints": {
     "maxVelocity": 3.0,
     "maxAcceleration": 2.0,
@@ -49,13 +42,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -119.99999999999999
+    "rotation": -59.99999999999999
   },
   "reversed": false,
-  "folder": "FourBigBooms",
+  "folder": "dynamic pathfinding paths",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": -179.999
+    "rotation": -59.99999999999999
   },
   "useDefaultConstraints": true
 }

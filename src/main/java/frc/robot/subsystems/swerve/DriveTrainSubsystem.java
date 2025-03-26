@@ -134,9 +134,9 @@ public class DriveTrainSubsystem extends SubsystemBase {
 		this.reefedPathfindingManagers = Util.createIfFlagElseNull(() -> List.of(
 			new PathfindingManager( // reef 1
 				List.of(
-					"parallel into reef 1",
-					"up to reef 1",
-					"down to reef 1"
+					"InToReef1",
+					"CounterClockwiseToReef1",
+					"ClockwiseToReef1"
 				)
 			)
 		), Flags.DriveTrain.ENABLE_DYNAMIC_PATHFINDING);

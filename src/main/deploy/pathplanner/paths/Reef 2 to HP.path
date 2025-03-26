@@ -3,13 +3,13 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 5.13825,
-        "y": 2.88
+        "x": 5.157236842105262,
+        "y": 5.150740131578948
       },
       "prevControl": null,
       "nextControl": {
-        "x": 5.164544964502144,
-        "y": 3.1387426184541436
+        "x": 5.183531806607406,
+        "y": 5.409482750033091
       },
       "isLocked": false,
       "linkedName": "Reef2"
@@ -73,7 +73,7 @@
   "folder": "Lil Addy's Bigger Booms",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 119.99999999999999
+    "rotation": -119.99999999999999
   },
   "useDefaultConstraints": true
 }

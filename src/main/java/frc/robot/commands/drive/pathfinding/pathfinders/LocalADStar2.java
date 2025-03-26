@@ -26,12 +26,22 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
  *
  * <p>I would like to apologize to anyone trying to understand this code. The implementation I
  * translated it from was much worse.
+ * <p>
+ * Changelog:
+ * The main issue with the library impl is that it doesn't ensure a smooth connection onto the target path,
+ * Instead it will almost always create a sharp turn.
+ * In order to fix this: <pre>
+ * 1) determine the line of approach of the dynamic-gen path towards the goal position (since if we have an obstacle in our way this task becomes slightly non-trivial without having already completed a round of pathfinding)
+ * 2) once the line of approach can be determined we insert an extra "connecting path" in between the dynamic-gen path and the pre-planned path that we are seeking towards
+ * 3) change the goal position to the start of the new connecting path
+ * 4) if the situation changes and the line of approach of the dynamic-gen path stops aligning with the connecting path then we need to reset the goal position and redo steps 1-3
+ * Many parts of this will probably be handled elsewhere
  *
  * @see com.pathplanner.lib.pathfinding.LocalADStar
  */
 public class LocalADStar2 implements Pathfinder {
 	/**
-	 * Note: don't set this number too low because it will make the path gen go backwards (???)
+	 * Note: don't set this number too low because it will make the path gen go backwards (??? not sure why - addison)
 	 */
 	private static final double SMOOTHING_ANCHOR_PCT = 0.6;
 	private static final double EPS = 2.5;
@@ -147,13 +157,16 @@ public class LocalADStar2 implements Pathfinder {
 	 */
 	@Override
 	public PathPlannerPath getCurrentPath(PathConstraints constraints, GoalEndState goalEndState) {
+		newPathAvailable = false;
+		return getCurrentPathWithoutUpdate(constraints, goalEndState);
+	}
+	
+	public PathPlannerPath getCurrentPathWithoutUpdate(PathConstraints constraints, GoalEndState goalEndState) {
 		List<Waypoint> waypoints;
 		
 		pathLock.readLock().lock();
 		waypoints = new ArrayList<>(currentWaypoints);
 		pathLock.readLock().unlock();
-		
-		newPathAvailable = false;
 		
 		if (waypoints.size() < 2) {
 			// Not enough points. Something got borked somewhere

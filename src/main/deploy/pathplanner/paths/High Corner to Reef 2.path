@@ -32,12 +32,12 @@
     },
     {
       "anchor": {
-        "x": 5.13825,
-        "y": 2.88
+        "x": 5.157236842105262,
+        "y": 5.150740131578948
       },
       "prevControl": {
-        "x": 5.694734589041096,
-        "y": 3.3620239726027403
+        "x": 5.713721431146358,
+        "y": 5.632764104181688
       },
       "nextControl": null,
       "isLocked": false,
@@ -67,7 +67,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 119.99999999999999
+    "rotation": -119.99999999999999
   },
   "reversed": false,
   "folder": "Lil Addy's Bigger Booms",

@@ -3,13 +3,13 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 5.13825,
-        "y": 2.88
+        "x": 5.157236842105262,
+        "y": 5.150740131578948
       },
       "prevControl": null,
       "nextControl": {
-        "x": 4.88018189102691,
-        "y": 3.089999254269898
+        "x": 4.899168733132172,
+        "y": 5.360739385848846
       },
       "isLocked": false,
       "linkedName": "Reef2"
@@ -64,7 +64,7 @@
   "folder": "FourBigBooms",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 119.99999999999999
+    "rotation": -119.99999999999999
   },
   "useDefaultConstraints": true
 }
