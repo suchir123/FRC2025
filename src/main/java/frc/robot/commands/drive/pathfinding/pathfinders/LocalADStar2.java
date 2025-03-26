@@ -1,21 +1,25 @@
 package frc.robot.commands.drive.pathfinding.pathfinders;
 
-import com.pathplanner.lib.path.*;
+import com.pathplanner.lib.path.GoalEndState;
+import com.pathplanner.lib.path.PathConstraints;
+import com.pathplanner.lib.path.PathPlannerPath;
+import com.pathplanner.lib.path.Waypoint;
 import com.pathplanner.lib.pathfinding.Pathfinder;
 import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.Filesystem;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.util.*;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
 
 /**
  * Implementation of AD* running locally in a background thread
@@ -31,15 +35,6 @@ public class LocalADStar2 implements Pathfinder {
 	 */
 	private static final double SMOOTHING_ANCHOR_PCT = 0.6;
 	private static final double EPS = 2.5;
-	
-	private double fieldLength = 16.54;
-	private double fieldWidth = 8.02;
-	
-	private double nodeSize = 0.2;
-	
-	private int nodesX = (int) Math.ceil(fieldLength / nodeSize);
-	private int nodesY = (int) Math.ceil(fieldWidth / nodeSize);
-	
 	private final HashMap<GridPosition, Double> g = new HashMap<>();
 	private final HashMap<GridPosition, Double> rhs = new HashMap<>();
 	private final HashMap<GridPosition, Pair<Double, Double>> open = new HashMap<>();
@@ -48,27 +43,29 @@ public class LocalADStar2 implements Pathfinder {
 	private final Set<GridPosition> staticObstacles = new HashSet<>();
 	private final Set<GridPosition> dynamicObstacles = new HashSet<>();
 	private final Set<GridPosition> requestObstacles = new HashSet<>();
-	
+	private final Thread planningThread;
+	private final ReadWriteLock pathLock = new ReentrantReadWriteLock();
+	private final ReadWriteLock requestLock = new ReentrantReadWriteLock();
+	private double fieldLength = 16.54;
+	private double fieldWidth = 8.02;
+	private double nodeSize = 0.2;
+	private int nodesX = (int) Math.ceil(fieldLength / nodeSize);
+	private int nodesY = (int) Math.ceil(fieldWidth / nodeSize);
 	private GridPosition requestStart;
 	private Translation2d requestRealStartPos;
 	private GridPosition requestGoal;
 	private Translation2d requestRealGoalPos;
-	
 	private double eps;
-	
-	private final Thread planningThread;
 	private boolean requestMinor = true;
 	private boolean requestMajor = true;
 	private boolean requestReset = true;
 	private boolean newPathAvailable = false;
-	
-	private final ReadWriteLock pathLock = new ReentrantReadWriteLock();
-	private final ReadWriteLock requestLock = new ReentrantReadWriteLock();
-	
 	private List<Waypoint> currentWaypoints = new ArrayList<>();
 	private List<GridPosition> currentPathFull = new ArrayList<>();
 	
-	/** Create a new pathfinder that runs AD* locally in a background thread */
+	/**
+	 * Create a new pathfinder that runs AD* locally in a background thread
+	 */
 	public LocalADStar2() {
 		planningThread = new Thread(this::runThread);
 		
@@ -144,7 +141,7 @@ public class LocalADStar2 implements Pathfinder {
 	/**
 	 * Get the most recently calculated path
 	 *
-	 * @param constraints The path constraints to use when creating the path
+	 * @param constraints  The path constraints to use when creating the path
 	 * @param goalEndState The goal end state to use when creating the path
 	 * @return The PathPlannerPath created from the points calculated by the pathfinder
 	 */
@@ -170,7 +167,7 @@ public class LocalADStar2 implements Pathfinder {
 	 * Set the start position to pathfind from
 	 *
 	 * @param startPosition Start position on the field. If this is within an obstacle it will be
-	 *     moved to the nearest non-obstacle node.
+	 *                      moved to the nearest non-obstacle node.
 	 */
 	@Override
 	public void setStartPosition(Translation2d startPosition) {
@@ -191,7 +188,7 @@ public class LocalADStar2 implements Pathfinder {
 	 * Set the goal position to pathfind to
 	 *
 	 * @param goalPosition Goal position on the field. f this is within an obstacle it will be moved
-	 *     to the nearest non-obstacle node.
+	 *                     to the nearest non-obstacle node.
 	 */
 	@Override
 	public void setGoalPosition(Translation2d goalPosition) {
@@ -213,10 +210,10 @@ public class LocalADStar2 implements Pathfinder {
 	/**
 	 * Set the dynamic obstacles that should be avoided while pathfinding.
 	 *
-	 * @param obs A List of Translation2d pairs representing obstacles. Each Translation2d represents
-	 *     opposite corners of a bounding box.
+	 * @param obs             A List of Translation2d pairs representing obstacles. Each Translation2d represents
+	 *                        opposite corners of a bounding box.
 	 * @param currentRobotPos The current position of the robot. This is needed to change the start
-	 *     position of the path if the robot is now within an obstacle.
+	 *                        position of the path if the robot is now within an obstacle.
 	 */
 	@Override
 	public void setDynamicObstacles(
