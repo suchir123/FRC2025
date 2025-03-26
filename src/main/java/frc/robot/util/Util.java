@@ -1,5 +1,6 @@
 package frc.robot.util;
 
+import com.pathplanner.lib.trajectory.PathPlannerTrajectoryState;
 import com.revrobotics.spark.SparkBase;
 import com.revrobotics.spark.config.SparkBaseConfig;
 import edu.wpi.first.math.geometry.CoordinateAxis;
@@ -199,5 +200,9 @@ public final class Util {
         }
 
         return ret;
+    }
+    
+    public static double[] convertPPTrajStateListToDoubleArray(List<PathPlannerTrajectoryState> states) {
+        return convertPoseListToDoubleArray(states.stream().map(state -> state.pose).toList());
     }
 }

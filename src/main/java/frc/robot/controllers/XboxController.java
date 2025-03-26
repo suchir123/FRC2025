@@ -104,4 +104,16 @@ public class XboxController extends AbstractController {
     public Trigger pov(int value) {
         return this.controller.pov(value);
     }
+
+    @Override
+    public Trigger leftJoystickButtonTrigger() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'leftJoystickButtonTrigger'");
+    }
+
+    @Override
+    public Trigger rightJoystickButtonTrigger() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'rightJoystickButtonTrigger'");
+    }
 }

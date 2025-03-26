@@ -6,12 +6,12 @@ public class ElevatorStateManager {
     /**
      * The global ElevatorStateManager instance. I feel like this doesn't make a whole lot of sense in the context of the program but it's easier to pass this around and I'm lowkey too lazy to make it non-static even though it's maybe a couple extra lines of code since only RobotContainer also needs it.
      */
-    public static final ElevatorStateManager INSTANCE = new ElevatorStateManager(0, new Rotation2d(), ElevatorStateManager.CoralIntakeState.STOPPED, false);
+    public static final ElevatorStateManager INSTANCE = new ElevatorStateManager(0, new Rotation2d(), ElevatorStateManager.CoralIntakeState.STOPPED, AlgaeReefRemoverState.STOPPED);
 
     private ElevatorState currentState;
     private ElevatorState nextState;
     
-    private ElevatorStateManager(double height, Rotation2d pivotAngle, CoralIntakeState coralIntakeState, boolean runAlgaeRemover) {
+    private ElevatorStateManager(double height, Rotation2d pivotAngle, CoralIntakeState coralIntakeState, AlgaeReefRemoverState algaeReefRemoverState) {
         this.currentState = new ElevatorState();
         this.nextState = null;
 
@@ -19,7 +19,7 @@ public class ElevatorStateManager {
             .setHeight(height)
             .setPivotAngle(pivotAngle)
             .setCoralIntakeState(coralIntakeState)
-            .setRunAlgaeRemover(runAlgaeRemover);
+            .setAlgaeReefRemoverState(algaeReefRemoverState);
     }
 
     public double getHeight() {
@@ -34,8 +34,8 @@ public class ElevatorStateManager {
         return this.currentState.coralIntakeState;
     }
 
-    public boolean getRunAlgaeRemover() {
-        return this.currentState.runAlgaeRemover;
+    public AlgaeReefRemoverState getAlgaeReefRemoverState() {
+        return this.currentState.algaeReefRemoverState;
     }
 
     public ElevatorState getCurrentState() {
@@ -92,13 +92,22 @@ public class ElevatorStateManager {
     }
 
     /**
+     * The possible states for the algae reef remover.
+     */
+    public enum AlgaeReefRemoverState {
+        STOPPED,
+        INTAKE,
+        OUTTAKE
+    }
+
+    /**
      * A holder for the actual target state of the elevator.
      */
     public class ElevatorState {
         double height;
         Rotation2d pivotAngle;
         CoralIntakeState coralIntakeState;
-        boolean runAlgaeRemover;
+        AlgaeReefRemoverState algaeReefRemoverState;
 
         public double getHeight() {
             return height;
@@ -127,12 +136,12 @@ public class ElevatorStateManager {
             return this;
         }
 
-        public boolean isRunAlgaeRemover() {
-            return runAlgaeRemover;
+        public AlgaeReefRemoverState isAlgaeReefRemoverState() {
+            return algaeReefRemoverState;
         }
 
-        public ElevatorState setRunAlgaeRemover(boolean runAlgaeRemover) {
-            this.runAlgaeRemover = runAlgaeRemover;
+        public ElevatorState setAlgaeReefRemoverState(AlgaeReefRemoverState runAlgaeRemover) {
+            this.algaeReefRemoverState = runAlgaeRemover;
             return this;
         }
 
@@ -145,7 +154,7 @@ public class ElevatorStateManager {
                 .setHeight(this.height)
                 .setPivotAngle(this.pivotAngle)
                 .setCoralIntakeState(this.coralIntakeState)
-                .setRunAlgaeRemover(this.runAlgaeRemover);
+                .setAlgaeReefRemoverState(this.algaeReefRemoverState);
             return copy;
         }
 

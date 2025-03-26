@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.commands.elevator.ElevatorStateManager;
+import frc.robot.commands.elevator.ElevatorStateManager.AlgaeReefRemoverState;
 import frc.robot.subsystems.CoralIntakeSubsystem;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.staticsubsystems.RobotGyro;
@@ -72,7 +73,7 @@ public class ElevatorAutonManager {
                 .setHeight(0)
                 .setPivotAngle(Rotation2d.fromRotations(0.14))
                 .setCoralIntakeState(ElevatorStateManager.CoralIntakeState.INTAKE_FORCE_02)
-                .setRunAlgaeRemover(false)
+                .setAlgaeReefRemoverState(AlgaeReefRemoverState.STOPPED)
                 .setAsCurrent();
         }).andThen(
             new WaitUntilCommand(getIsCoralInIntake)
@@ -88,7 +89,7 @@ public class ElevatorAutonManager {
                 .setHeight(0)
                 .setPivotAngle(Rotation2d.fromRotations(0.14))
                 .setCoralIntakeState(ElevatorStateManager.CoralIntakeState.STOPPED)
-                .setRunAlgaeRemover(false)
+                .setAlgaeReefRemoverState(AlgaeReefRemoverState.STOPPED)
                 .setAsCurrent();
         })).andThen(
             new WaitUntilCommand(getAtSetpoint)
@@ -100,7 +101,7 @@ public class ElevatorAutonManager {
             .setHeight(0)
             .setPivotAngle(Rotation2d.fromRotations(0.03))
             .setCoralIntakeState(ElevatorStateManager.CoralIntakeState.STOPPED)
-            .setRunAlgaeRemover(false)
+            .setAlgaeReefRemoverState(AlgaeReefRemoverState.STOPPED)
             .setAsCurrent()
         ).andThen(
             new WaitUntilCommand(getAtSetpoint)
@@ -112,7 +113,7 @@ public class ElevatorAutonManager {
             .setHeight(0)
             .setPivotAngle(Rotation2d.fromRotations(0.46))
             .setCoralIntakeState(ElevatorStateManager.CoralIntakeState.STOPPED)
-            .setRunAlgaeRemover(false)
+            .setAlgaeReefRemoverState(AlgaeReefRemoverState.STOPPED)
             .setAsCurrent()
         ).andThen(
             new WaitUntilCommand(getAtSetpoint)
@@ -124,7 +125,7 @@ public class ElevatorAutonManager {
             .setHeight(0.35)
             .setPivotAngle(Rotation2d.fromRotations(0.46))
             .setCoralIntakeState(ElevatorStateManager.CoralIntakeState.STOPPED)
-            .setRunAlgaeRemover(false)
+            .setAlgaeReefRemoverState(AlgaeReefRemoverState.STOPPED)
             .setAsCurrent()
         ).andThen(
             new WaitUntilCommand(getAtSetpoint)
@@ -138,7 +139,7 @@ public class ElevatorAutonManager {
                 .setHeight(1.02)
                 .setPivotAngle(Rotation2d.fromRotations(0.42))
                 .setCoralIntakeState(ElevatorStateManager.CoralIntakeState.STOPPED)
-                .setRunAlgaeRemover(false)
+                .setAlgaeReefRemoverState(AlgaeReefRemoverState.STOPPED)
                 .setAsCurrent();
         })//.andThen(
             //new WaitUntilCommand(getAtSetpoint)

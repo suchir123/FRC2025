@@ -16,17 +16,15 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.networktables.GenericPublisher;
 import edu.wpi.first.networktables.NetworkTableType;
-import edu.wpi.first.wpilibj.AddressableLEDBufferView;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Flags;
-import frc.robot.util.LEDStrip;
 import frc.robot.util.NetworkTablesUtil;
 import frc.robot.util.Util;
 
 public class CoralIntakeSubsystem extends SubsystemBase {
     private static final double VERY_HARD_BACK_LIMIT = 0.03; // to make sure we don't roll-over the intake
-    private static final double FRONT_LIMIT = 0.53;
+    private static final double FRONT_LIMIT = 0.6;
 
     private final SparkMax coralPivotMotor;
     private final RelativeEncoder coralPivotEncoder;

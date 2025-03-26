@@ -13,19 +13,7 @@
         {
           "type": "named",
           "data": {
-            "name": "GoToL4"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
             "name": "PlaceCoral"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "ElevatorDown"
           }
         }
       ]

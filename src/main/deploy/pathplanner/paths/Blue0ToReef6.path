@@ -39,7 +39,7 @@
   "eventMarkers": [
     {
       "name": "GoToL4",
-      "waypointRelativePos": 0.6000000000000013,
+      "waypointRelativePos": 0.5627118644067792,
       "endWaypointRelativePos": null,
       "command": {
         "type": "named",

@@ -7,8 +7,6 @@ package frc.robot.subsystems.swerve;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.SparkBase.ControlType;
-import com.revrobotics.spark.SparkBase.PersistMode;
-import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkClosedLoopController;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
@@ -25,9 +23,6 @@ import frc.robot.Constants.NetworkTablesConstants;
 import frc.robot.Flags;
 import frc.robot.util.NetworkTablesUtil;
 import frc.robot.util.Util;
-
-import static frc.robot.util.Util.bringAngleWithinUnitCircle;
-import static frc.robot.util.Util.nearestHundredth;
 
 /**
  * There are three existing readouts for the module's rotational position.

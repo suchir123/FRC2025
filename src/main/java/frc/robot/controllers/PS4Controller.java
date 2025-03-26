@@ -104,4 +104,14 @@ public class PS4Controller extends AbstractController {
     public Trigger pov(int value) {
         return this.controller.pov(value);
     }
+
+    @Override
+    public Trigger leftJoystickButtonTrigger() {
+        return this.controller.L3();
+    }
+
+    @Override
+    public Trigger rightJoystickButtonTrigger() {
+        return this.controller.R3();
+    }
 }

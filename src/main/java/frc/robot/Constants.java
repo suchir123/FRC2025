@@ -16,11 +16,12 @@ public final class Constants {
 		public static final String MAIN_TABLE_NAME = "robot";
 	}
 	
-	public static class OperatorConstants { // move it back by 10 cm!!!
+	public static class OperatorConstants {
 		public static final int RIGHT_JOYSTICK_PORT = 2;
 		public static final int NINTENDO_PRO_CONTROLLER = 1;
 		public static final int PS5_CONTROLLER = 3;
 		public static final int PS4_CONTROLLER = 4;
+		public static final int SECONDARY_PS5_CONTROLLER = 5;
 		
 		// Should this be here? especially with our new controller system, we could potentially refactor or re-abstract this using another class (maybe even for multiple driver preferences?)
 		public static class PrimaryControllerConstants {
@@ -37,10 +38,12 @@ public final class Constants {
 		
 		public static class SecondaryControllerConstants {
 			public static final TriggerType RESET_GYRO = TriggerType.POV_0;
-			public static final TriggerType TOGGLE_ALGAE_GROUND_INTAKE_HEIGHT = TriggerType.LEFT_SHOULDER_BUTTON;
-			public static final TriggerType MICRO_ADJUST_DRIVING = TriggerType.LEFT_SHOULDER_TRIGGER;
+			public static final TriggerType BARGE_ALGAE = TriggerType.POV_90;
+			public static final TriggerType GROUND_INTAKE_ALGAE_TOGGLE = TriggerType.LEFT_SHOULDER_BUTTON;
+			public static final TriggerType GROUND_INTAKE_CORAL_TOGGLE = TriggerType.LEFT_SHOULDER_TRIGGER;
 			
 			public static final TriggerType CLIMB_PIVOT_ANGLE_SECONDARY = TriggerType.POV_180;
+			public static final TriggerType BARGE_OUTTAKE = TriggerType.POV_270;
 			public static final TriggerType DROP_L1 = TriggerType.RIGHT_SHOULDER_TRIGGER;
 			public static final TriggerType L4 = TriggerType.RIGHT_SHOULDER_BUTTON;
 			public static final TriggerType L3 = TriggerType.UPPER_BUTTON;
@@ -131,10 +134,10 @@ public final class Constants {
 		 * 2 (LED)
 		 */
 		public static class PWM {
-			public static final int ALGAE_LEFT_SERVO_PORT = 1;
-			public static final int ALGAE_RIGHT_SERVO_PORT = 0;
+			public static final int ALGAE_LEFT_SERVO_PORT = 2;
+			public static final int ALGAE_RIGHT_SERVO_PORT = 1;
 			
-			public static final int LED_PORT = 2;
+			public static final int LED_PORT = 0;
 		}
 		
 		/**

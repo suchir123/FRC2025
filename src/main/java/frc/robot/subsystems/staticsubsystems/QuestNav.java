@@ -27,7 +27,11 @@ public final class QuestNav {
 	private float yaw_offset = 0.0f;
 	private Translation2d questNavRawToFieldCoordinateSystem = new Translation2d();
 	
-	private QuestNav() {}
+	private QuestNav() {
+		// Initialize in constructor or setup
+		heartbeatRequestSub = nt4Table.getDoubleTopic("heartbeat/quest_to_robot").subscribe(0.0);
+		heartbeatResponsePub = nt4Table.getDoubleTopic("heartbeat/robot_to_quest").publish();
+	}
 	
 	// Gets the Quest's measured position.
 	public Pose2d getPose() {
@@ -116,5 +120,26 @@ public final class QuestNav {
 	
 	public void resetBlue() {
 		resetHeading(Rotation2d.kZero);
+	}
+
+	/** Subscriber for heartbeat requests */
+	private final DoubleSubscriber heartbeatRequestSub;
+	/** Publisher for heartbeat responses */
+	private final DoublePublisher heartbeatResponsePub;
+	/** Last processed heartbeat request ID */
+	private double lastProcessedHeartbeatId = 0;
+
+	/** Process heartbeat requests from Quest and respond with the same ID */
+	private void processHeartbeat() {
+		double requestId = heartbeatRequestSub.get();
+		// Only respond to new requests to avoid flooding
+		if (requestId > 0 && requestId != lastProcessedHeartbeatId) {
+			heartbeatResponsePub.set(requestId);
+			lastProcessedHeartbeatId = requestId;
+		}
+	}
+
+	public void periodic() {
+		this.processHeartbeat();
 	}
 }

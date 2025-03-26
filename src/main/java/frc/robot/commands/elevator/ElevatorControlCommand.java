@@ -49,10 +49,17 @@ public class ElevatorControlCommand extends Command {
         this.elevator.setTargetHeight(targetHeight);
         this.coralIntake.setPivotTargetAngle(Rotation2d.fromRotations(targetPivotAngle));
 
-        if (this.stateManager.getRunAlgaeRemover()) {
-            this.algaeRemover.setIntakeSpeed(0.2);
-        } else {
-            this.algaeRemover.setIntakeSpeed(0);
+        switch(this.stateManager.getAlgaeReefRemoverState()) {
+            case STOPPED:
+                this.algaeRemover.setIntakeSpeed(0);
+                break;
+            case INTAKE:
+                this.algaeRemover.setIntakeSpeed(0.2);
+                break;
+            case OUTTAKE:
+                this.algaeRemover.setIntakeSpeed(-0.5);
+            default:
+                System.out.println("ElevatorStateManager.ElevatorState has invalid entries for AlgaeReefRemoverState that aren't implemented");
         }
 
         switch (this.stateManager.getCoralIntakeState()) {

@@ -16,8 +16,6 @@ public class AlgaeGroundIntakeSubsystem extends SubsystemBase {
     private final Servo algaeLeftServo;
     private final Servo algaeRightServo;
 
-    private boolean down = false;
-
     public AlgaeGroundIntakeSubsystem() {
         algaeIntakeMotor = new SparkMax(PortConstants.CAN.ALGAE_GROUND_INTAKE_MOTOR_ID, MotorType.kBrushless);
         // leaving these undefined seems better than adding them with bad values
@@ -41,35 +39,19 @@ public class AlgaeGroundIntakeSubsystem extends SubsystemBase {
 
     @Override
     public void periodic() {
-        // System.out.println("DOWN? " + this.down);
-        if (Flags.AlgaeGroundIntake.ENABLED) {
-            if (this.down) {
-                this.flapToValue(0, 1);
-            } else {
-                this.flapToValue(1, 0);
-            }
-        }
     }
 
     public void setIntakeSpeed(double speed) {
         if(Flags.AlgaeGroundIntake.ENABLED) {
-            System.out.println("setting intake to " + speed);
+            // System.out.println("setting intake to " + speed);
             algaeIntakeMotor.set(speed);
         }
     }
 
-    public void toggleServosDown() {
-        this.down = !this.down;
-    }
-
-    public boolean servosDown() {
-        return this.down;
-    }
-
     /**
+     * Logically, left + right = 1.0
      * @param left  Value [0,1]
      * @param right Value [0,1]
-     * @note Logically, left + right = 1.0
      */
     public void flapToValue(double left, double right) {
         // System.out.println("left: " + this.leftServo.getAngle() + ", right: " + this.rightServo.getAngle());

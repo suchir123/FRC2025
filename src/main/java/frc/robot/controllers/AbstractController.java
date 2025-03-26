@@ -146,4 +146,8 @@ public abstract class AbstractController {
      * @return The upper button on the far side on the right.
      */
     public abstract Trigger rightShoulderTrigger();
+
+    public abstract Trigger leftJoystickButtonTrigger();
+
+    public abstract Trigger rightJoystickButtonTrigger();
 }

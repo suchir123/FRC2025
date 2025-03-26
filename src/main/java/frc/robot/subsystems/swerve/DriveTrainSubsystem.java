@@ -7,7 +7,6 @@ package frc.robot.subsystems.swerve;
 import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 import com.pathplanner.lib.path.PathPlannerPath;
-import com.pathplanner.lib.pathfinding.Pathfinding;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.Nat;
@@ -37,6 +36,7 @@ import frc.robot.Flags;
 import frc.robot.Robot;
 import frc.robot.commands.drive.ManualDriveCommand;
 import frc.robot.commands.drive.pathfinding.PathfindingManager;
+import frc.robot.commands.drive.pathfinding.pathfinders.LocalADStar2;
 import frc.robot.subsystems.staticsubsystems.LimeLight;
 import frc.robot.subsystems.staticsubsystems.RobotGyro;
 import frc.robot.subsystems.staticsubsystems.LimeLight.LimeyApriltagReading;
@@ -125,9 +125,9 @@ public class DriveTrainSubsystem extends SubsystemBase {
     private final DoublePublisher bLAmp = NetworkTablesUtil.MAIN_ROBOT_TABLE.getDoubleTopic("bl_amp").publish();
     private final DoublePublisher bRAmp = NetworkTablesUtil.MAIN_ROBOT_TABLE.getDoubleTopic("br_amp").publish();
     
-    private final DoubleArrayPublisher rawPosePub = NetworkTablesUtil.MAIN_ROBOT_TABLE.getDoubleArrayTopic("raw_pose").publish();
-    private final DoubleArrayPublisher chosenPathPub = NetworkTablesUtil.MAIN_ROBOT_TABLE.getDoubleArrayTopic("chosen_path").publish();
-    private final DoubleArrayPublisher pathfinderPathPub = NetworkTablesUtil.MAIN_ROBOT_TABLE.getDoubleArrayTopic("pathfinder").publish();
+    private static final DoubleArrayPublisher rawPosePub = NetworkTablesUtil.MAIN_ROBOT_TABLE.getDoubleArrayTopic("raw_pose").publish();
+    private static final DoubleArrayPublisher chosenPathPub = NetworkTablesUtil.MAIN_ROBOT_TABLE.getDoubleArrayTopic("chosen_path").publish();
+    public static final DoubleArrayPublisher pathfinderPathPub = NetworkTablesUtil.MAIN_ROBOT_TABLE.getDoubleArrayTopic("pathfinder").publish();
     
     private boolean lockedHeadingMode = false;
     private Rotation2d lockedHeading;
@@ -166,25 +166,39 @@ public class DriveTrainSubsystem extends SubsystemBase {
         
         if(Flags.DriveTrain.ENABLE_DYNAMIC_PATHFINDING && Util.isSim()) {
             System.out.println("pathplanner test");
+            PathfindingManager.configurePathfinder(new LocalADStar2());
             setPose(new Pose2d(2, 2, Rotation2d.fromDegrees(120)));
             c=reefedPathfindingManagers.get(0).getFullCommand(getPose());
             // System.out.println(poses);
         }
     }
     
+    private RobotConfig config;
+    
     private void configureAutoBuilder() {
-        RobotConfig config;
         try {
-            config = RobotConfig.fromGUISettings();
+            this.config = RobotConfig.fromGUISettings();
         } catch(Exception e) {
             System.out.println("Error while loading robotconfig for auto");
             e.printStackTrace();
-            config = null;
         }
         
         AutoBuilder.configure(
             this::getPose,
             this::setPose,
+            this::getRobotRelativeChassisSpeeds,
+            this::consumeChassisSpeeds,
+            new PPHolonomicDriveController(
+                new PIDConstants(1.769, 0, 0),
+                new PIDConstants(1.5, 0, 0)
+            ),
+            config, // womp womp if its null
+            () -> !Util.onBlueTeam(),
+            this
+        );
+        
+        PathfindingManager.configure(
+            this::getPose,
             this::getRobotRelativeChassisSpeeds,
             this::consumeChassisSpeeds,
             new PPHolonomicDriveController(
@@ -464,8 +478,10 @@ public class DriveTrainSubsystem extends SubsystemBase {
             } else {
                 // System.out.println("command running");
             }
-            var poses = reefedPathfindingManagers.get(0).getBestPath(getPose()).getPathPoses();
-            field.getRobotObject().setPoses(poses);
+            var poses = Util.convertPPTrajStateListToDoubleArray(reefedPathfindingManagers.get(0).getBestPath(getPose()).getIdealTrajectory(config).orElseThrow().getStates());
+            // field.getRobotObject().setPoses(poses);
+            chosenPathPub.set(poses);
+            /*
             PathPlannerPath p = PathfindingManager.getNewestPathfindingPath();
             if (p != null) {
                 var pathfindPoses = p.getPathPoses();
@@ -474,7 +490,7 @@ public class DriveTrainSubsystem extends SubsystemBase {
                 pathfinderPathPub.set(Util.convertPoseListToDoubleArray(pathfindPoses));
             } else {
                 // System.out.println("null path");
-            }
+            }*/
         }
     }
 

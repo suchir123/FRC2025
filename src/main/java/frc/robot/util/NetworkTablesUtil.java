@@ -70,7 +70,7 @@ public final class NetworkTablesUtil {
         return newSubscriber;
     }
 
-    public static void getConnections() {
+    public static void printConnections() {
         for (ConnectionInfo connection : INSTANCE.getConnections()) {
             System.out.println("Connection: Using version " + connection.protocol_version + ", ID: " + connection.remote_id + ", IP: " + connection.remote_ip + ", last update: " + connection.last_update);
         }

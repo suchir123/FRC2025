@@ -2,6 +2,7 @@ package frc.robot.commands.drive;
 
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Flags;
 import frc.robot.controllers.AbstractController;
 import frc.robot.subsystems.swerve.DriveTrainSubsystem;
@@ -15,6 +16,8 @@ public class ManualDriveCommand extends Command {
     // private final AprilTagHandler aprilTagHandler;
     private final SlewRateLimiter xSpeedLimiter = new SlewRateLimiter(1);
     private final SlewRateLimiter ySpeedLimiter = new SlewRateLimiter(1);
+
+    private final Trigger leftStickButton, rightStickButton;
     // private final SlewRateLimiter rotLimiter = new SlewRateLimiter(0.5);
     // private final Trigger autoAimSubwoofer;
     // private final LinearFilter filter = LinearFilter.singlePoleIIR(0.1, 0.02);
@@ -23,6 +26,9 @@ public class ManualDriveCommand extends Command {
     public ManualDriveCommand(DriveTrainSubsystem driveTrain, AbstractController joystick) { //AprilTagHandler aprilTagHandler) {
         this.driveTrain = driveTrain;
         this.joystick = joystick;
+
+        this.leftStickButton = joystick.leftJoystickButtonTrigger();
+        this.rightStickButton = joystick.rightJoystickButtonTrigger();
         // this.aprilTagHandler = aprilTagHandler;
         // this.autoAimSubwoofer = ControlHandler.get(joystick, ControllerConstants.AUTO_AIM_FOR_SHOOT);
 
@@ -49,12 +55,17 @@ public class ManualDriveCommand extends Command {
         // this.driveTrain.drive(this.joystick.getVerticalMovement());
         double flip = flipFactor();
         // We need a negative sign here because the robot starts facing in the other direction
-        double ySpeed = Util.squareKeepSign(this.ySpeedLimiter.calculate(this.joystick.getLeftVerticalMovement() * flip)) * MAX_SPEED_METERS_PER_SEC;
-        double xSpeed = -Util.squareKeepSign(this.xSpeedLimiter.calculate(this.joystick.getLeftHorizontalMovement() * flip)) * MAX_SPEED_METERS_PER_SEC;
+        
+        double speedAdjust = 1;
+        if(this.leftStickButton.getAsBoolean() || this.rightStickButton.getAsBoolean()) {
+            speedAdjust = 0.25;
+        }
+        double ySpeed = Util.squareKeepSign(this.ySpeedLimiter.calculate(this.joystick.getLeftVerticalMovement() * flip)) * MAX_SPEED_METERS_PER_SEC * speedAdjust;
+        double xSpeed = -Util.squareKeepSign(this.xSpeedLimiter.calculate(this.joystick.getLeftHorizontalMovement() * flip)) * MAX_SPEED_METERS_PER_SEC * speedAdjust;
         // System.out.println("xSpeed = " + xSpeed);
         // System.out.println("ySpeed = " + ySpeed);
 
-        double rotSpeed = -this.joystick.getRightHorizontalMovement() * MAX_ROT_SPEED_ANGULAR;
+        double rotSpeed = -this.joystick.getRightHorizontalMovement() * MAX_ROT_SPEED_ANGULAR * speedAdjust;
 
 
         // System.out.println("forward speed: " + ySpeed + ", x speed: " + xSpeed);
