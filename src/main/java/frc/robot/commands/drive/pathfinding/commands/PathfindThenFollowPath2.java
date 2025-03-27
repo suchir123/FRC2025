@@ -8,6 +8,7 @@ import com.pathplanner.lib.path.GoalEndState;
 import com.pathplanner.lib.path.IdealStartingState;
 import com.pathplanner.lib.path.PathConstraints;
 import com.pathplanner.lib.path.PathPlannerPath;
+import com.pathplanner.lib.trajectory.PathPlannerTrajectory;
 import com.pathplanner.lib.util.DriveFeedforwards;
 import com.pathplanner.lib.util.FlippingUtil;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -18,6 +19,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 
+import java.lang.reflect.Field;
 import java.util.Set;
 import java.util.function.BiConsumer;
 import java.util.function.BooleanSupplier;
@@ -31,6 +33,16 @@ public class PathfindThenFollowPath2 extends SequentialCommandGroup {
 	
 	private final PathfindingCommand pfCom;
 	private final Function<PathPlannerPath, Command> generateDeferredPathJoinerCommand;
+	
+	private static PathPlannerTrajectory getPathfindingCommandTargetPath(PathfindingCommand pfCom) {
+		try {
+			Field f = PathfindingCommand.class.getDeclaredField("targetPath");
+			f.setAccessible(true);
+			return (PathPlannerTrajectory) f.get(pfCom);
+		} catch (NoSuchFieldException | IllegalAccessException e) {
+			throw new RuntimeException(e);
+		}
+	}
 	
 	/**
 	 * Constructs a new PathfindThenFollowPath command group.
@@ -60,6 +72,17 @@ public class PathfindThenFollowPath2 extends SequentialCommandGroup {
 		RobotConfig robotConfig,
 		BooleanSupplier shouldFlipPath,
 		Subsystem... requirements) {
+		
+		// ? generate end path except longer
+		// ? generate follow path to there?
+		// use those paths to find the point we want
+		
+		// 1. find intermediate point
+		// 2. generate intermediate path between intermediate point and start of goal path
+		
+		// need to generate intermediate path here
+		// then just change the goal path in this.pfCom to that instead
+		
 		this.pfCom = new PathfindingCommand(
 			goalPath,
 			pathfindingConstraints,
@@ -70,6 +93,8 @@ public class PathfindThenFollowPath2 extends SequentialCommandGroup {
 			robotConfig,
 			shouldFlipPath,
 			requirements);
+		
+		
 		
 		this.generateDeferredPathJoinerCommand = (joinTo -> Commands.defer(
 			() -> {
@@ -133,6 +158,7 @@ public class PathfindThenFollowPath2 extends SequentialCommandGroup {
 			// Use a deferred command to generate an on-the-fly path to join
 			// the end of the pathfinding command to the start of the path
 			generateDeferredPathJoinerCommand.apply(goalPath),
+			
 			new FollowPathCommand(
 				goalPath,
 				poseSupplier,
