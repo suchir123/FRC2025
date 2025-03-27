@@ -16,9 +16,12 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.networktables.GenericPublisher;
 import edu.wpi.first.networktables.NetworkTableType;
+import edu.wpi.first.wpilibj.LEDPattern;
+import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Flags;
+import frc.robot.util.LEDStrip;
 import frc.robot.util.NetworkTablesUtil;
 import frc.robot.util.Util;
 
@@ -41,6 +44,7 @@ public class CoralIntakeSubsystem extends SubsystemBase {
     //private static final GenericPublisher coralIntakeMotorPublisher = NetworkTablesUtil.getPublisher("robot", "coralIntakeMotorPosition", NetworkTableType.kDouble);
 
     private final SparkMax coralIntakeMotor;
+    private final LEDStrip leftLEDStrip, rightLEDStrip;
 
     public CoralIntakeSubsystem() {
         coralPivotMotor = new SparkMax(Constants.PortConstants.CAN.CORAL_PIVOT_MOTOR_ID, MotorType.kBrushless);
@@ -48,6 +52,12 @@ public class CoralIntakeSubsystem extends SubsystemBase {
         coralPivotAbsoluteEncoder = coralPivotMotor.getAbsoluteEncoder();
         // throughboreEncoder = new ThroughboreEncoder(Constants.PortConstants.DIO.CORAL_ABSOLUTE_ENCODER_ABS_ID, 0, false);
         coralPivotPIDController = coralPivotMotor.getClosedLoopController();
+
+        leftLEDStrip = new LEDStrip(0, 19);
+        rightLEDStrip = new LEDStrip(20, 38);
+
+        leftLEDStrip.usePattern(LEDPattern.solid(Color.kRed));
+        rightLEDStrip.usePattern(LEDPattern.solid(Color.kGreen));
         
         // ledStrip = new LEDStrip();
 //        leftLEDView = this.ledStrip.createBufferView(0, 0);
@@ -61,7 +71,7 @@ public class CoralIntakeSubsystem extends SubsystemBase {
         coralPivotMotorConfig.absoluteEncoder
                 .setSparkMaxDataPortConfig()
                 .inverted(true)
-                .zeroOffset(1-0.35);
+                .zeroOffset(1-0.52);
         coralPivotMotorConfig.encoder
                 .positionConversionFactor(1d / 48)
                 .velocityConversionFactor(1d / 48 / 60);

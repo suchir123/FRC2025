@@ -3,13 +3,13 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.427,
-        "y": 0.8245291095890411
+        "x": 1.38,
+        "y": 0.845
       },
       "prevControl": null,
       "nextControl": {
-        "x": 4.541215804769455,
-        "y": 2.4096835529346863
+        "x": 4.494215804769455,
+        "y": 2.4301544433456446
       },
       "isLocked": false,
       "linkedName": "HumanPlayer1"
@@ -39,7 +39,7 @@
   "eventMarkers": [
     {
       "name": "GoToL4",
-      "waypointRelativePos": 0.4203389830508465,
+      "waypointRelativePos": 0.4,
       "endWaypointRelativePos": null,
       "command": {
         "type": "named",
