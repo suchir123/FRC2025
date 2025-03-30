@@ -8,8 +8,8 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 5.865042808219179,
-        "y": 1.7510958904109586
+        "x": 5.5739354113865645,
+        "y": 2.221561523074859
       },
       "isLocked": false,
       "linkedName": "Reef6"
@@ -20,8 +20,8 @@
         "y": 0.845
       },
       "prevControl": {
-        "x": 2.509340753424656,
-        "y": 2.141789383561642
+        "x": 2.3167828489024016,
+        "y": 1.885402755668352
       },
       "nextControl": null,
       "isLocked": false,
@@ -30,8 +30,8 @@
   ],
   "rotationTargets": [
     {
-      "waypointRelativePos": 0.3288770053475936,
-      "rotationDegrees": 119.99999999999999
+      "waypointRelativePos": 0.4411764705882353,
+      "rotationDegrees": 110.0
     }
   ],
   "constraintZones": [],

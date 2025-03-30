@@ -10,6 +10,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.Filesystem;
+import frc.robot.commands.drive.pathfinding.Pathfinder2;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -39,7 +40,7 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
  *
  * @see com.pathplanner.lib.pathfinding.LocalADStar
  */
-public class LocalADStar2 implements Pathfinder {
+public class LocalADStar2 implements Pathfinder2 {
 	/**
 	 * Note: don't set this number too low because it will make the path gen go backwards (??? not sure why - addison)
 	 */

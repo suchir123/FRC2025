@@ -182,8 +182,8 @@ public class DriveTrainSubsystem extends SubsystemBase {
 			this::getRobotRelativeChassisSpeeds,
 			this::consumeChassisSpeeds,
 			new PPHolonomicDriveController(
-				new PIDConstants(1.769, 0, 0),
-				new PIDConstants(1.5, 0, 0)
+				new PIDConstants(1.25, 0, 0),
+				new PIDConstants(1.4, 0, 0)
 			),
 			config, // womp womp if its null
 			() -> !Util.onBlueTeam(),
@@ -195,8 +195,8 @@ public class DriveTrainSubsystem extends SubsystemBase {
 			this::getRobotRelativeChassisSpeeds,
 			this::consumeChassisSpeeds,
 			new PPHolonomicDriveController(
-				new PIDConstants(1.769, 0, 0),
-				new PIDConstants(1.5, 0, 0)
+				new PIDConstants(1.25, 0, 0),
+				new PIDConstants(1.4, 0, 0)
 			),
 			config, // womp womp if its null
 			() -> !Util.onBlueTeam(),
@@ -501,7 +501,7 @@ public class DriveTrainSubsystem extends SubsystemBase {
 	public void updateOdometryWithOculus() {
 		if (QuestNav.INSTANCE.connected()) {
 			Pose2d oculus = QuestNav.INSTANCE.getPose();
-			this.poseEstimator.addVisionMeasurement(oculus, QuestNav.INSTANCE.timestamp(), VecBuilder.fill(0.0069, 0.0069, 0.1));
+			this.poseEstimator.addVisionMeasurement(oculus, QuestNav.INSTANCE.timestamp(), VecBuilder.fill(0.007, 0.007, 0.1));
 		} else {
 			DriverStation.reportWarning("Oculus not connected!", false);
 		}
@@ -520,15 +520,17 @@ public class DriveTrainSubsystem extends SubsystemBase {
 					correction = 0.0025;
 					shouldResetOculus = true;
 				} else if (reading.distance() < 1) {
-					correction = 0.0069;
+					correction = 0.005;
 					shouldResetOculus = true;
 				} else if (reading.distance() < 1.5) {
-					correction = 0.008;
-					if (reading.distance() < 1.25) {
-						shouldResetOculus = true;
-					}
+					correction = 0.006;
+					shouldResetOculus = true;
+				} else if(reading.distance() < 1.75) {
+					correction = 0.006;
+					shouldResetOculus = true;
 				} else if (reading.distance() < 2) {
-					correction = 0.01269;
+					correction = 0.0065;
+					shouldResetOculus = true;
 				}
 			}
 			this.poseEstimator.addVisionMeasurement(reading.pose(), reading.timestamp(), VecBuilder.fill(correction, correction, correction));

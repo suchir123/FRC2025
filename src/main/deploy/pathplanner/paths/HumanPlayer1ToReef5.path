@@ -8,8 +8,8 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 4.494215804769455,
-        "y": 2.4301544433456446
+        "x": 2.6380058519181357,
+        "y": 1.6619585525225404
       },
       "isLocked": false,
       "linkedName": "HumanPlayer1"
@@ -20,8 +20,8 @@
         "y": 2.93
       },
       "prevControl": {
-        "x": 2.672940392970546,
-        "y": 2.601067863411647
+        "x": 3.335025253169417,
+        "y": 2.435025253169417
       },
       "nextControl": null,
       "isLocked": false,
@@ -30,7 +30,7 @@
   ],
   "rotationTargets": [
     {
-      "waypointRelativePos": 0.60427807486631,
+      "waypointRelativePos": 0.36,
       "rotationDegrees": 59.99999999999999
     }
   ],
@@ -39,7 +39,7 @@
   "eventMarkers": [
     {
       "name": "GoToL4",
-      "waypointRelativePos": 0.4,
+      "waypointRelativePos": 0.5355932203389826,
       "endWaypointRelativePos": null,
       "command": {
         "type": "named",

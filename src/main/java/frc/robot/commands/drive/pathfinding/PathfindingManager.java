@@ -159,6 +159,16 @@ public class PathfindingManager {
 		Pathfinding.setPathfinder(p);
 	}
 	
+	private static Pathfinder getPathfinder() {
+		try {
+			Field f = Pathfinding.class.getDeclaredField("pathfinder");
+			f.setAccessible(true);
+			return (Pathfinder) f.get(null);
+		} catch (NoSuchFieldException | IllegalAccessException e) {
+			throw new RuntimeException(e);
+		}
+	}
+	
 	public static PathPlannerPath getNewestPathfindingPath() {
 		if (mostRecentSet == null) {
 			// System.out.println("No path being run");
@@ -213,7 +223,7 @@ public class PathfindingManager {
 		try {
 			Field f = PathfindingCommand.class.getDeclaredField("currentTrajectory");
 			f.setAccessible(true);
-			
+	
 			return (PathPlannerTrajectory) f.get(pfCom);
 		} catch (NoSuchFieldException | IllegalAccessException e) {
 			throw new RuntimeException(e);

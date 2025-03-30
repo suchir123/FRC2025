@@ -45,7 +45,7 @@ public final class Flags {
     }
 
     public static class AlgaeGroundIntake {
-        public static final boolean IS_ATTACHED = true;
+        public static final boolean IS_ATTACHED = false;
         public static final boolean ENABLED = true;
         public static final boolean USE_TEST_ALGAE_GROUND_COMMAND = false;
     }

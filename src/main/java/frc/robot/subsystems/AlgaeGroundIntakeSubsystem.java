@@ -34,6 +34,8 @@ public class AlgaeGroundIntakeSubsystem extends SubsystemBase {
                 .voltageCompensation(12);
         
         Util.configureSparkMotor(algaeIntakeMotor, algaeMotorConfig);
+
+        flapToValue(0.9, 0.1);
         // algaeIntakeMotor.configure(algaeMotorConfig, SparkBase.ResetMode.kResetSafeParameters, SparkBase.PersistMode.kPersistParameters);
     }
 
