@@ -174,7 +174,11 @@ public class PathfindingManager {
 			// System.out.println("No path being run");
 			return null;
 		}
-		return Pathfinding.getCurrentPath(CONSTRAINTS, mostRecentSet);
+		Pathfinder p = getPathfinder();
+		if(p instanceof Pathfinder2 p2) {
+			return p2.getCurrentPathWithoutUpdate(CONSTRAINTS, mostRecentSet); // yippee
+		}
+		return null; // Pathfinding.getCurrentPath(CONSTRAINTS, mostRecentSet); // not yippee
 	}
 	
 	public static Pose2d extractStartPose(PathPlannerPath p) {
@@ -243,7 +247,7 @@ public class PathfindingManager {
 			if(p.getPfCom() == null) {
 				System.out.println("pfcom null");
 			}
-			PathPlannerTrajectory ppTraj = getPathfindingCommandCurrentTrajectory(p.getPfCom());
+			PathPlannerTrajectory ppTraj = p.getPfCom().currentTrajectory;
 			if(ppTraj != null) {
 				DriveTrainSubsystem.pathfinderPathPub.set(Util.convertPPTrajStateListToDoubleArray(ppTraj.getStates()));
 				System.out.println("pptraj not null");

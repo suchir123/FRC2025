@@ -1,11 +1,13 @@
 package frc.robot.util;
 
+import com.pathplanner.lib.path.PathPlannerPath;
 import com.pathplanner.lib.trajectory.PathPlannerTrajectoryState;
 import com.revrobotics.spark.SparkBase;
 import com.revrobotics.spark.config.SparkBaseConfig;
 import edu.wpi.first.math.geometry.CoordinateAxis;
 import edu.wpi.first.math.geometry.CoordinateSystem;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
@@ -204,5 +206,17 @@ public final class Util {
     
     public static double[] convertPPTrajStateListToDoubleArray(List<PathPlannerTrajectoryState> states) {
         return convertPoseListToDoubleArray(states.stream().map(state -> state.pose).toList());
+    }
+
+    public static Rotation2d slopeAngle(Pose2d p1, Pose2d p2) {
+        return p1.getTranslation().minus(p2.getTranslation()).getAngle();
+    }
+
+    public static Rotation2d slopeAngle(PathPlannerPath p) {
+        List<Pose2d> poses = p.getPathPoses();
+        if(poses.size() > 1) {
+            return slopeAngle(poses.get(poses.size() - 2), poses.get(poses.size() - 1));
+        }
+        return Rotation2d.kZero;
     }
 }
