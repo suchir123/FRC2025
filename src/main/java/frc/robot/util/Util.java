@@ -211,12 +211,4 @@ public final class Util {
     public static Rotation2d slopeAngle(Pose2d p1, Pose2d p2) {
         return p1.getTranslation().minus(p2.getTranslation()).getAngle();
     }
-
-    public static Rotation2d slopeAngle(PathPlannerPath p) {
-        List<Pose2d> poses = p.getPathPoses();
-        if(poses.size() > 1) {
-            return slopeAngle(poses.get(poses.size() - 2), poses.get(poses.size() - 1));
-        }
-        return Rotation2d.kZero;
-    }
 }

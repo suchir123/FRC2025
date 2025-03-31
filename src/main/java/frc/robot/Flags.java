@@ -45,7 +45,7 @@ public final class Flags {
     }
 
     public static class AlgaeGroundIntake {
-        public static final boolean IS_ATTACHED = false;
+        public static final boolean IS_ATTACHED = true;
         public static final boolean ENABLED = true;
         public static final boolean USE_TEST_ALGAE_GROUND_COMMAND = false;
     }
@@ -124,9 +124,9 @@ public final class Flags {
         // True if the auton selection GUI in Shuffleboard is active and we're choosing autons from it
         public static final boolean ENABLE_AUTON_CHOOSER = true;
         
-        public static final boolean ENABLE_OCULUS_ODOMETRY_FUSING = true;
+        public static final boolean ENABLE_OCULUS_ODOMETRY_FUSING = false;
 
-        public static final boolean ENABLE_LIMEY_APRILTAGS_ODOMETRY_FUSING = true;
+        public static final boolean ENABLE_LIMEY_APRILTAGS_ODOMETRY_FUSING = false;
 
         public static final boolean ENABLE_DYNAMIC_PATHFINDING = true;
     }

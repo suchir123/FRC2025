@@ -8,6 +8,7 @@ import com.pathplanner.lib.path.IdealStartingState;
 import com.pathplanner.lib.path.PathConstraints;
 import com.pathplanner.lib.path.PathPlannerPath;
 import com.pathplanner.lib.pathfinding.Pathfinding;
+import com.pathplanner.lib.trajectory.PathPlannerTrajectory;
 import com.pathplanner.lib.util.DriveFeedforwards;
 import com.pathplanner.lib.util.FlippingUtil;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -15,11 +16,10 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import edu.wpi.first.wpilibj2.command.Subsystem;
+import edu.wpi.first.wpilibj2.command.*;
+import frc.robot.RobotContainer;
 import frc.robot.commands.drive.pathfinding.PathfindingManager;
+import frc.robot.subsystems.swerve.DriveTrainSubsystem;
 import frc.robot.util.Util;
 
 import java.util.List;
@@ -67,173 +67,53 @@ public class PathfindThenFollowPath2 extends SequentialCommandGroup {
 		BooleanSupplier shouldFlipPath,
 		Subsystem... requirements) {
 		this.generateDeferredPathJoinerCommand = (supJoinTo -> Commands.defer(
-				() -> {
-					PathPlannerPath joinTo = supJoinTo.get();
-					if (joinTo.numPoints() < 2) {
-						return Commands.none();
-					}
-
-					Pose2d startPose = poseSupplier.get();
-					ChassisSpeeds startSpeeds = currentRobotRelativeSpeeds.get();
-					ChassisSpeeds startFieldSpeeds =
-							ChassisSpeeds.fromRobotRelativeSpeeds(startSpeeds, startPose.getRotation());
-					Rotation2d startHeading =
-							new Rotation2d(
-									startFieldSpeeds.vxMetersPerSecond, startFieldSpeeds.vyMetersPerSecond);
-
-					Pose2d endWaypoint =
-							new Pose2d(joinTo.getPoint(0).position, joinTo.getInitialHeading());
-					boolean shouldFlip = shouldFlipPath.getAsBoolean() && !joinTo.preventFlipping;
+			() -> {
+				PathPlannerPath joinTo = supJoinTo.get();
+				if (joinTo.numPoints() < 2) {
+					return Commands.none();
+				}
+				
+				Pose2d startPose = poseSupplier.get();
+				ChassisSpeeds startSpeeds = currentRobotRelativeSpeeds.get();
+				ChassisSpeeds startFieldSpeeds =
+					ChassisSpeeds.fromRobotRelativeSpeeds(startSpeeds, startPose.getRotation());
+				Rotation2d startHeading =
+					new Rotation2d(
+						startFieldSpeeds.vxMetersPerSecond, startFieldSpeeds.vyMetersPerSecond);
+				
+				Pose2d endWaypoint =
+					new Pose2d(joinTo.getPoint(0).position, joinTo.getInitialHeading());
+				boolean shouldFlip = shouldFlipPath.getAsBoolean() && !joinTo.preventFlipping;
+				if (shouldFlip) {
+					endWaypoint = FlippingUtil.flipFieldPose(endWaypoint);
+				}
+				
+				GoalEndState endState;
+				if (joinTo.getIdealStartingState() != null) {
+					Rotation2d endRot = joinTo.getIdealStartingState().rotation();
 					if (shouldFlip) {
-						endWaypoint = FlippingUtil.flipFieldPose(endWaypoint);
+						endRot = FlippingUtil.flipFieldRotation(endRot);
 					}
-
-					GoalEndState endState;
-					if (joinTo.getIdealStartingState() != null) {
-						Rotation2d endRot = joinTo.getIdealStartingState().rotation();
-						if (shouldFlip) {
-							endRot = FlippingUtil.flipFieldRotation(endRot);
-						}
-						endState = new GoalEndState(joinTo.getIdealStartingState().velocityMPS(), endRot);
-					} else {
-						endState =
-								new GoalEndState(
-										pathfindingConstraints.maxVelocityMPS(), startPose.getRotation());
-					}
-
-					PathPlannerPath joinPath =
-							new PathPlannerPath(
-									PathPlannerPath.waypointsFromPoses(
-											new Pose2d(startPose.getTranslation(), startHeading), endWaypoint),
-									pathfindingConstraints,
-									new IdealStartingState(
-											Math.hypot(startSpeeds.vxMetersPerSecond, startSpeeds.vyMetersPerSecond),
-											startPose.getRotation()),
-									endState);
-					joinPath.preventFlipping = true;
-
-					return new FollowPathCommand(
-							joinPath,
-							poseSupplier,
-							currentRobotRelativeSpeeds,
-							output,
-							controller,
-							robotConfig,
-							shouldFlipPath,
-							requirements);
-				},
-				Set.of(requirements)));
-
-		// ? generate end path except longer
-		// ? generate follow path to there?
-		// use those paths to find the point we want
-
-		// 1. find intermediate point
-		// 2. generate intermediate path between intermediate point and start of goal path
-
-		// need to generate intermediate path here
-		// then just change the goal path in this.pfCom to that instead
-
-		// we need to extend the points on the end path as part of the connection algo
-		List<Pose2d> pathPoses = goalPath.getPathPoses();
-		boolean extendable = pathPoses.size() > 1;
-		if(extendable) {
-			Pose2d last1 = pathPoses.get(pathPoses.size() - 1);
-			Rotation2d slopeEnd = Util.slopeAngle(goalPath); // slope
-			Pose2d extended = last1.plus(new Transform2d(new Translation2d(1, slopeEnd), Rotation2d.kZero)); // more
-			if(shouldFlipPath.getAsBoolean()) {
-				extended = FlippingUtil.flipFieldPose(extended);
-			}
-			this.pfCom = new PathfindingCommand2( // path find to the extended part of the path
-					extended,
-					pathfindingConstraints,
-					goalPath.getGoalEndState().velocity(),
-					poseSupplier,
-					currentRobotRelativeSpeeds,
-					output,
-					controller,
-					robotConfig,
-					requirements
-			);
-
-			AtomicReference<Pose2d> newTarget = new AtomicReference<>();
-			AtomicReference<PathPlannerPath> connector = new AtomicReference<>();
-			addCommands(
-					// the pfCom will pathfind to a "farther away" point from where it should
-					// its targetPose is also public
-					// we just need to make another command here that runs alongside pfCom that changes targetPose to be the start point of the next connection path
-					this.pfCom.raceWith(Commands.run(() -> {
-						// get the currently running path
-						PathPlannerPath p = PathfindingManager.getNewestPathfindingPath(); // this shouldn't screw anything up
-						if(p != null) {
-							List<Pose2d> poses = p.getPathPoses(); // you guessed it. another slope calculation
-							if(poses.size() > 1) {
-								// as a YOLO heuristic (read: i'm coding this at 5am) we can just kinda guess where we wanna end the previous path. maybe 0.5m before it ends?
-								// if the path is less than 0.5m total then just do nothing, since either 1) we started out close anyways, or 2) we were previously doing this already so just stick to it
-								if(poses.get(poses.size() - 1).getTranslation().getDistance(poses.get(0).getTranslation()) > 0.5) {
-									// sample it at 0.5m before the end
-									Pose2d last = poses.get(poses.size() - 1);
-									int idx = poses.size() - 1;
-									// iterate from the end until we find a pose 0.5m away
-									for(int i = poses.size() - 2; i > 0; i--) {
-										if(poses.get(i).getTranslation().getDistance(last.getTranslation()) > 0.5) {
-											idx = i;
-											break;
-										}
-									}
-									Rotation2d slope = Util.slopeAngle(poses.get(idx), poses.get(idx + 1)); // slope of the cut-off area of auto-gen path
-									// with the slope we want to use it to generate a smooth bezier trajectory
-									// note: in a PathPlannerPath the Rotation2d is the heading of the trajectory, NOT of the robot chassis. trajectory heading = the direction of the robot's velocity vector
-									newTarget.set(new Pose2d(poses.get(idx).getTranslation(), slope));
-
-									this.pfCom.targetPose = newTarget.get();
-									Pathfinding.setGoalPosition(newTarget.get().getTranslation()); // sneak in and change it
-								}
-							}
-						}
-					})),
-
-					// Use a deferred command to generate an on-the-fly path to join
-					// the end of the pathfinding command to the start of the path
-					generateDeferredPathJoinerCommand.apply(() -> {
-						Pose2d p = newTarget.get();
-						if(p != null) {
-							var waypoints = PathPlannerPath.waypointsFromPoses(
-									newTarget.get(),
-									last1
-							);
-							connector.set(new PathPlannerPath(waypoints, pathfindingConstraints, goalPath.getIdealStartingState(), new GoalEndState(goalPath.getIdealStartingState().velocityMPS(), goalPath.getIdealStartingState().rotation())));
-						}
-						return goalPath;
-					}),
-
-					Commands.defer(() ->
-						new FollowPathCommand(
-								connector.get(),
-								poseSupplier,
-								currentRobotRelativeSpeeds,
-								output,
-								controller,
-								robotConfig,
-								shouldFlipPath,
-								requirements),
-							Set.of(requirements)
-					),
-
-					new FollowPathCommand(
-							goalPath,
-							poseSupplier,
-							currentRobotRelativeSpeeds,
-							output,
-							controller,
-							robotConfig,
-							shouldFlipPath,
-							requirements)
-			);
-		} else {
-			this.pfCom = new PathfindingCommand2( // idk why this would ever be the case
-					goalPath,
-					pathfindingConstraints,
+					endState = new GoalEndState(joinTo.getIdealStartingState().velocityMPS(), endRot);
+				} else {
+					endState =
+						new GoalEndState(
+							pathfindingConstraints.maxVelocityMPS(), startPose.getRotation());
+				}
+				
+				PathPlannerPath joinPath =
+					new PathPlannerPath(
+						PathPlannerPath.waypointsFromPoses(
+							new Pose2d(startPose.getTranslation(), startHeading), endWaypoint),
+						pathfindingConstraints,
+						new IdealStartingState(
+							Math.hypot(startSpeeds.vxMetersPerSecond, startSpeeds.vyMetersPerSecond),
+							startPose.getRotation()),
+						endState);
+				joinPath.preventFlipping = true;
+				
+				return new FollowPathCommand(
+					joinPath,
 					poseSupplier,
 					currentRobotRelativeSpeeds,
 					output,
@@ -241,22 +121,167 @@ public class PathfindThenFollowPath2 extends SequentialCommandGroup {
 					robotConfig,
 					shouldFlipPath,
 					requirements);
-
+			},
+			Set.of(requirements)));
+		
+		// ? generate end path except longer
+		// ? generate follow path to there?
+		// use those paths to find the point we want
+		
+		// 1. find intermediate point
+		// 2. generate intermediate path between intermediate point and start of goal path
+		
+		// need to generate intermediate path here
+		// then just change the goal path in this.pfCom to that instead
+		
+		// we need to extend the points on the end path as part of the connection algo
+		List<Pose2d> pathPoses = goalPath.getPathPoses();
+		boolean extendable = pathPoses.size() > 1;
+		if (extendable) {
+			Pose2d goalPathStart = new Pose2d(pathPoses.get(0).getTranslation(), goalPath.getIdealStartingState().rotation());
+			Rotation2d slopeStart = Util.slopeAngle(goalPathStart, pathPoses.get(1)); // slope
+			System.out.println("GPS: " + goalPathStart + ", " + slopeStart);
+			Pose2d extended = goalPathStart.plus(new Transform2d(new Translation2d(-0.5, slopeStart), Rotation2d.kZero)); // more
+			System.out.println("Extended pose: " + extended);
+			if (shouldFlipPath.getAsBoolean()) {
+				extended = FlippingUtil.flipFieldPose(extended);
+			}
+			
+			this.pfCom = new PathfindingCommand2( // path find to the extended part of the path
+				extended,
+				pathfindingConstraints,
+				goalPath.getGoalEndState().velocity(),
+				poseSupplier,
+				currentRobotRelativeSpeeds,
+				output,
+				controller,
+				robotConfig,
+				requirements
+			);
+			
+			AtomicReference<Pose2d> newTarget = new AtomicReference<>();
+			AtomicReference<PathPlannerPath> connectorPath = new AtomicReference<>();
+			
+			AtomicReference<FollowPathCommand> connectorCommand = new AtomicReference<>();
 			addCommands(
-					this.pfCom,
-					// Use a deferred command to generate an on-the-fly path to join
-					// the end of the pathfinding command to the start of the path
-					generateDeferredPathJoinerCommand.apply(() -> goalPath),
-
-					new FollowPathCommand(
-							goalPath,
+				// the pfCom will pathfind to a "farther away" point from where it should
+				// its targetPose is also public
+				// we just need to make another command here that runs alongside pfCom that changes targetPose to be the start point of the next connection path
+				this.pfCom.alongWith(Commands.waitSeconds(0.5).andThen(Commands.runOnce(() -> {
+					System.out.println("RUNNING THE RUNONCE PART");
+					// get the currently running path
+					PathPlannerPath pathfindingPath = PathfindingManager.getNewestPathfindingPath(); // this shouldn't screw anything up
+					if (pathfindingPath != null) {
+						List<Pose2d> poses = pathfindingPath.getPathPoses(); // you guessed it. another slope calculation
+						if (poses.size() > 1) {
+							// as a YOLO heuristic (read: i'm coding this at 5am) we can just kinda guess where we wanna end the previous path. maybe 0.5m before it ends?
+							// if the path is less than 0.5m total then just do nothing, since either 1) we started out close anyways, or 2) we were previously doing this already so just stick to it
+							if (poses.get(poses.size() - 1).getTranslation().getDistance(poses.get(0).getTranslation()) > 0.5) {
+								// sample it at 0.5m before the end
+								Pose2d last = poses.get(poses.size() - 1);
+								int idx = poses.size() - 1;
+								// iterate from the end until we find a pose 0.5m away
+								for (int i = poses.size() - 2; i > 0; i--) {
+									if (poses.get(i).getTranslation().getDistance(last.getTranslation()) > 0.5) {
+										System.out.println("found the first one that's over 0.5 away. idx: " + i + ", pose: " + poses.get(i) + ", poses size: " + poses.size());
+										idx = i;
+										break;
+									}
+								}
+								Rotation2d slope = Util.slopeAngle(poses.get(idx), poses.get(idx + 1)); // slope of the cut-off area of auto-gen path
+								// with the slope we want to use it to generate a smooth bezier trajectory
+								// note: in a PathPlannerPath the Rotation2d is the heading of the trajectory, NOT of the robot chassis. trajectory heading = the direction of the robot's velocity vector
+								newTarget.set(new Pose2d(poses.get(idx).getTranslation(), slope.plus(Rotation2d.k180deg)));
+								System.out.println("new target: " + newTarget);
+								this.pfCom.targetPose = newTarget.get();
+								// Pathfinding.setGoalPosition(newTarget.get().getTranslation()); // sneak in and change it
+							}
+							
+							if(Util.isSim()) {
+								RobotContainer.INSTANCE.driveTrain.setPose(new Pose2d(newTarget.get().getTranslation(), goalPath.getGoalEndState().rotation()));
+							}
+						}
+					}
+				}))),
+				
+				// Use a deferred command to generate an on-the-fly path to join
+				// the end of the pathfinding command to the start of the path
+				generateDeferredPathJoinerCommand.apply(() -> {
+					Pose2d p = newTarget.get();
+					if (p != null) {
+						var waypoints = PathPlannerPath.waypointsFromPoses(
+							newTarget.get(), // the cut off part from the end of pathfinding
+							new Pose2d(goalPathStart.getTranslation(), slopeStart.plus(Rotation2d.k180deg)) // the original start of pre-planned paths
+						);
+						connectorPath.set(new PathPlannerPath(waypoints, pathfindingConstraints, goalPath.getIdealStartingState(), new GoalEndState(goalPath.getIdealStartingState().velocityMPS(), goalPath.getIdealStartingState().rotation())));
+						return connectorPath.get();
+					}
+					return goalPath;
+				}),
+				
+				Commands.defer(() -> {
+						connectorCommand.set(new FollowPathCommand(
+							connectorPath.get(),
 							poseSupplier,
 							currentRobotRelativeSpeeds,
 							output,
 							controller,
 							robotConfig,
 							shouldFlipPath,
-							requirements));
+							requirements)
+						);
+						return connectorCommand.get();
+					}, Set.of(requirements)
+				).alongWith(new InstantCommand(() -> DriveTrainSubsystem.connectionPathPub.set(Util.convertPPTrajStateListToDoubleArray(trajFromFollowPathCom(connectorCommand.get()).getStates())))),
+				
+				new FollowPathCommand(
+					goalPath,
+					poseSupplier,
+					currentRobotRelativeSpeeds,
+					output,
+					controller,
+					robotConfig,
+					shouldFlipPath,
+					requirements)
+			);
+		} else {
+			System.out.println("not extendable");
+			this.pfCom = new PathfindingCommand2( // idk why this would ever be the case
+				goalPath,
+				pathfindingConstraints,
+				poseSupplier,
+				currentRobotRelativeSpeeds,
+				output,
+				controller,
+				robotConfig,
+				shouldFlipPath,
+				requirements);
+			
+			addCommands(
+				this.pfCom,
+				// Use a deferred command to generate an on-the-fly path to join
+				// the end of the pathfinding command to the start of the path
+				generateDeferredPathJoinerCommand.apply(() -> goalPath),
+				
+				new FollowPathCommand(
+					goalPath,
+					poseSupplier,
+					currentRobotRelativeSpeeds,
+					output,
+					controller,
+					robotConfig,
+					shouldFlipPath,
+					requirements));
+		}
+	}
+	
+	private static PathPlannerTrajectory trajFromFollowPathCom(FollowPathCommand c) {
+		try {
+			var f = FollowPathCommand.class.getDeclaredField("trajectory");
+			f.setAccessible(true);
+			return (PathPlannerTrajectory) f.get(c);
+		} catch (NoSuchFieldException | IllegalAccessException e) {
+			throw new RuntimeException(e);
 		}
 	}
 	

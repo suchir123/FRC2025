@@ -250,7 +250,7 @@ public class PathfindingManager {
 			PathPlannerTrajectory ppTraj = p.getPfCom().currentTrajectory;
 			if(ppTraj != null) {
 				DriveTrainSubsystem.pathfinderPathPub.set(Util.convertPPTrajStateListToDoubleArray(ppTraj.getStates()));
-				System.out.println("pptraj not null");
+				// System.out.println("pptraj not null");
 			} else {
 				// System.out.println("pptraj null");
 			}

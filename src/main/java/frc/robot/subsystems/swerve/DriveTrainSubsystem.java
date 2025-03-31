@@ -53,7 +53,11 @@ import static edu.wpi.first.units.Units.RadiansPerSecond;
  * Represents a swerve drive style drivetrain.
  */
 public class DriveTrainSubsystem extends SubsystemBase {
+	private static final DoubleArrayPublisher rawPosePub = NetworkTablesUtil.MAIN_ROBOT_TABLE.getDoubleArrayTopic("raw_pose").publish();
 	public static final DoubleArrayPublisher pathfinderPathPub = NetworkTablesUtil.MAIN_ROBOT_TABLE.getDoubleArrayTopic("pathfinder").publish();
+	private static final DoubleArrayPublisher chosenPathPub = NetworkTablesUtil.MAIN_ROBOT_TABLE.getDoubleArrayTopic("chosen_path").publish();
+	public static final DoubleArrayPublisher connectionPathPub = NetworkTablesUtil.MAIN_ROBOT_TABLE.getDoubleArrayTopic("connection_path").publish();
+	
 	private static final double SMART_OPTIMIZATION_THRESH_M_PER_SEC = 2;
 	
 	private static final boolean INVERT_DRIVE_MOTORS = true;
@@ -63,8 +67,6 @@ public class DriveTrainSubsystem extends SubsystemBase {
 	private static final Translation2d backLeftLocation = new Translation2d(-RobotConstants.LEG_LENGTHS_M, RobotConstants.LEG_LENGTHS_M);
 	private static final Translation2d backRightLocation = new Translation2d(-RobotConstants.LEG_LENGTHS_M, -RobotConstants.LEG_LENGTHS_M);
 	public static final Translation2d cameraLocation = backRightLocation.plus(new Translation2d(0.075, 0.205));
-	private static final DoubleArrayPublisher rawPosePub = NetworkTablesUtil.MAIN_ROBOT_TABLE.getDoubleArrayTopic("raw_pose").publish();
-	private static final DoubleArrayPublisher chosenPathPub = NetworkTablesUtil.MAIN_ROBOT_TABLE.getDoubleArrayTopic("chosen_path").publish();
 	static SwerveModuleState[] optimizedTargetStates = new SwerveModuleState[4]; // for debugging purposes
 	// public static final double MAX_SPEED = 3.0; // 3 meters per second
 	// public static final double MAX_ANGULAR_SPEED = Math.PI; // 1/2 rotation per second
@@ -164,6 +166,7 @@ public class DriveTrainSubsystem extends SubsystemBase {
 			PathfindingManager.configurePathfinder(new LocalADStar2());
 			setPose(new Pose2d(2, 2, Rotation2d.fromDegrees(120)));
 			c = reefedPathfindingManagers.get(0).getFullCommand(getPose());
+			// c.schedule();
 			// System.out.println(poses);
 		}
 	}
@@ -424,6 +427,7 @@ public class DriveTrainSubsystem extends SubsystemBase {
 		this.backRight.stop();
 	}
 	
+	private boolean has = false;
 	@Override
 	public void periodic() {
 		Pose2d current = this.getPose();
@@ -464,8 +468,10 @@ public class DriveTrainSubsystem extends SubsystemBase {
 		
 		if (Flags.DriveTrain.ENABLE_DYNAMIC_PATHFINDING && Util.isSim()) {
 			// System.out.println("pp init: " + AutoBuilder.isConfigured() + " " + AutoBuilder.isPathfindingConfigured());
-			if (!c.isScheduled()) {
+			if (!c.isScheduled() && !has && Robot.INSTANCE.isEnabled()) {
 				c.schedule();
+				System.out.println("SCHEDULING ! \nSCHEDULING!\n SCHEDULIGN!");
+				has = true;
 			} else {
 				// System.out.println("command running");
 			}
@@ -483,6 +489,13 @@ public class DriveTrainSubsystem extends SubsystemBase {
                 // System.out.println("null path");
             }*/
 		}
+	}
+
+	public Command getFindToReef0Command() {
+		if(Flags.DriveTrain.ENABLE_DYNAMIC_PATHFINDING) {
+			return reefedPathfindingManagers.get(0).getFullCommand(getPose());
+		}
+		return new InstantCommand();
 	}
 	
 	/**
@@ -532,8 +545,9 @@ public class DriveTrainSubsystem extends SubsystemBase {
 					correction = 0.0065;
 					shouldResetOculus = true;
 				}
+				this.poseEstimator.addVisionMeasurement(reading.pose(), reading.timestamp(), VecBuilder.fill(correction, correction, correction));
 			}
-			this.poseEstimator.addVisionMeasurement(reading.pose(), reading.timestamp(), VecBuilder.fill(correction, correction, correction));
+			
 			if (shouldResetOculus) {
 				// System.out.println("Resetting oculus with limey input");
 				QuestNav.INSTANCE.resetPose(getPose());
