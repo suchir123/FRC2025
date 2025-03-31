@@ -41,9 +41,9 @@ public class PowerHandler {
                     System.out.println(field.getName());
                 }
             }
-        } catch (Exception exception) {
+        } catch (Exception e) {
             System.out.println("Error during printing PDP faults:");
-            exception.printStackTrace();
+            e.printStackTrace();
         }
     }
 

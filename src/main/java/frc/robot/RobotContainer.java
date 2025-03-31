@@ -19,7 +19,6 @@ import frc.robot.commands.autons.FollowApriltagForwardCommand;
 import frc.robot.commands.climb.ClimbCommand;
 import frc.robot.commands.climb.BalanceClimberCommand;
 import frc.robot.commands.drive.ManualDriveCommand;
-import frc.robot.commands.drive.ReefAprilTagCenterCommand;
 import frc.robot.commands.elevator.ElevatorControlCommand;
 import frc.robot.commands.elevator.ElevatorStateManager;
 import frc.robot.commands.elevator.ElevatorStateManager.AlgaeReefRemoverState;
@@ -219,7 +218,7 @@ public class RobotContainer {
                     this.driveTrain.setHeadingLockMode(false);
                 }));
 
-                ControlHandler.get(this.primaryController, OperatorConstants.PrimaryControllerConstants.REEF_AUTO_AIM).whileTrue(driveTrain.getFindToReef0Command());
+                ControlHandler.get(this.primaryController, OperatorConstants.PrimaryControllerConstants.REEF_AUTO_AIM).whileTrue(driveTrain.getFindToSelectedReefCommand());
                 //ControlHandler.get(this.secondaryController, OperatorConstants.PrimaryControllerConstants.ALGAE_AUTO_AIM).whileTrue(new AlgaeCenterCommand(driveTrain, this.primaryController));
                 // ControlHandler.get(this.secondaryController, OperatorConstants.SecondaryControllerConstants.MICRO_ADJUST_DRIVING).whileTrue(new SlowerManualDriveCommand(driveTrain, this.secondaryController));
                 //ControlHandler.get(this.secondaryController, OperatorConstants.SecondaryControllerConstants.INTAKE_STATE).whileTrue(new SlowerManualDriveCommand(driveTrain, this.primaryController));

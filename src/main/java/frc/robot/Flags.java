@@ -68,7 +68,7 @@ public final class Flags {
         /**
          * Whether the drive train should be allowed to send power to motor controllers. If false, motors will not be set to any power and PID requests will not be sent.
          */
-        public static final boolean ENABLED = true;
+        public static final boolean ENABLED = false;
 
         /**
          * Whether the drive motors should be allowed to run. If false, drive motors will not be set to any power and PID requests will not be sent.

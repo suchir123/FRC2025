@@ -41,10 +41,12 @@ import frc.robot.commands.drive.pathfinding.pathfinders.LocalADStar2;
 import frc.robot.subsystems.staticsubsystems.LimeLight;
 import frc.robot.subsystems.staticsubsystems.LimeLight.LimeyApriltagReading;
 import frc.robot.subsystems.staticsubsystems.QuestNav;
+import frc.robot.subsystems.staticsubsystems.RoboGUI;
 import frc.robot.subsystems.staticsubsystems.RobotGyro;
 import frc.robot.util.NetworkTablesUtil;
 import frc.robot.util.Util;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static edu.wpi.first.units.Units.RadiansPerSecond;
@@ -53,24 +55,22 @@ import static edu.wpi.first.units.Units.RadiansPerSecond;
  * Represents a swerve drive style drivetrain.
  */
 public class DriveTrainSubsystem extends SubsystemBase {
-	private static final DoubleArrayPublisher rawPosePub = NetworkTablesUtil.MAIN_ROBOT_TABLE.getDoubleArrayTopic("raw_pose").publish();
 	public static final DoubleArrayPublisher pathfinderPathPub = NetworkTablesUtil.MAIN_ROBOT_TABLE.getDoubleArrayTopic("pathfinder").publish();
-	private static final DoubleArrayPublisher chosenPathPub = NetworkTablesUtil.MAIN_ROBOT_TABLE.getDoubleArrayTopic("chosen_path").publish();
 	public static final DoubleArrayPublisher connectionPathPub = NetworkTablesUtil.MAIN_ROBOT_TABLE.getDoubleArrayTopic("connection_path").publish();
-	
-	private static final double SMART_OPTIMIZATION_THRESH_M_PER_SEC = 2;
-	
+	private static final DoubleArrayPublisher rawPosePub = NetworkTablesUtil.MAIN_ROBOT_TABLE.getDoubleArrayTopic("raw_pose").publish();
+	private static final DoubleArrayPublisher chosenPathPub = NetworkTablesUtil.MAIN_ROBOT_TABLE.getDoubleArrayTopic("chosen_path").publish();
 	private static final boolean INVERT_DRIVE_MOTORS = true;
 	// Location of each swerve drive, relative to motor center. +X -> moving to front of robot, +Y -> moving to left of robot. IMPORTANT.
 	private static final Translation2d frontLeftLocation = new Translation2d(RobotConstants.LEG_LENGTHS_M, RobotConstants.LEG_LENGTHS_M);
 	private static final Translation2d frontRightLocation = new Translation2d(RobotConstants.LEG_LENGTHS_M, -RobotConstants.LEG_LENGTHS_M);
 	private static final Translation2d backLeftLocation = new Translation2d(-RobotConstants.LEG_LENGTHS_M, RobotConstants.LEG_LENGTHS_M);
 	private static final Translation2d backRightLocation = new Translation2d(-RobotConstants.LEG_LENGTHS_M, -RobotConstants.LEG_LENGTHS_M);
-	public static final Translation2d cameraLocation = backRightLocation.plus(new Translation2d(0.075, 0.205));
+	
 	static SwerveModuleState[] optimizedTargetStates = new SwerveModuleState[4]; // for debugging purposes
 	// public static final double MAX_SPEED = 3.0; // 3 meters per second
 	// public static final double MAX_ANGULAR_SPEED = Math.PI; // 1/2 rotation per second
 	final double LOCK_HEADING_THRESHOLD = 0.1; // TODO: test if when rotate without translating
+	
 	private final SwerveModule frontLeft = new SwerveModule(
 		PortConstants.CAN.DTRAIN_FRONT_LEFT_DRIVE_MOTOR_ID,
 		PortConstants.CAN.DTRAIN_FRONT_LEFT_ROTATION_MOTOR_ID,
@@ -104,6 +104,7 @@ public class DriveTrainSubsystem extends SubsystemBase {
 		true
 	);
 	public final SwerveModule[] swerveModules = {frontLeft, frontRight, backLeft, backRight};
+	
 	private final SwerveDriveKinematics kinematics = new SwerveDriveKinematics(frontLeftLocation, frontRightLocation, backLeftLocation, backRightLocation);
 	private final SwerveDrivePoseEstimator poseEstimator = new SwerveDrivePoseEstimator(kinematics, RobotGyro.getRotation2d(), this.getAbsoluteModulePositions(), new Pose2d(), new Matrix<>(Nat.N3(), Nat.N1(), new double[] {0.1, 0.1, 0.1}), new Matrix<>(Nat.N3(), Nat.N1(), new double[] {0.01, 0.01, 0.1}));
 	private final Field2d field = new Field2d();
@@ -111,11 +112,13 @@ public class DriveTrainSubsystem extends SubsystemBase {
 	private final Field2d estimatedField = new Field2d();
 	private final Field2d questNavField = new Field2d();
 	private final Field2d limelightField = new Field2d();
+	
 	// uploads the intended, estimated, and actual states of the robot.
 	private final StructArrayPublisher<SwerveModuleState> targetSwerveStatePublisher = NetworkTablesUtil.MAIN_ROBOT_TABLE.getStructArrayTopic("TargetStates", SwerveModuleState.struct).publish();
 	private final StructArrayPublisher<SwerveModuleState> realSwerveStatePublisher = NetworkTablesUtil.MAIN_ROBOT_TABLE.getStructArrayTopic("ActualStates", SwerveModuleState.struct).publish();
 	private final StructArrayPublisher<SwerveModuleState> absoluteAbsoluteSwerveStatePublisher = NetworkTablesUtil.MAIN_ROBOT_TABLE.getStructArrayTopic("AbsoluteAbsolute", SwerveModuleState.struct).publish();
 	private final StructArrayPublisher<SwerveModuleState> relativeSwerveStatePublisher = NetworkTablesUtil.MAIN_ROBOT_TABLE.getStructArrayTopic("RelativeStates", SwerveModuleState.struct).publish();
+	
 	// publish robot position relative to field
 	private final StructPublisher<Pose2d> posePositionPublisher = NetworkTablesUtil.MAIN_ROBOT_TABLE.getStructTopic("estimatedOdometryPosition", Pose2d.struct).publish();
 	private final StructPublisher<Rotation2d> robotRotationPublisher = NetworkTablesUtil.MAIN_ROBOT_TABLE.getStructTopic("rotation", Rotation2d.struct).publish();
@@ -125,23 +128,30 @@ public class DriveTrainSubsystem extends SubsystemBase {
 	private final DoublePublisher fRAmp = NetworkTablesUtil.MAIN_ROBOT_TABLE.getDoubleTopic("fr_amp").publish();
 	private final DoublePublisher bLAmp = NetworkTablesUtil.MAIN_ROBOT_TABLE.getDoubleTopic("bl_amp").publish();
 	private final DoublePublisher bRAmp = NetworkTablesUtil.MAIN_ROBOT_TABLE.getDoubleTopic("br_amp").publish();
+	
 	private final List<PathfindingManager> reefedPathfindingManagers;
 	Command c = new InstantCommand();
+	
 	private boolean lockedHeadingMode = false;
 	private Rotation2d lockedHeading;
 	private RobotConfig config;
+	private boolean has = false;
 	
 	// private final AprilTagHandler aprilTagHandler;
 	public DriveTrainSubsystem(/*AprilTagHandler aprilTagHandler*/) {
-		this.reefedPathfindingManagers = Util.createIfFlagElseNull(() -> List.of(
-			new PathfindingManager( // reef 1
-				List.of(
-					"InToReef1",
-					"CounterClockwiseToReef1",
-					"ClockwiseToReef1"
-				)
-			)
-		), Flags.DriveTrain.ENABLE_DYNAMIC_PATHFINDING);
+		this.reefedPathfindingManagers = Util.createIfFlagElseNull(() -> {
+			List<PathfindingManager> mgrs = new ArrayList<>();
+			String[] reefPrefixes = {"In", "Clockwise", "CounterClockwise"}; // this code section is the first time I wish something could be pythonic
+			for (int i = 1; i <= 6; i++) {
+				String[] prefixed = new String[reefPrefixes.length];
+				for (int j = 0; j < reefPrefixes.length; j++) {
+					prefixed[j] = reefPrefixes[j] + "ToReef" + i;
+				}
+				mgrs.add(new PathfindingManager(List.of(prefixed))); // note: will unpack list to make a List<String> so everything is ok.
+			}
+			
+			return mgrs;
+		}, Flags.DriveTrain.ENABLE_DYNAMIC_PATHFINDING);
 		// this.aprilTagHandler = aprilTagHandler;
 		
 		RobotGyro.resetGyroAngle();
@@ -427,7 +437,6 @@ public class DriveTrainSubsystem extends SubsystemBase {
 		this.backRight.stop();
 	}
 	
-	private boolean has = false;
 	@Override
 	public void periodic() {
 		Pose2d current = this.getPose();
@@ -490,10 +499,29 @@ public class DriveTrainSubsystem extends SubsystemBase {
             }*/
 		}
 	}
-
+	
+	/**
+	 * THE RETURNED COMMAND SHOULD BE INSTANTLY RUN. DO NOT DELAY SCHEDULING.
+	 * @return A dynamic pathfinding command to reef 1 (aka index 0 in reef list)
+	 */
 	public Command getFindToReef0Command() {
-		if(Flags.DriveTrain.ENABLE_DYNAMIC_PATHFINDING) {
+		if (Flags.DriveTrain.ENABLE_DYNAMIC_PATHFINDING) {
 			return reefedPathfindingManagers.get(0).getFullCommand(getPose());
+		}
+		return new InstantCommand();
+	}
+	
+	/**
+	 * THE RETURNED COMMAND SHOULD BE INSTANTLY RUN. DO NOT DELAY SCHEDULING.
+	 * @return A dynamic pathfinding command to the reef number indicated by robot gui in network tables.
+	 */
+	public Command getFindToSelectedReefCommand() {
+		if (Flags.DriveTrain.ENABLE_DYNAMIC_PATHFINDING) {
+			int selection = RoboGUI.getPressedTargetReef();
+			RoboGUI.resetPressedTargetReef(); // reset it so we don't run again by accident
+			if(selection != -1) {
+				return reefedPathfindingManagers.get(selection - 1).getFullCommand(getPose()); // minus 1 bc array indexing
+			}
 		}
 		return new InstantCommand();
 	}
@@ -538,7 +566,7 @@ public class DriveTrainSubsystem extends SubsystemBase {
 				} else if (reading.distance() < 1.5) {
 					correction = 0.006;
 					shouldResetOculus = true;
-				} else if(reading.distance() < 1.75) {
+				} else if (reading.distance() < 1.75) {
 					correction = 0.006;
 					shouldResetOculus = true;
 				} else if (reading.distance() < 2) {

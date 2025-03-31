@@ -37,7 +37,7 @@ public class AlgaeGroundIntakeCommand extends Command {
     public void initialize() {
         this.toggleAlgaeHeight.onTrue(new InstantCommand(() -> {
             if(!atAlgaeHeight) {
-                this.algaeGroundIntake.flapToValue(0.4, 0.6);
+                this.algaeGroundIntake.flapToValue(0.5, 0.5);
             } else {
                 this.algaeGroundIntake.flapToValue(0.9, 0.1);
             }
