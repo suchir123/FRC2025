@@ -1,9 +1,6 @@
 package frc.robot.commands.drive.pathfinding.pathfinders;
 
-import com.pathplanner.lib.path.GoalEndState;
-import com.pathplanner.lib.path.PathConstraints;
-import com.pathplanner.lib.path.PathPlannerPath;
-import com.pathplanner.lib.path.Waypoint;
+import com.pathplanner.lib.path.*;
 import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -173,7 +170,12 @@ public class LocalADStar2 implements Pathfinder2 {
 			return null;
 		}
 		
-		return new PathPlannerPath(waypoints, constraints, null, goalEndState);
+		return new PathPlannerPath(
+			waypoints,
+			constraints,
+			null,
+			goalEndState
+		);
 	}
 	
 	/**

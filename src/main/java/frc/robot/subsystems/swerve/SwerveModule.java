@@ -142,13 +142,13 @@ public class SwerveModule {
 
         driveConfig.closedLoop
                 .feedbackSensor(FeedbackSensor.kPrimaryEncoder)
-                .pidf(0.6, 0, 0.3, 0.31) // p0.3, d 0.2 ff0.25
+                .pidf(0.5, 0, 0.3, 0.31) // p0.3, d 0.2 ff0.25
                 .outputRange(-1, 1);
 
         // These numbers are recently made up and subject to change.
         driveConfig.closedLoop.maxMotion
                 .maxVelocity(3.5)
-                .maxAcceleration(4.0)
+                .maxAcceleration(3.75)
                 // TODO: tune closed loop error constant
                 .allowedClosedLoopError(0.1);
 

@@ -38,7 +38,7 @@ import frc.robot.util.*;
 
 @SuppressWarnings("ConstantValue")
 public class RobotContainer {
-    
+    public static RobotContainer INSTANCE;
     
     //private static final GenericPublisher COLOR_SENSOR_PUB = NetworkTablesUtil.getPublisher("robot", "color_sensor_sees_note", NetworkTableType.kBoolean);
 
@@ -62,7 +62,7 @@ public class RobotContainer {
     private final SendableChooser<Command> autonChooser;
     private Command auto;
 
-    private final DriveTrainSubsystem driveTrain;
+    public final DriveTrainSubsystem driveTrain;
     private final ElevatorSubsystem elevators;
     private final ClimberSubsystem climber;
     private final CoralIntakeSubsystem coralIntake;
@@ -105,6 +105,7 @@ public class RobotContainer {
         }
 
         // NetworkTablesUtil.printConnections();
+        INSTANCE = this;
     }
 
     private void configureNamedCommands() {
@@ -218,7 +219,7 @@ public class RobotContainer {
                     this.driveTrain.setHeadingLockMode(false);
                 }));
 
-                ControlHandler.get(this.primaryController, OperatorConstants.PrimaryControllerConstants.REEF_AUTO_AIM).whileTrue(new ReefAprilTagCenterCommand(driveTrain, this.primaryController));
+                ControlHandler.get(this.primaryController, OperatorConstants.PrimaryControllerConstants.REEF_AUTO_AIM).whileTrue(driveTrain.getFindToReef0Command());
                 //ControlHandler.get(this.secondaryController, OperatorConstants.PrimaryControllerConstants.ALGAE_AUTO_AIM).whileTrue(new AlgaeCenterCommand(driveTrain, this.primaryController));
                 // ControlHandler.get(this.secondaryController, OperatorConstants.SecondaryControllerConstants.MICRO_ADJUST_DRIVING).whileTrue(new SlowerManualDriveCommand(driveTrain, this.secondaryController));
                 //ControlHandler.get(this.secondaryController, OperatorConstants.SecondaryControllerConstants.INTAKE_STATE).whileTrue(new SlowerManualDriveCommand(driveTrain, this.primaryController));

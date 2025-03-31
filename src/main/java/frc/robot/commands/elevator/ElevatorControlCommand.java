@@ -58,6 +58,7 @@ public class ElevatorControlCommand extends Command {
                 break;
             case OUTTAKE:
                 this.algaeRemover.setIntakeSpeed(-0.5);
+                break;
             default:
                 System.out.println("ElevatorStateManager.ElevatorState has invalid entries for AlgaeReefRemoverState that aren't implemented");
         }
