@@ -139,7 +139,7 @@ public class DriveTrainSubsystem extends SubsystemBase {
 	
 	// private final AprilTagHandler aprilTagHandler;
 	public DriveTrainSubsystem(/*AprilTagHandler aprilTagHandler*/) {
-		this.reefedPathfindingManagers = Util.createIfFlagElseNull(() -> {
+		this.reefedPathfindingManagers = Util.createIfFlagElseNull(() -> { // https://www.desmos.com/calculator/esepl3jdzw target a path length of 0.75m
 			List<PathfindingManager> mgrs = new ArrayList<>();
 			String[] reefPrefixes = {"In", "Clockwise", "CounterClockwise"}; // this code section is the first time I wish something could be pythonic
 			for (int i = 1; i <= 6; i++) {
@@ -149,6 +149,18 @@ public class DriveTrainSubsystem extends SubsystemBase {
 				}
 				mgrs.add(new PathfindingManager(List.of(prefixed))); // note: will unpack list to make a List<String> so everything is ok.
 			}
+			
+			String[] humanPlayerPrefixes = {"Right", "Left", ""};
+			for (int i = 1; i <= 2; i++) {
+				String[] prefixed = new String[humanPlayerPrefixes.length];
+				for (int j = 0; j < humanPlayerPrefixes.length; j++) {
+					prefixed[j] = humanPlayerPrefixes[j] + "IntoHumanPlayer" + i;
+				}
+				mgrs.add(new PathfindingManager(List.of(prefixed)));
+			}
+			
+			List<String> otherPathNames = List.of();
+			mgrs.add(new PathfindingManager(otherPathNames));
 			
 			return mgrs;
 		}, Flags.DriveTrain.ENABLE_DYNAMIC_PATHFINDING);
@@ -170,15 +182,17 @@ public class DriveTrainSubsystem extends SubsystemBase {
 		this.configureAutoBuilder();
 		
 		System.out.println("Initialized DriveTrainSubsystem");
+		PathfindingManager.configurePathfinder(new LocalADStar2());
 		
 		if (Flags.DriveTrain.ENABLE_DYNAMIC_PATHFINDING && Util.isSim()) {
 			System.out.println("pathplanner test");
-			PathfindingManager.configurePathfinder(new LocalADStar2());
-			setPose(new Pose2d(2, 2, Rotation2d.fromDegrees(120)));
-			c = reefedPathfindingManagers.get(0).getFullCommand(getPose());
+			setPose(new Pose2d(3.08, 2.35, Rotation2d.fromDegrees(48)));
+			c = reefedPathfindingManagers.get(4).getFullCommand(getPose());
 			// c.schedule();
 			// System.out.println(poses);
 		}
+
+		setPose(new Pose2d(5.47, 1.9, Rotation2d.fromDegrees(122)));
 	}
 	
 	private void configureAutoBuilder() {
@@ -208,8 +222,8 @@ public class DriveTrainSubsystem extends SubsystemBase {
 			this::getRobotRelativeChassisSpeeds,
 			this::consumeChassisSpeeds,
 			new PPHolonomicDriveController(
-				new PIDConstants(1.25, 0, 0),
-				new PIDConstants(1.4, 0, 0)
+				new PIDConstants(1.35, 0, 0),
+				new PIDConstants(1.5, 0, 0)
 			),
 			config, // womp womp if its null
 			() -> !Util.onBlueTeam(),
@@ -484,7 +498,7 @@ public class DriveTrainSubsystem extends SubsystemBase {
 			} else {
 				// System.out.println("command running");
 			}
-			var poses = Util.convertPPTrajStateListToDoubleArray(reefedPathfindingManagers.get(0).getBestPath(getPose()).getIdealTrajectory(config).orElseThrow().getStates());
+			var poses = Util.convertPPTrajStateListToDoubleArray(reefedPathfindingManagers.get(4).getBestPath(getPose()).getIdealTrajectory(config).orElseThrow().getStates());
 			// field.getRobotObject().setPoses(poses);
 			chosenPathPub.set(poses);
             /*
@@ -517,6 +531,7 @@ public class DriveTrainSubsystem extends SubsystemBase {
 	 */
 	public Command getFindToSelectedReefCommand() {
 		if (Flags.DriveTrain.ENABLE_DYNAMIC_PATHFINDING) {
+			System.out.println("generating new command");
 			int selection = RoboGUI.getPressedTargetReef();
 			RoboGUI.resetPressedTargetReef(); // reset it so we don't run again by accident
 			if(selection != -1) {
@@ -551,34 +566,42 @@ public class DriveTrainSubsystem extends SubsystemBase {
 	public void updateOdometryWithLimeyApriltags() {
 		if (LimeLight.isLimeyConnected()) {
 			boolean shouldResetOculus = false;
+			boolean shouldResetFullPose = false;
 			LimeyApriltagReading reading = LimeLight.getLimeyApriltagReading();
 			double correction = Double.POSITIVE_INFINITY;
 			if (reading.exists()) {
 				if (reading.distance() < 0.6) {
 					correction = 0.001; // 0.05 * Math.pow(reading.distance() / 0.61, 6);// Math.pow(0.3 * reading.distance(), 10 / reading.distance());
 					shouldResetOculus = true;
+					shouldResetFullPose = true;
 				} else if (reading.distance() < 0.75) {
 					correction = 0.0025;
 					shouldResetOculus = true;
+					shouldResetFullPose = true;
 				} else if (reading.distance() < 1) {
 					correction = 0.005;
 					shouldResetOculus = true;
+					// shouldResetFullPose = true;
 				} else if (reading.distance() < 1.5) {
 					correction = 0.006;
 					shouldResetOculus = true;
 				} else if (reading.distance() < 1.75) {
 					correction = 0.006;
-					shouldResetOculus = true;
+					// shouldResetOculus = true;
 				} else if (reading.distance() < 2) {
 					correction = 0.0065;
-					shouldResetOculus = true;
+					// shouldResetOculus = true;
 				}
 				this.poseEstimator.addVisionMeasurement(reading.pose(), reading.timestamp(), VecBuilder.fill(correction, correction, correction));
-			}
-			
-			if (shouldResetOculus) {
-				// System.out.println("Resetting oculus with limey input");
-				QuestNav.INSTANCE.resetPose(getPose());
+
+				if (shouldResetFullPose) {
+					// setPose(reading.pose());
+				}
+
+				if (shouldResetOculus) {
+					// System.out.println("Resetting oculus with limey input");
+					QuestNav.INSTANCE.resetPose(reading.pose());
+				}
 			}
 		} else {
 			DriverStation.reportWarning("Limey not connected!", false);

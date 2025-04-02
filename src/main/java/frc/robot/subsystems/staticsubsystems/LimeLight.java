@@ -21,6 +21,7 @@ public final class LimeLight {
 
     public static void poke() {
         System.out.println("LimeLight initialized");
+        setLimeyPipeline(0);
     }
     
     public static void setLimeyPipeline(int pipeline) {

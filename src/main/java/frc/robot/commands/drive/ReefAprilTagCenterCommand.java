@@ -53,9 +53,9 @@ public class ReefAprilTagCenterCommand extends Command {
     @Override
     public void execute() {
         if(Util.onBlueTeam()) {
-            LimeLight.setLimeyPipeline(1);
+            // LimeLight.setLimeyPipeline(1);
         } else {
-            LimeLight.setLimeyPipeline(0);
+            // LimeLight.setLimeyPipeline(2);
         }
         double flip = flipFactor();
         // System.out.println("vert: " + this.joystick.getRightVerticalMovement() + ", hor: " + this.joystick.getRightHorizontalMovement());

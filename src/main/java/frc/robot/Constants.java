@@ -27,24 +27,25 @@ public final class Constants {
 		public static class PrimaryControllerConstants {
 			public static final TriggerType ALGAE_GROUND_INTAKE = TriggerType.LEFT_SHOULDER_TRIGGER;
 			public static final TriggerType ALGAE_GROUND_OUTTAKE = TriggerType.LEFT_SHOULDER_BUTTON;
-			public static final TriggerType ALGAE_AUTO_AIM = TriggerType.LEFT_BUTTON;
+			public static final TriggerType REEF_AUTO_AIM = TriggerType.LEFT_BUTTON;
 			public static final TriggerType CORAL_INTAKE_MOTOR = TriggerType.RIGHT_SHOULDER_TRIGGER;
 			public static final TriggerType ACTIVATE_ELEVATORS = TriggerType.RIGHT_SHOULDER_BUTTON;
 			
 			public static final TriggerType ALGAE_REMOVER = TriggerType.RIGHT_BUTTON;
-			public static final TriggerType REEF_AUTO_AIM = TriggerType.LOWER_BUTTON;
+			public static final TriggerType REEF_AUTO_PATHFIND = TriggerType.LOWER_BUTTON;
 			public static final TriggerType CLIMB_PIVOT_ANGLE_PRIMARY = TriggerType.UPPER_BUTTON;
 		}
 		
 		public static class SecondaryControllerConstants {
-			public static final TriggerType RESET_GYRO = TriggerType.POV_0;
-			public static final TriggerType BARGE_ALGAE = TriggerType.POV_90;
 			public static final TriggerType GROUND_INTAKE_ALGAE_TOGGLE = TriggerType.LEFT_SHOULDER_BUTTON;
 			public static final TriggerType GROUND_INTAKE_CORAL_TOGGLE = TriggerType.LEFT_SHOULDER_TRIGGER;
+			public static final TriggerType GROUND_INTAKE_START_CONFIG = TriggerType.POV_0;
 			
-			public static final TriggerType CLIMB_PIVOT_ANGLE_SECONDARY = TriggerType.POV_180;
+			public static final TriggerType RESET_GYRO = TriggerType.POV_180;
 			public static final TriggerType BARGE_OUTTAKE = TriggerType.POV_270;
-			public static final TriggerType DROP_L1 = TriggerType.RIGHT_SHOULDER_TRIGGER;
+
+			
+			public static final TriggerType BARGE_ALGAE = TriggerType.RIGHT_SHOULDER_TRIGGER;
 			public static final TriggerType L4 = TriggerType.RIGHT_SHOULDER_BUTTON;
 			public static final TriggerType L3 = TriggerType.UPPER_BUTTON;
 			public static final TriggerType L2 = TriggerType.LEFT_BUTTON;

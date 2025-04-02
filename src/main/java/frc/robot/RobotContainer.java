@@ -1,5 +1,7 @@
 package frc.robot;
 
+import java.util.Set;
+
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 
@@ -8,6 +10,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandPS4Controller;
 import edu.wpi.first.wpilibj2.command.button.CommandPS5Controller;
@@ -19,6 +22,8 @@ import frc.robot.commands.autons.FollowApriltagForwardCommand;
 import frc.robot.commands.climb.ClimbCommand;
 import frc.robot.commands.climb.BalanceClimberCommand;
 import frc.robot.commands.drive.ManualDriveCommand;
+import frc.robot.commands.drive.ReefAprilTagCenterCommand;
+import frc.robot.commands.drive.pathfinding.commands.PathfindingCommand2;
 import frc.robot.commands.elevator.ElevatorControlCommand;
 import frc.robot.commands.elevator.ElevatorStateManager;
 import frc.robot.commands.elevator.ElevatorStateManager.AlgaeReefRemoverState;
@@ -100,7 +105,7 @@ public class RobotContainer {
         }
         
         if(Flags.DriveTrain.ENABLE_DYNAMIC_PATHFINDING) {
-            // PathfindingCommand.warmupCommand().schedule();
+            PathfindingCommand2.warmupCommand().schedule();
         }
 
         // NetworkTablesUtil.printConnections();
@@ -184,7 +189,7 @@ public class RobotContainer {
                 .setAsCurrent()));
 
             ControlHandler.get(this.primaryController, OperatorConstants.PrimaryControllerConstants.CLIMB_PIVOT_ANGLE_PRIMARY)
-                .or(ControlHandler.get(this.secondaryController, OperatorConstants.SecondaryControllerConstants.CLIMB_PIVOT_ANGLE_SECONDARY))
+                 // .or(ControlHandler.get(this.secondaryController, OperatorConstants.SecondaryControllerConstants.CLIMB_PIVOT_ANGLE_SECONDARY))
                 .onTrue(new InstantCommand(() -> elevatorStateManager.cloneState()
                     .setHeight(0)
                     .setPivotAngle(Rotation2d.fromRotations(0.4))
@@ -196,9 +201,10 @@ public class RobotContainer {
                 .setCoralIntakeState(ElevatorStateManager.CoralIntakeState.INTAKE)
                 .setAsCurrent()));
 
+                /*
             ControlHandler.get(this.secondaryController, OperatorConstants.SecondaryControllerConstants.DROP_L1).onTrue(new InstantCommand(() -> elevatorStateManager.cloneState()
                 .setCoralIntakeState(CoralIntakeState.OUTTAKE)
-                .setAsCurrent()));
+                .setAsCurrent())); */
 
             ControlHandler.get(this.primaryController, OperatorConstants.PrimaryControllerConstants.ALGAE_REMOVER).onTrue(new InstantCommand(() -> elevatorStateManager.cloneState()
                 .setHeight(elevatorStateManager.getHeight()) // 0.11
@@ -218,8 +224,9 @@ public class RobotContainer {
                     this.driveTrain.setHeadingLockMode(false);
                 }));
 
-                ControlHandler.get(this.primaryController, OperatorConstants.PrimaryControllerConstants.REEF_AUTO_AIM).whileTrue(driveTrain.getFindToSelectedReefCommand());
-                //ControlHandler.get(this.secondaryController, OperatorConstants.PrimaryControllerConstants.ALGAE_AUTO_AIM).whileTrue(new AlgaeCenterCommand(driveTrain, this.primaryController));
+                // we need to defer this b/c we need a new command each time
+                ControlHandler.get(this.primaryController, OperatorConstants.PrimaryControllerConstants.REEF_AUTO_PATHFIND).whileTrue(Commands.defer(driveTrain::getFindToSelectedReefCommand, Set.of(driveTrain)));
+                ControlHandler.get(this.secondaryController, OperatorConstants.PrimaryControllerConstants.REEF_AUTO_AIM).whileTrue(new ReefAprilTagCenterCommand(driveTrain, this.primaryController));
                 // ControlHandler.get(this.secondaryController, OperatorConstants.SecondaryControllerConstants.MICRO_ADJUST_DRIVING).whileTrue(new SlowerManualDriveCommand(driveTrain, this.secondaryController));
                 //ControlHandler.get(this.secondaryController, OperatorConstants.SecondaryControllerConstants.INTAKE_STATE).whileTrue(new SlowerManualDriveCommand(driveTrain, this.primaryController));
             }

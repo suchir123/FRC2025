@@ -39,7 +39,7 @@ public class AlgaeGroundIntakeCommand extends Command {
             if(!atAlgaeHeight) {
                 this.algaeGroundIntake.flapToValue(0.5, 0.5);
             } else {
-                this.algaeGroundIntake.flapToValue(0.9, 0.1);
+                this.algaeGroundIntake.flapToValue(0.85, 0.15);
             }
             atAlgaeHeight = !atAlgaeHeight;
             atCoralHeight = false;
@@ -49,7 +49,7 @@ public class AlgaeGroundIntakeCommand extends Command {
             if(!atCoralHeight) {
                 this.algaeGroundIntake.flapToValue(0, 1);
             } else {
-                this.algaeGroundIntake.flapToValue(0.9, 0.1);
+                this.algaeGroundIntake.flapToValue(0.85, 0.15);
             }
             atCoralHeight = !atCoralHeight;
             atAlgaeHeight = false;

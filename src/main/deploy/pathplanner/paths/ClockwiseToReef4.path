@@ -4,12 +4,12 @@
     {
       "anchor": {
         "x": 2.8665,
-        "y": 2.7575
+        "y": 3.255
       },
       "prevControl": null,
       "nextControl": {
         "x": 2.8665,
-        "y": 3.1378749794560394
+        "y": 3.505
       },
       "isLocked": false,
       "linkedName": null
@@ -21,7 +21,7 @@
       },
       "prevControl": {
         "x": 2.8665,
-        "y": 3.469161370955483
+        "y": 3.7554999999999996
       },
       "nextControl": null,
       "isLocked": false,
@@ -47,7 +47,7 @@
   "reversed": false,
   "folder": "dynamic pathfinding paths",
   "idealStartingState": {
-    "velocity": 0,
+    "velocity": 0.5,
     "rotation": 0.0
   },
   "useDefaultConstraints": true

@@ -68,7 +68,7 @@ public final class Flags {
         /**
          * Whether the drive train should be allowed to send power to motor controllers. If false, motors will not be set to any power and PID requests will not be sent.
          */
-        public static final boolean ENABLED = false;
+        public static final boolean ENABLED = true;
 
         /**
          * Whether the drive motors should be allowed to run. If false, drive motors will not be set to any power and PID requests will not be sent.
@@ -124,9 +124,9 @@ public final class Flags {
         // True if the auton selection GUI in Shuffleboard is active and we're choosing autons from it
         public static final boolean ENABLE_AUTON_CHOOSER = true;
         
-        public static final boolean ENABLE_OCULUS_ODOMETRY_FUSING = false;
+        public static final boolean ENABLE_OCULUS_ODOMETRY_FUSING = true;
 
-        public static final boolean ENABLE_LIMEY_APRILTAGS_ODOMETRY_FUSING = false;
+        public static final boolean ENABLE_LIMEY_APRILTAGS_ODOMETRY_FUSING = true;
 
         public static final boolean ENABLE_DYNAMIC_PATHFINDING = true;
     }

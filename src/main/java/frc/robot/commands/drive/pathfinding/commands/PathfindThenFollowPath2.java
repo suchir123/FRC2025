@@ -7,13 +7,11 @@ import com.pathplanner.lib.path.GoalEndState;
 import com.pathplanner.lib.path.IdealStartingState;
 import com.pathplanner.lib.path.PathConstraints;
 import com.pathplanner.lib.path.PathPlannerPath;
-import com.pathplanner.lib.pathfinding.Pathfinding;
 import com.pathplanner.lib.trajectory.PathPlannerTrajectory;
 import com.pathplanner.lib.util.DriveFeedforwards;
 import com.pathplanner.lib.util.FlippingUtil;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.*;
@@ -136,12 +134,13 @@ public class PathfindThenFollowPath2 extends SequentialCommandGroup {
 		
 		// we need to extend the points on the end path as part of the connection algo
 		List<Pose2d> pathPoses = goalPath.getPathPoses();
-		boolean extendable = pathPoses.size() > 1;
+		Pose2d goalPathStart = new Pose2d(pathPoses.get(0).getTranslation(), goalPath.getIdealStartingState().rotation());
+		boolean extendable = pathPoses.size() > 1 && poseSupplier.get().getTranslation().getDistance(goalPathStart.getTranslation()) > 0.5;
 		if (extendable) {
-			Pose2d goalPathStart = new Pose2d(pathPoses.get(0).getTranslation(), goalPath.getIdealStartingState().rotation());
+			System.out.println("extendable, going for it");
 			Rotation2d slopeStart = Util.slopeAngle(goalPathStart, pathPoses.get(1)); // slope
-			System.out.println("GPS: " + goalPathStart + ", " + slopeStart);
-			Pose2d extended = goalPathStart.plus(new Transform2d(new Translation2d(-0.5, slopeStart), Rotation2d.kZero)); // more
+			System.out.println("GPS: " + goalPathStart + ", slope: " + slopeStart);
+			Pose2d extended = new Pose2d(goalPathStart.getTranslation().plus(new Translation2d(0.5, slopeStart)), goalPathStart.getRotation()); // more
 			System.out.println("Extended pose: " + extended);
 			if (shouldFlipPath.getAsBoolean()) {
 				extended = FlippingUtil.flipFieldPose(extended);
@@ -150,7 +149,7 @@ public class PathfindThenFollowPath2 extends SequentialCommandGroup {
 			this.pfCom = new PathfindingCommand2( // path find to the extended part of the path
 				extended,
 				pathfindingConstraints,
-				goalPath.getGoalEndState().velocity(),
+				goalPath.getIdealStartingState().velocity(),
 				poseSupplier,
 				currentRobotRelativeSpeeds,
 				output,
@@ -159,31 +158,44 @@ public class PathfindThenFollowPath2 extends SequentialCommandGroup {
 				requirements
 			);
 			
+			/*
+			 * The new target point to end the dynamic pathplanning portion at.
+			 */
 			AtomicReference<Pose2d> newTarget = new AtomicReference<>();
+
+			/*
+			 * The path connecting the new target point to the beginning of the preplanned path
+			 */
 			AtomicReference<PathPlannerPath> connectorPath = new AtomicReference<>();
 			
-			AtomicReference<FollowPathCommand> connectorCommand = new AtomicReference<>();
+			/*
+			 * A command to follow the connectorPath
+			 */
+			AtomicReference<Command> connectorCommand = new AtomicReference<>();
 			addCommands(
 				// the pfCom will pathfind to a "farther away" point from where it should
 				// its targetPose is also public
 				// we just need to make another command here that runs alongside pfCom that changes targetPose to be the start point of the next connection path
-				this.pfCom.alongWith(Commands.waitSeconds(0.5).andThen(Commands.runOnce(() -> {
+				this.pfCom.alongWith(Commands.waitSeconds(0.25).andThen(Commands.runOnce(() -> {
 					System.out.println("RUNNING THE RUNONCE PART");
 					// get the currently running path
 					PathPlannerPath pathfindingPath = PathfindingManager.getNewestPathfindingPath(); // this shouldn't screw anything up
 					if (pathfindingPath != null) {
+						System.out.println("found a pathfinding path");
 						List<Pose2d> poses = pathfindingPath.getPathPoses(); // you guessed it. another slope calculation
 						if (poses.size() > 1) {
 							// as a YOLO heuristic (read: i'm coding this at 5am) we can just kinda guess where we wanna end the previous path. maybe 0.5m before it ends?
 							// if the path is less than 0.5m total then just do nothing, since either 1) we started out close anyways, or 2) we were previously doing this already so just stick to it
-							if (poses.get(poses.size() - 1).getTranslation().getDistance(poses.get(0).getTranslation()) > 0.5) {
+							final double tooFarAway = 1;
+							if (poses.get(poses.size() - 1).getTranslation().getDistance(poses.get(0).getTranslation()) > tooFarAway) {
+								System.out.println("far enough away, finding a new target point");
 								// sample it at 0.5m before the end
 								Pose2d last = poses.get(poses.size() - 1);
 								int idx = poses.size() - 1;
 								// iterate from the end until we find a pose 0.5m away
-								for (int i = poses.size() - 2; i > 0; i--) {
-									if (poses.get(i).getTranslation().getDistance(last.getTranslation()) > 0.5) {
-										System.out.println("found the first one that's over 0.5 away. idx: " + i + ", pose: " + poses.get(i) + ", poses size: " + poses.size());
+								for (int i = poses.size() - 2; i >= 0; i--) {
+									if (poses.get(i).getTranslation().getDistance(last.getTranslation()) > tooFarAway) {
+										System.out.println("found the first one that's at the distance limit. idx: " + i + ", pose: " + poses.get(i) + ", poses size: " + poses.size());
 										idx = i;
 										break;
 									}
@@ -195,6 +207,8 @@ public class PathfindThenFollowPath2 extends SequentialCommandGroup {
 								System.out.println("new target: " + newTarget);
 								this.pfCom.targetPose = newTarget.get();
 								// Pathfinding.setGoalPosition(newTarget.get().getTranslation()); // sneak in and change it
+							} else {
+								newTarget.set(poses.get(poses.size() - 1)); // just go to endpoint
 							}
 							
 							if(Util.isSim()) {
@@ -209,32 +223,51 @@ public class PathfindThenFollowPath2 extends SequentialCommandGroup {
 				generateDeferredPathJoinerCommand.apply(() -> {
 					Pose2d p = newTarget.get();
 					if (p != null) {
+						System.out.println("new target exists");
 						var waypoints = PathPlannerPath.waypointsFromPoses(
-							newTarget.get(), // the cut off part from the end of pathfinding
+							poseSupplier.get(), // the cut off part from the end of pathfinding
 							new Pose2d(goalPathStart.getTranslation(), slopeStart.plus(Rotation2d.k180deg)) // the original start of pre-planned paths
 						);
 						connectorPath.set(new PathPlannerPath(waypoints, pathfindingConstraints, goalPath.getIdealStartingState(), new GoalEndState(goalPath.getIdealStartingState().velocityMPS(), goalPath.getIdealStartingState().rotation())));
 						return connectorPath.get();
 					}
+					System.out.println("new target doesn't exist");
 					return goalPath;
 				}),
 				
+				// Note: I think this is like that coconut file in that one video game where if you delete it then nothing works
+				// Because I don't even think the deferred command gets run
+				// like it throws an error every time
 				Commands.defer(() -> {
-						connectorCommand.set(new FollowPathCommand(
-							connectorPath.get(),
-							poseSupplier,
-							currentRobotRelativeSpeeds,
-							output,
-							controller,
-							robotConfig,
-							shouldFlipPath,
-							requirements)
-						);
+						var cPath = connectorPath.get();
+						if(cPath != null) {
+							var poses = cPath.getPathPoses();
+							if(poses.size() > 1 && poses.get(0).getTranslation().getDistance(poses.get(poses.size() - 1).getTranslation()) > 0.75) {
+								System.out.println("connector path exists & is long enough, connecting...");
+								connectorCommand.set(new FollowPathCommand(
+									cPath,
+									poseSupplier,
+									currentRobotRelativeSpeeds,
+									output,
+									controller,
+									robotConfig,
+									shouldFlipPath,
+									requirements));
+								System.out.println("made the connector command");
+							}
+						} else {
+							System.out.println("connector path doesn't exist");
+							connectorCommand.set(new InstantCommand(() -> System.out.println("connector path null, skipping connector path.")));
+						}
 						return connectorCommand.get();
 					}, Set.of(requirements)
-				).alongWith(new InstantCommand(() -> DriveTrainSubsystem.connectionPathPub.set(Util.convertPPTrajStateListToDoubleArray(trajFromFollowPathCom(connectorCommand.get()).getStates())))),
+				).alongWith(new InstantCommand(() -> {
+					if(connectorCommand.get() instanceof FollowPathCommand fpc) {
+						DriveTrainSubsystem.connectionPathPub.set(Util.convertPPTrajStateListToDoubleArray(trajFromFollowPathCom(fpc).getStates()));
+					}
+				})),
 				
-				new FollowPathCommand(
+				new FollowPathCommand( // follow pre-planned path
 					goalPath,
 					poseSupplier,
 					currentRobotRelativeSpeeds,
@@ -245,8 +278,8 @@ public class PathfindThenFollowPath2 extends SequentialCommandGroup {
 					requirements)
 			);
 		} else {
-			System.out.println("not extendable");
-			this.pfCom = new PathfindingCommand2( // idk why this would ever be the case
+			System.out.println("not extendable, doing it the normal way");
+			this.pfCom = new PathfindingCommand2(
 				goalPath,
 				pathfindingConstraints,
 				poseSupplier,
