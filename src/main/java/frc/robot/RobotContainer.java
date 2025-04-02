@@ -83,7 +83,7 @@ public class RobotContainer {
         this.coralIntake = Util.createIfFlagElseNull(CoralIntakeSubsystem::new, Flags.CoralIntake.IS_ATTACHED);
         this.algaeReefRemover = Util.createIfFlagElseNull(AlgaeReefRemoverSubsystem::new, Flags.AlgaeReefRemover.IS_ATTACHED);
         this.algaeGroundIntake = Util.createIfFlagElseNull(AlgaeGroundIntakeSubsystem::new, Flags.AlgaeGroundIntake.IS_ATTACHED);
-        this.elevatorAutonManager = Util.createIfFlagElseNull(() -> new ElevatorAutonManager(elevators, coralIntake, driveTrain), Flags.Elevator.IS_ATTACHED && Flags.CoralIntake.IS_ATTACHED && Flags.DriveTrain.IS_ATTACHED);
+        this.elevatorAutonManager = Util.createIfFlagElseNull(() -> new ElevatorAutonManager(elevators, coralIntake, driveTrain), canUseElevatorControlCommand() && Flags.DriveTrain.IS_ATTACHED);
 
         if(elevatorAutonManager != null) {
             configureNamedCommands();
@@ -140,10 +140,10 @@ public class RobotContainer {
     }
 
     private void configureBindings() {
-        if (Flags.Elevator.IS_ATTACHED && !Flags.Elevator.USE_TEST_ELEVATOR_COMMAND && !Flags.Elevator.USE_TEST_PID_COMMAND && !Flags.CoralIntake.USE_TEST_PID_COMMAND) {
+        if (canUseElevatorControlCommand()) {
             ControlHandler.get(this.secondaryController, OperatorConstants.SecondaryControllerConstants.INTAKE_STATE).onTrue(new InstantCommand(() -> elevatorStateManager.cloneState()
                 .setHeight(0)
-                .setPivotAngle(Rotation2d.fromRotations(0.14))
+                .setPivotAngle(Rotation2d.fromRotations(0.12))
                 .setCoralIntakeState(ElevatorStateManager.CoralIntakeState.INTAKE)
                 .setAlgaeReefRemoverState(AlgaeReefRemoverState.STOPPED)
                 .setAsCurrent()));

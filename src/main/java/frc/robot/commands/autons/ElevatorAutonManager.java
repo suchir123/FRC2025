@@ -87,7 +87,7 @@ public class ElevatorAutonManager {
             System.out.println("getGoToIntakeState InstantCommand ran!");
             ElevatorStateManager.INSTANCE.cloneState()
                 .setHeight(0)
-                .setPivotAngle(Rotation2d.fromRotations(0.14))
+                .setPivotAngle(Rotation2d.fromRotations(0.12))
                 .setCoralIntakeState(ElevatorStateManager.CoralIntakeState.STOPPED)
                 .setAlgaeReefRemoverState(AlgaeReefRemoverState.STOPPED)
                 .setAsCurrent();
