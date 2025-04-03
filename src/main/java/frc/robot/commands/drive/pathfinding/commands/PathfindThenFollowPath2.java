@@ -35,6 +35,10 @@ public class PathfindThenFollowPath2 extends SequentialCommandGroup {
 	
 	private final PathfindingCommand2 pfCom;
 	private final Function<Supplier<PathPlannerPath>, Command> generateDeferredPathJoinerCommand;
+
+	private static boolean f() {
+		return false;
+	}
 	
 	/**
 	 * Constructs a new PathfindThenFollowPath command group.
@@ -50,7 +54,7 @@ public class PathfindThenFollowPath2 extends SequentialCommandGroup {
 	 *                                   module states, you will need to reverse the feedforwards for modules that have been flipped
 	 * @param controller                 Path following controller that will be used to follow the path
 	 * @param robotConfig                The robot configuration
-	 * @param shouldFlipPath             Should the target path be flipped to the other side of the field? This
+	 * @param shouldFlip             Should the target path be flipped to the other side of the field? This
 	 *                                   will maintain a global blue alliance origin.
 	 * @param requirements               the subsystems required by this command (drive subsystem)
 	 */
@@ -62,8 +66,9 @@ public class PathfindThenFollowPath2 extends SequentialCommandGroup {
 		BiConsumer<ChassisSpeeds, DriveFeedforwards> output,
 		PathFollowingController controller,
 		RobotConfig robotConfig,
-		BooleanSupplier shouldFlipPath,
+		BooleanSupplier shouldFlip,
 		Subsystem... requirements) {
+		final BooleanSupplier shouldFlipPath = PathfindThenFollowPath2::f;
 		this.generateDeferredPathJoinerCommand = (supJoinTo -> Commands.defer(
 			() -> {
 				PathPlannerPath joinTo = supJoinTo.get();
@@ -81,15 +86,15 @@ public class PathfindThenFollowPath2 extends SequentialCommandGroup {
 				
 				Pose2d endWaypoint =
 					new Pose2d(joinTo.getPoint(0).position, joinTo.getInitialHeading());
-				boolean shouldFlip = shouldFlipPath.getAsBoolean() && !joinTo.preventFlipping;
-				if (shouldFlip) {
+				boolean shouldFlipP = shouldFlipPath.getAsBoolean() && !joinTo.preventFlipping;
+				if (shouldFlipP) {
 					endWaypoint = FlippingUtil.flipFieldPose(endWaypoint);
 				}
 				
 				GoalEndState endState;
 				if (joinTo.getIdealStartingState() != null) {
 					Rotation2d endRot = joinTo.getIdealStartingState().rotation();
-					if (shouldFlip) {
+					if (shouldFlipP) {
 						endRot = FlippingUtil.flipFieldRotation(endRot);
 					}
 					endState = new GoalEndState(joinTo.getIdealStartingState().velocityMPS(), endRot);
@@ -142,9 +147,6 @@ public class PathfindThenFollowPath2 extends SequentialCommandGroup {
 			System.out.println("GPS: " + goalPathStart + ", slope: " + slopeStart);
 			Pose2d extended = new Pose2d(goalPathStart.getTranslation().plus(new Translation2d(0.5, slopeStart)), goalPathStart.getRotation()); // more
 			System.out.println("Extended pose: " + extended);
-			if (shouldFlipPath.getAsBoolean()) {
-				extended = FlippingUtil.flipFieldPose(extended);
-			}
 			
 			this.pfCom = new PathfindingCommand2( // path find to the extended part of the path
 				extended,
@@ -205,6 +207,7 @@ public class PathfindThenFollowPath2 extends SequentialCommandGroup {
 								// note: in a PathPlannerPath the Rotation2d is the heading of the trajectory, NOT of the robot chassis. trajectory heading = the direction of the robot's velocity vector
 								newTarget.set(new Pose2d(poses.get(idx).getTranslation(), slope.plus(Rotation2d.k180deg)));
 								System.out.println("new target: " + newTarget);
+								System.out.println("goal end rotation for pathfinding: " + goalPath.getIdealStartingState().rotation());
 								this.pfCom.targetPose = newTarget.get();
 								// Pathfinding.setGoalPosition(newTarget.get().getTranslation()); // sneak in and change it
 							} else {
@@ -212,7 +215,7 @@ public class PathfindThenFollowPath2 extends SequentialCommandGroup {
 							}
 							
 							if (Util.isSim()) {
-								RobotContainer.INSTANCE.driveTrain.setPose(new Pose2d(newTarget.get().getTranslation(), goalPath.getGoalEndState().rotation()));
+								RobotContainer.INSTANCE.driveTrain.setPose(new Pose2d(newTarget.get().getTranslation(), goalPath.getIdealStartingState().rotation()));
 							}
 						}
 					}
@@ -224,9 +227,11 @@ public class PathfindThenFollowPath2 extends SequentialCommandGroup {
 					Pose2d p = newTarget.get();
 					if (p != null) {
 						System.out.println("new target exists");
+						Pose2d end = new Pose2d(goalPathStart.getTranslation(), slopeStart.plus(Rotation2d.k180deg)); // the original start of pre-planned paths
+						System.out.println("end of path joiner: " + end);
 						var waypoints = PathPlannerPath.waypointsFromPoses(
-							poseSupplier.get(), // the cut off part from the end of pathfinding
-							new Pose2d(goalPathStart.getTranslation(), slopeStart.plus(Rotation2d.k180deg)) // the original start of pre-planned paths
+							new Pose2d(poseSupplier.get().getTranslation(), newTarget.get().getRotation()), // the cut off part from the end of pathfinding
+							end
 						);
 						connectorPath.set(new PathPlannerPath(waypoints, pathfindingConstraints, goalPath.getIdealStartingState(), new GoalEndState(goalPath.getIdealStartingState().velocityMPS(), goalPath.getIdealStartingState().rotation())));
 						return connectorPath.get();
@@ -251,7 +256,7 @@ public class PathfindThenFollowPath2 extends SequentialCommandGroup {
 									output,
 									controller,
 									robotConfig,
-									shouldFlipPath,
+									shouldFlip,
 									requirements));
 								System.out.println("made the connector command");
 							}
@@ -274,7 +279,7 @@ public class PathfindThenFollowPath2 extends SequentialCommandGroup {
 					output,
 					controller,
 					robotConfig,
-					shouldFlipPath,
+					shouldFlip,
 					requirements)
 			);
 		} else {
@@ -287,7 +292,7 @@ public class PathfindThenFollowPath2 extends SequentialCommandGroup {
 				output,
 				controller,
 				robotConfig,
-				shouldFlipPath,
+				shouldFlip,
 				requirements);
 			
 			addCommands(
@@ -303,7 +308,7 @@ public class PathfindThenFollowPath2 extends SequentialCommandGroup {
 					output,
 					controller,
 					robotConfig,
-					shouldFlipPath,
+					shouldFlip,
 					requirements));
 		}
 	}

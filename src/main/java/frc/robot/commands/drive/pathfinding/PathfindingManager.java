@@ -1,7 +1,6 @@
 package frc.robot.commands.drive.pathfinding;
 
 import com.pathplanner.lib.auto.AutoBuilder;
-import com.pathplanner.lib.commands.PathfindingCommand;
 import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PathFollowingController;
 import com.pathplanner.lib.path.*;
@@ -9,6 +8,7 @@ import com.pathplanner.lib.pathfinding.Pathfinder;
 import com.pathplanner.lib.pathfinding.Pathfinding;
 import com.pathplanner.lib.trajectory.PathPlannerTrajectory;
 import com.pathplanner.lib.util.DriveFeedforwards;
+
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -115,7 +115,7 @@ public class PathfindingManager {
 					output,
 					controller,
 					robotConfig,
-					shouldFlipPath,
+					() -> false,
 					driveRequirements);
 	}
 	
@@ -184,6 +184,14 @@ public class PathfindingManager {
 	public static Pose2d extractStartPose(PathPlannerPath p) {
 		return p.getStartingHolonomicPose().orElse(p.getStartingDifferentialPose());
 	}
+
+	public static PathPlannerPath flipPathIfNeeded(PathPlannerPath p) {
+		if(Util.onBlueTeam()) {
+			return p;
+		}
+		// System.out.println("flipping path & mirroring");
+		return p.flipPath().mirrorPath();
+	}
 	
 	private static List<PathPlannerPath> importPaths(List<String> pathNames) {
 		List<PathPlannerPath> paths = new ArrayList<>(pathNames.size());
@@ -216,22 +224,11 @@ public class PathfindingManager {
 	}
 	
 	public PathPlannerPath getBestPath(Pose2d currentPose, PathChooser pathChooser) {
-		return pathChooser.bestPath(currentPose, this.pathList);
+		return pathChooser.bestPath(currentPose, this.pathList.stream().map(PathfindingManager::flipPathIfNeeded).toList());
 	}
 	
 	public PathPlannerPath getBestPath(Pose2d currentPose) {
 		return this.getBestPath(currentPose, this.pathChooser);
-	}
-	
-	private static PathPlannerTrajectory getPathfindingCommandCurrentTrajectory(PathfindingCommand pfCom) {
-		try {
-			Field f = PathfindingCommand.class.getDeclaredField("currentTrajectory");
-			f.setAccessible(true);
-	
-			return (PathPlannerTrajectory) f.get(pfCom);
-		} catch (NoSuchFieldException | IllegalAccessException e) {
-			throw new RuntimeException(e);
-		}
 	}
 	
 	/**

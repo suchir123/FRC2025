@@ -28,6 +28,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -47,6 +48,7 @@ import frc.robot.util.Util;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import static edu.wpi.first.units.Units.RadiansPerSecond;
 
@@ -188,12 +190,12 @@ public class DriveTrainSubsystem extends SubsystemBase {
 		if (Flags.DriveTrain.ENABLE_DYNAMIC_PATHFINDING && Util.isSim()) {
 			System.out.println("pathplanner test");
 			setPose(new Pose2d(3.08, 2.35, Rotation2d.fromDegrees(48)));
-			c = reefedPathfindingManagers.get(4).getFullCommand(getPose());
+			c = Commands.defer(() -> reefedPathfindingManagers.get(4).getFullCommand(getPose()), Set.of(this));
 			// c.schedule();
 			// System.out.println(poses);
 		}
 		
-		setPose(new Pose2d(5.75, 1.55, Rotation2d.fromDegrees(124)));
+		// setPose(new Pose2d(5.75, 1.55, Rotation2d.fromDegrees(124)));
 	}
 	
 	public static double flipFactor() {
@@ -544,6 +546,7 @@ public class DriveTrainSubsystem extends SubsystemBase {
 			System.out.println("generating new command");
 			int selection = RoboGUI.getPressedTargetReef();
 			RoboGUI.resetPressedTargetReef(); // reset it so we don't run again by accident
+			System.out.println("pathing to reef (if it's -2 then it was -1 before): " + (selection - 1));
 			if (selection != -1) {
 				return reefedPathfindingManagers.get(selection - 1).getFullCommand(getPose()); // minus 1 bc array indexing
 			}

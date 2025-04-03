@@ -2,9 +2,11 @@ package frc.robot.commands.drive.pathfinding;
 
 import com.pathplanner.lib.path.PathPlannerPath;
 import edu.wpi.first.math.geometry.Pose2d;
-
 import java.util.List;
 
+/**
+ * Note: This implementation WILL handle field flipping. The supplied heuristic has no need to flip any paths.
+ */
 public class HeuristicBasedPathChooser implements PathChooser {
 	private final PathPreferenceHeuristic prefHeuristic;
 	public HeuristicBasedPathChooser(PathPreferenceHeuristic prefHeuristic) {
@@ -16,7 +18,7 @@ public class HeuristicBasedPathChooser implements PathChooser {
 		PathPlannerPath bestPath = null;
 		double bestScore = Double.NEGATIVE_INFINITY;
 		for(PathPlannerPath path : paths) {
-			Pose2d pose = path.getStartingHolonomicPose().orElse(path.getStartingDifferentialPose());
+			Pose2d pose = PathfindingManager.extractStartPose(path);
 			if(pose != null) {
 				List<Pose2d> pathPoses = path.getPathPoses();
 				double score = prefHeuristic.score(currentPose, pose, pathPoses.get(pathPoses.size() - 1));
