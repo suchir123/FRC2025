@@ -35,7 +35,6 @@ import frc.robot.Constants.PortConstants;
 import frc.robot.Constants.RobotConstants;
 import frc.robot.Flags;
 import frc.robot.Robot;
-import frc.robot.commands.drive.ManualDriveCommand;
 import frc.robot.commands.drive.pathfinding.PathfindingManager;
 import frc.robot.commands.drive.pathfinding.pathfinders.LocalADStar2;
 import frc.robot.subsystems.staticsubsystems.LimeLight;
@@ -57,6 +56,8 @@ import static edu.wpi.first.units.Units.RadiansPerSecond;
 public class DriveTrainSubsystem extends SubsystemBase {
 	public static final DoubleArrayPublisher pathfinderPathPub = NetworkTablesUtil.MAIN_ROBOT_TABLE.getDoubleArrayTopic("pathfinder").publish();
 	public static final DoubleArrayPublisher connectionPathPub = NetworkTablesUtil.MAIN_ROBOT_TABLE.getDoubleArrayTopic("connection_path").publish();
+	public static final double MAX_SPEED_METERS_PER_SEC = Flags.DriveTrain.LOWER_MAX_SPEED ? 1.5 : 3;
+	public static final double MAX_ROT_SPEED_ANGULAR = 3;
 	private static final DoubleArrayPublisher rawPosePub = NetworkTablesUtil.MAIN_ROBOT_TABLE.getDoubleArrayTopic("raw_pose").publish();
 	private static final DoubleArrayPublisher chosenPathPub = NetworkTablesUtil.MAIN_ROBOT_TABLE.getDoubleArrayTopic("chosen_path").publish();
 	private static final boolean INVERT_DRIVE_MOTORS = true;
@@ -66,7 +67,7 @@ public class DriveTrainSubsystem extends SubsystemBase {
 	private static final Translation2d backLeftLocation = new Translation2d(-RobotConstants.LEG_LENGTHS_M, RobotConstants.LEG_LENGTHS_M);
 	private static final Translation2d backRightLocation = new Translation2d(-RobotConstants.LEG_LENGTHS_M, -RobotConstants.LEG_LENGTHS_M);
 	
-	static SwerveModuleState[] optimizedTargetStates = new SwerveModuleState[4]; // for debugging purposes
+	static final SwerveModuleState[] optimizedTargetStates = new SwerveModuleState[4]; // for debugging purposes
 	// public static final double MAX_SPEED = 3.0; // 3 meters per second
 	// public static final double MAX_ANGULAR_SPEED = Math.PI; // 1/2 rotation per second
 	final double LOCK_HEADING_THRESHOLD = 0.1; // TODO: test if when rotate without translating
@@ -191,8 +192,16 @@ public class DriveTrainSubsystem extends SubsystemBase {
 			// c.schedule();
 			// System.out.println(poses);
 		}
-
-		setPose(new Pose2d(5.47, 1.9, Rotation2d.fromDegrees(122)));
+		
+		setPose(new Pose2d(5.75, 1.55, Rotation2d.fromDegrees(124)));
+	}
+	
+	public static double flipFactor() {
+	    if (Util.onBlueTeam()) {
+	        return 1;
+	    } else {
+	        return -1;
+	    }
 	}
 	
 	private void configureAutoBuilder() {
@@ -347,7 +356,7 @@ public class DriveTrainSubsystem extends SubsystemBase {
 		
 		SwerveModuleState[] swerveModuleStates = kinematics.toSwerveModuleStates(chassisSpeeds);
 		
-		SwerveDriveKinematics.desaturateWheelSpeeds(swerveModuleStates, ManualDriveCommand.MAX_SPEED_METERS_PER_SEC);
+		SwerveDriveKinematics.desaturateWheelSpeeds(swerveModuleStates, MAX_SPEED_METERS_PER_SEC);
 		frontLeft.setDesiredState(swerveModuleStates[0], 0);
 		frontRight.setDesiredState(swerveModuleStates[1], 1);
 		backLeft.setDesiredState(swerveModuleStates[2], 2);
@@ -468,7 +477,6 @@ public class DriveTrainSubsystem extends SubsystemBase {
 		Pose2d limeyPose = LimeLight.getLimeyApriltagReading().pose();
 		limeyPosePublisher.set(limeyPose);
 		
-		//noinspection StatementWithEmptyBody
 		// for (SwerveModule module : swerveModules) {
 		// System.out.println(module.getName() + " rel vel: " + RobotMathUtil.roundNearestHundredth(module.getRelativeTurnVelocity()) + ", abs vel: " + RobotMathUtil.roundNearestHundredth(module.getTurningAbsEncoderVelocityConverted()));
 		// System.out.println(module.getName() + " " + module.getDriveRotations());
@@ -516,6 +524,7 @@ public class DriveTrainSubsystem extends SubsystemBase {
 	
 	/**
 	 * THE RETURNED COMMAND SHOULD BE INSTANTLY RUN. DO NOT DELAY SCHEDULING.
+	 *
 	 * @return A dynamic pathfinding command to reef 1 (aka index 0 in reef list)
 	 */
 	public Command getFindToReef0Command() {
@@ -527,6 +536,7 @@ public class DriveTrainSubsystem extends SubsystemBase {
 	
 	/**
 	 * THE RETURNED COMMAND SHOULD BE INSTANTLY RUN. DO NOT DELAY SCHEDULING.
+	 *
 	 * @return A dynamic pathfinding command to the reef number indicated by robot gui in network tables.
 	 */
 	public Command getFindToSelectedReefCommand() {
@@ -534,7 +544,7 @@ public class DriveTrainSubsystem extends SubsystemBase {
 			System.out.println("generating new command");
 			int selection = RoboGUI.getPressedTargetReef();
 			RoboGUI.resetPressedTargetReef(); // reset it so we don't run again by accident
-			if(selection != -1) {
+			if (selection != -1) {
 				return reefedPathfindingManagers.get(selection - 1).getFullCommand(getPose()); // minus 1 bc array indexing
 			}
 		}
@@ -593,11 +603,11 @@ public class DriveTrainSubsystem extends SubsystemBase {
 					// shouldResetOculus = true;
 				}
 				this.poseEstimator.addVisionMeasurement(reading.pose(), reading.timestamp(), VecBuilder.fill(correction, correction, correction));
-
+				
 				if (shouldResetFullPose) {
 					// setPose(reading.pose());
 				}
-
+				
 				if (shouldResetOculus) {
 					// System.out.println("Resetting oculus with limey input");
 					QuestNav.INSTANCE.resetPose(reading.pose());

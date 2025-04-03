@@ -7,7 +7,6 @@ import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.Flags;
 import frc.robot.controllers.AbstractController;
 import frc.robot.subsystems.staticsubsystems.LimeLight;
 import frc.robot.subsystems.staticsubsystems.RobotGyro;
@@ -16,38 +15,21 @@ import frc.robot.util.AprilTagUtil;
 import frc.robot.util.Util;
 
 public class ReefAprilTagCenterCommand extends Command {
-    public static final double MAX_SPEED_METERS_PER_SEC = Flags.DriveTrain.LOWER_MAX_SPEED ? 1.5 : 3;
+    public static final double MAX_SPEED_METERS_PER_SEC = DriveTrainSubsystem.MAX_SPEED_METERS_PER_SEC;
     public static final double MAX_ROT_SPEED_ANGULAR = 3;
     private final DriveTrainSubsystem driveTrain;
     private final AbstractController joystick;
-    // private final AprilTagHandler aprilTagHandler;
-    // private final SlewRateLimiter xSpeedLimiter = new SlewRateLimiter(1);
     private final SlewRateLimiter ySpeedLimiter = new SlewRateLimiter(1);
-    // private final SlewRateLimiter rotLimiter = new SlewRateLimiter(0.5);
-    // private final Trigger autoAimSubwoofer;
-    // private final LinearFilter filter = LinearFilter.singlePoleIIR(0.1, 0.02);
-    // private boolean wasAutomaticallyDrivingLastFrame = false;
 
-    public ReefAprilTagCenterCommand(DriveTrainSubsystem driveTrain, AbstractController joystick) { //AprilTagHandler aprilTagHandler) {
+    public ReefAprilTagCenterCommand(DriveTrainSubsystem driveTrain, AbstractController joystick) {
         this.driveTrain = driveTrain;
         this.joystick = joystick;
-        // this.aprilTagHandler = aprilTagHandler;
-        // this.autoAimSubwoofer = ControlHandler.get(joystick, ControllerConstants.AUTO_AIM_FOR_SHOOT);
 
         addRequirements(driveTrain);
     }
 
     @Override
     public void initialize() {
-        // this.driveTrain.setPose(new Pose2d(2, 7, RobotGyro.getRotation2d()));
-    }
-
-    private double flipFactor() {
-        if (Util.onBlueTeam()) {
-            return 1;
-        } else {
-            return -1;
-        }
     }
 
     @Override
@@ -57,18 +39,15 @@ public class ReefAprilTagCenterCommand extends Command {
         } else {
             // LimeLight.setLimeyPipeline(2);
         }
-        double flip = flipFactor();
-        // System.out.println("vert: " + this.joystick.getRightVerticalMovement() + ", hor: " + this.joystick.getRightHorizontalMovement());
-        // this.driveTrain.drive(this.joystick.getVerticalMovement());
-        final double kPTranslation = 0.02;
+        
+        final double kPTranslation = 0.25;
         final double kPRotation = 0.1;
         //double flip = flipFactor();
         double pixelDiff = -LimeLight.getLimeyTX();
+        if(Math.abs(pixelDiff) < 0.5) pixelDiff = 0;
         int tagId = LimeLight.getLimeyTargetTag();
-        double ySpeedError = Util.squareKeepSign(this.ySpeedLimiter.calculate(this.joystick.getLeftVerticalMovement() * flip)) * MAX_SPEED_METERS_PER_SEC * 0.25;
-        double xSpeedError = MathUtil.clamp(kPTranslation * pixelDiff, -0.1, 0.1);
-        // System.out.println("xSpeed = " + xSpeed);
-        // System.out.println("ySpeed = " + ySpeed);
+        double ySpeedError = Util.squareKeepSign(this.ySpeedLimiter.calculate(this.joystick.getLeftVerticalMovement())) * MAX_SPEED_METERS_PER_SEC * 0.25;
+        double xSpeedError = MathUtil.clamp(kPTranslation * pixelDiff, -0.069, 0.069);
 
         Optional<Pose3d> tagPose = AprilTagUtil.getTagPose(tagId);
         double rotSpeed = -this.joystick.getRightHorizontalMovement() * MAX_ROT_SPEED_ANGULAR;
@@ -76,8 +55,9 @@ public class ReefAprilTagCenterCommand extends Command {
             Rotation2d targetAngle = AprilTagUtil.getTagPose(tagId).orElseGet(Pose3d::new).getRotation().toRotation2d();
             Rotation2d currentAngle = RobotGyro.getRotation2d();
 
-            double angleDiff = MathUtil.inputModulus(targetAngle.minus(currentAngle).getDegrees(), -180, 180);
-            // rotSpeed = MathUtil.clamp(angleDiff * kPRotation, -0.5, 0.5);
+            double angleDiff = MathUtil.inputModulus(-targetAngle.minus(currentAngle).getDegrees(), -180, 180);
+            if(Math.abs(angleDiff) < 2) angleDiff = 0;
+            rotSpeed = MathUtil.clamp(angleDiff * kPRotation, -0.1, 0.1);
         }
 
         // System.out.println("forward speed: " + ySpeed + ", x speed: " + xSpeed);

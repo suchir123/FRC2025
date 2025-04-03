@@ -9,8 +9,8 @@ public final class RoboGUI {
 	private static final NetworkTableEntry placementPositionEntry = NetworkTablesUtil.getEntry("robogui", "selectedPlacementPosition");
 	
 	public static int getPressedTargetReef() {
-		return 5;
-		// return placementPositionEntry.getNumber(-1).intValue();
+		// return 5;
+		return placementPositionEntry.getNumber(-1).intValue();
 	}
 	
 	public static void resetPressedTargetReef() {

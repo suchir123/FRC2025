@@ -43,7 +43,7 @@ public final class Constants {
 			
 			public static final TriggerType RESET_GYRO = TriggerType.POV_180;
 			public static final TriggerType BARGE_OUTTAKE = TriggerType.POV_270;
-
+			
 			
 			public static final TriggerType BARGE_ALGAE = TriggerType.RIGHT_SHOULDER_TRIGGER;
 			public static final TriggerType L4 = TriggerType.RIGHT_SHOULDER_BUTTON;
@@ -79,7 +79,7 @@ public final class Constants {
 		 *
 		 * 14 (DRI)
 		 * 15 (ROT)
-		 * 
+		 *
 		 * 17 (ELE)
 		 * 18 (ELE)
 		 * 19 (DRI)
@@ -93,15 +93,15 @@ public final class Constants {
 			public static final int DTRAIN_FRONT_LEFT_DRIVE_MOTOR_ID = 11;
 			public static final int DTRAIN_FRONT_LEFT_ROTATION_MOTOR_ID = 23;
 			public static final int DTRAIN_FRONT_LEFT_CANCODER_ID = 12;
-
+			
 			public static final int DTRAIN_FRONT_RIGHT_DRIVE_MOTOR_ID = 21;
 			public static final int DTRAIN_FRONT_RIGHT_ROTATION_MOTOR_ID = 22;
 			public static final int DTRAIN_FRONT_RIGHT_CANCODER_ID = 3;
-
+			
 			public static final int DTRAIN_BACK_LEFT_DRIVE_MOTOR_ID = 14;
 			public static final int DTRAIN_BACK_LEFT_ROTATION_MOTOR_ID = 15;
 			public static final int DTRAIN_BACK_LEFT_CANCODER_ID = 6;
-
+			
 			public static final int DTRAIN_BACK_RIGHT_DRIVE_MOTOR_ID = 19;
 			public static final int DTRAIN_BACK_RIGHT_ROTATION_MOTOR_ID = 20;
 			public static final int DTRAIN_BACK_RIGHT_CANCODER_ID = 1;

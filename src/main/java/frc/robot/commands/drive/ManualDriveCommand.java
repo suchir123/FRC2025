@@ -3,14 +3,11 @@ package frc.robot.commands.drive;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-import frc.robot.Flags;
 import frc.robot.controllers.AbstractController;
 import frc.robot.subsystems.swerve.DriveTrainSubsystem;
 import frc.robot.util.Util;
 
 public class ManualDriveCommand extends Command {
-    public static final double MAX_SPEED_METERS_PER_SEC = Flags.DriveTrain.LOWER_MAX_SPEED ? 1.5 : 3;
-    public static final double MAX_ROT_SPEED_ANGULAR = 3;
     private final DriveTrainSubsystem driveTrain;
     private final AbstractController joystick;
     // private final AprilTagHandler aprilTagHandler;
@@ -39,33 +36,25 @@ public class ManualDriveCommand extends Command {
     public void initialize() {
         // this.driveTrain.setPose(new Pose2d(2, 7, RobotGyro.getRotation2d()));
     }
-
-    private double flipFactor() {
-        if (Util.onBlueTeam()) {
-            return 1;
-        } else {
-            return -1;
-        }
-    }
-
+    
     @Override
     public void execute() {
         // System.out.println(NetworkTablesUtil.getLimeyJson());
         // System.out.println("vert: " + this.joystick.getRightVerticalMovement() + ", hor: " + this.joystick.getRightHorizontalMovement());
         // this.driveTrain.drive(this.joystick.getVerticalMovement());
-        double flip = flipFactor();
+        double flip = DriveTrainSubsystem.flipFactor();
         // We need a negative sign here because the robot starts facing in the other direction
         
         double speedAdjust = 1;
         if(this.leftStickButton.getAsBoolean() || this.rightStickButton.getAsBoolean()) {
             speedAdjust = 0.25;
         }
-        double ySpeed = Util.squareKeepSign(this.ySpeedLimiter.calculate(this.joystick.getLeftVerticalMovement() * flip)) * MAX_SPEED_METERS_PER_SEC * speedAdjust;
-        double xSpeed = -Util.squareKeepSign(this.xSpeedLimiter.calculate(this.joystick.getLeftHorizontalMovement() * flip)) * MAX_SPEED_METERS_PER_SEC * speedAdjust;
+        double ySpeed = Util.squareKeepSign(this.ySpeedLimiter.calculate(this.joystick.getLeftVerticalMovement() * flip)) * DriveTrainSubsystem.MAX_SPEED_METERS_PER_SEC * speedAdjust;
+        double xSpeed = -Util.squareKeepSign(this.xSpeedLimiter.calculate(this.joystick.getLeftHorizontalMovement() * flip)) * DriveTrainSubsystem.MAX_SPEED_METERS_PER_SEC * speedAdjust;
         // System.out.println("xSpeed = " + xSpeed);
         // System.out.println("ySpeed = " + ySpeed);
 
-        double rotSpeed = -this.joystick.getRightHorizontalMovement() * MAX_ROT_SPEED_ANGULAR * speedAdjust;
+        double rotSpeed = -this.joystick.getRightHorizontalMovement() * DriveTrainSubsystem.MAX_ROT_SPEED_ANGULAR * speedAdjust;
 
 
         // System.out.println("forward speed: " + ySpeed + ", x speed: " + xSpeed);

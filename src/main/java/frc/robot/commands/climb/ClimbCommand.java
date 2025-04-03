@@ -13,11 +13,11 @@ import frc.robot.subsystems.ClimberSubsystem;
  * Other command left as exercise to reader.
  */
 public class ClimbCommand extends Command {
-    private static double CLIMB_COMMAND_DURATION = 3.0;
-    private static double CLIMB_COMMAND_END_ANGLE = 60.0;
-    private static double SPEED = 0.2;
+    private static final double CLIMB_COMMAND_DURATION = 3.0;
+    private static final double CLIMB_COMMAND_END_ANGLE = 60.0;
+    private static final double SPEED = 0.2;
     private final ClimberSubsystem climber;
-    private Timer timer;
+    private final Timer timer;
     private Rotation2d currentPosition;
 
     public ClimbCommand(ClimberSubsystem climber) {

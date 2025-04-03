@@ -2,14 +2,13 @@ package frc.robot.commands.drive;
 
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.Flags;
 import frc.robot.controllers.AbstractController;
 import frc.robot.subsystems.swerve.DriveTrainSubsystem;
 import frc.robot.util.NetworkTablesUtil;
 import frc.robot.util.Util;
 
 public class AlgaeCenterCommand extends Command {
-    public static final double MAX_SPEED_METERS_PER_SEC = Flags.DriveTrain.LOWER_MAX_SPEED ? 1.5 : 3;
+    public static final double MAX_SPEED_METERS_PER_SEC = DriveTrainSubsystem.MAX_SPEED_METERS_PER_SEC;
     public static final double MAX_ROT_SPEED_ANGULAR = 3;
     private final DriveTrainSubsystem driveTrain;
     private final AbstractController joystick;
@@ -35,14 +34,6 @@ public class AlgaeCenterCommand extends Command {
         // this.driveTrain.setPose(new Pose2d(2, 7, RobotGyro.getRotation2d()));
     }
 
-    private double flipFactor() {
-        if (Util.onBlueTeam()) {
-            return 1;
-        } else {
-            return -1;
-        }
-    }
-
     @Override
     public void execute() {
         // System.out.println("vert: " + this.joystick.getRightVerticalMovement() + ", hor: " + this.joystick.getRightHorizontalMovement());
@@ -50,7 +41,7 @@ public class AlgaeCenterCommand extends Command {
         final double kP = 0.001;
         //double flip = flipFactor();
         double pixelDiff = NetworkTablesUtil.getJetsonAlgaeCenter();
-        double flip = flipFactor();
+        double flip = DriveTrainSubsystem.flipFactor();
         double ySpeedError = Util.squareKeepSign(this.ySpeedLimiter.calculate(this.joystick.getLeftVerticalMovement() * flip)) * MAX_SPEED_METERS_PER_SEC;
         double xSpeedError = -Util.squareKeepSign(this.xSpeedLimiter.calculate(this.joystick.getLeftHorizontalMovement() * flip)) * MAX_SPEED_METERS_PER_SEC;
         // System.out.println("xSpeed = " + xSpeed);

@@ -162,7 +162,7 @@ public class PathfindThenFollowPath2 extends SequentialCommandGroup {
 			 * The new target point to end the dynamic pathplanning portion at.
 			 */
 			AtomicReference<Pose2d> newTarget = new AtomicReference<>();
-
+			
 			/*
 			 * The path connecting the new target point to the beginning of the preplanned path
 			 */
@@ -211,7 +211,7 @@ public class PathfindThenFollowPath2 extends SequentialCommandGroup {
 								newTarget.set(poses.get(poses.size() - 1)); // just go to endpoint
 							}
 							
-							if(Util.isSim()) {
+							if (Util.isSim()) {
 								RobotContainer.INSTANCE.driveTrain.setPose(new Pose2d(newTarget.get().getTranslation(), goalPath.getGoalEndState().rotation()));
 							}
 						}
@@ -240,9 +240,9 @@ public class PathfindThenFollowPath2 extends SequentialCommandGroup {
 				// like it throws an error every time
 				Commands.defer(() -> {
 						var cPath = connectorPath.get();
-						if(cPath != null) {
+						if (cPath != null) {
 							var poses = cPath.getPathPoses();
-							if(poses.size() > 1 && poses.get(0).getTranslation().getDistance(poses.get(poses.size() - 1).getTranslation()) > 0.75) {
+							if (poses.size() > 1 && poses.get(0).getTranslation().getDistance(poses.get(poses.size() - 1).getTranslation()) > 0.75) {
 								System.out.println("connector path exists & is long enough, connecting...");
 								connectorCommand.set(new FollowPathCommand(
 									cPath,
@@ -262,7 +262,7 @@ public class PathfindThenFollowPath2 extends SequentialCommandGroup {
 						return connectorCommand.get();
 					}, Set.of(requirements)
 				).alongWith(new InstantCommand(() -> {
-					if(connectorCommand.get() instanceof FollowPathCommand fpc) {
+					if (connectorCommand.get() instanceof FollowPathCommand fpc) {
 						DriveTrainSubsystem.connectionPathPub.set(Util.convertPPTrajStateListToDoubleArray(trajFromFollowPathCom(fpc).getStates()));
 					}
 				})),

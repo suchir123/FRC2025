@@ -6,7 +6,6 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.Flags;
 import frc.robot.subsystems.staticsubsystems.LimeLight;
 import frc.robot.subsystems.swerve.DriveTrainSubsystem;
 import frc.robot.util.AprilTagUtil;
@@ -14,7 +13,7 @@ import frc.robot.util.Util;
 
 // Need to tune speed and have different times!
 public class FollowApriltagForwardCommand extends Command {
-    public static final double MAX_SPEED_METERS_PER_SEC = Flags.DriveTrain.LOWER_MAX_SPEED ? 1.5 : 3;
+    public static final double MAX_SPEED_METERS_PER_SEC = DriveTrainSubsystem.MAX_SPEED_METERS_PER_SEC;
     public static final double MAX_ROT_SPEED_ANGULAR = 3;
     private final DriveTrainSubsystem driveTrain;
     private final Timer timer;
@@ -50,15 +49,7 @@ public class FollowApriltagForwardCommand extends Command {
         this.timer.restart();
         // this.driveTrain.setPose(new Pose2d(2, 7, RobotGyro.getRotation2d()));
     }
-
-    private double flipFactor() {
-        if (Util.onBlueTeam()) {
-            return 1;
-        } else {
-            return -1;
-        }
-    }
-
+    
     @Override
     public void execute() {
         if(Util.onBlueTeam()) {
@@ -66,7 +57,7 @@ public class FollowApriltagForwardCommand extends Command {
         } else {
             LimeLight.setLimeyPipeline(0);
         }
-        double flip = flipFactor();
+        double flip = DriveTrainSubsystem.flipFactor();
         // System.out.println("vert: " + this.joystick.getRightVerticalMovement() + ", hor: " + this.joystick.getRightHorizontalMovement());
         // this.driveTrain.drive(this.joystick.getVerticalMovement());
         final double kPTranslation = 0.2;
