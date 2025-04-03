@@ -3,25 +3,25 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.64775,
-        "y": 7.3595
+        "x": 1.38,
+        "y": 7.207
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.0434931506849314,
-        "y": 6.955008561643836
+        "x": 1.7757431506849313,
+        "y": 6.802508561643836
       },
       "isLocked": false,
       "linkedName": "HumanPlayer2"
     },
     {
       "anchor": {
-        "x": 3.8203199999999997,
-        "y": 5.155999999999999
+        "x": 3.83,
+        "y": 5.122
       },
       "prevControl": {
-        "x": 3.5610873287671234,
-        "y": 5.422388698630137
+        "x": 3.5707673287671238,
+        "y": 5.388388698630138
       },
       "nextControl": null,
       "isLocked": false,
@@ -57,7 +57,7 @@
   "folder": "Lil Addy's Bigger Booms",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 126.634
+    "rotation": 126.0
   },
   "useDefaultConstraints": true
 }

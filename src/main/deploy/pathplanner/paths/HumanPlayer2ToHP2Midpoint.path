@@ -3,13 +3,13 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.64775,
-        "y": 7.3595
+        "x": 1.38,
+        "y": 7.207
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.0205592105263155,
-        "y": 6.459292763157895
+        "x": 1.7528092105263153,
+        "y": 6.306792763157895
       },
       "isLocked": false,
       "linkedName": "HumanPlayer2"
@@ -48,7 +48,7 @@
   "folder": "FourBigBooms",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 126.634
+    "rotation": 126.0
   },
   "useDefaultConstraints": true
 }

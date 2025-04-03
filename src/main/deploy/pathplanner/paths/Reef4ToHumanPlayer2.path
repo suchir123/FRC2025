@@ -16,12 +16,12 @@
     },
     {
       "anchor": {
-        "x": 1.64775,
-        "y": 7.3595
+        "x": 1.38,
+        "y": 7.207
       },
       "prevControl": {
-        "x": 2.17425,
-        "y": 6.452750000000001
+        "x": 1.9064999999999996,
+        "y": 6.300250000000001
       },
       "nextControl": null,
       "isLocked": false,
@@ -42,7 +42,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 126.634
+    "rotation": 126.0
   },
   "reversed": false,
   "folder": "FourBigBooms",

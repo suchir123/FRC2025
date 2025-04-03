@@ -3,35 +3,52 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.64775,
-        "y": 7.3595
+        "x": 1.38,
+        "y": 7.207
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.8969107533965783,
-        "y": 7.3799675100305215
+        "x": 2.6380058519181357,
+        "y": 6.39004144747746
       },
       "isLocked": false,
       "linkedName": "HumanPlayer2"
     },
     {
       "anchor": {
-        "x": 3.82,
-        "y": 5.155999999999999
+        "x": 3.83,
+        "y": 5.122
       },
       "prevControl": {
-        "x": 2.858906028105765,
-        "y": 5.357942344995496
+        "x": 3.335025253169417,
+        "y": 5.616974746830583
       },
       "nextControl": null,
       "isLocked": false,
       "linkedName": "Reef3"
     }
   ],
-  "rotationTargets": [],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 0.36,
+      "rotationDegrees": -59.99999999999999
+    }
+  ],
   "constraintZones": [],
   "pointTowardsZones": [],
-  "eventMarkers": [],
+  "eventMarkers": [
+    {
+      "name": "GoToL4",
+      "waypointRelativePos": 0.54,
+      "endWaypointRelativePos": null,
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "GoToL4"
+        }
+      }
+    }
+  ],
   "globalConstraints": {
     "maxVelocity": 3.0,
     "maxAcceleration": 2.0,
@@ -48,7 +65,7 @@
   "folder": "FourBigBooms",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 126.634
+    "rotation": 126.0
   },
   "useDefaultConstraints": true
 }

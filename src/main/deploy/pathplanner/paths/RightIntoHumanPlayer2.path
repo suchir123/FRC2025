@@ -16,12 +16,12 @@
     },
     {
       "anchor": {
-        "x": 1.64775,
-        "y": 7.3595
+        "x": 1.38,
+        "y": 7.207
       },
       "prevControl": {
-        "x": 1.90125,
-        "y": 7.301
+        "x": 1.6335,
+        "y": 7.1485
       },
       "nextControl": null,
       "isLocked": false,
@@ -42,7 +42,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 126.634
+    "rotation": 126.0
   },
   "reversed": false,
   "folder": "dynamic pathfinding paths 2",

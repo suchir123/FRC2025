@@ -3,25 +3,25 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 3.8203199999999997,
-        "y": 5.155999999999999
+        "x": 3.83,
+        "y": 5.122
       },
       "prevControl": null,
       "nextControl": {
-        "x": 3.305650684931507,
-        "y": 5.69285102739726
+        "x": 3.3153306849315074,
+        "y": 5.658851027397261
       },
       "isLocked": false,
       "linkedName": "Reef3"
     },
     {
       "anchor": {
-        "x": 1.64775,
-        "y": 7.3595
+        "x": 1.38,
+        "y": 7.207
       },
       "prevControl": {
-        "x": 2.088570205479452,
-        "y": 6.909931506849315
+        "x": 1.8208202054794518,
+        "y": 6.757431506849315
       },
       "nextControl": null,
       "isLocked": false,
@@ -51,7 +51,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 126.634
+    "rotation": 126.0
   },
   "reversed": false,
   "folder": "Lil Addy's Bigger Booms",
