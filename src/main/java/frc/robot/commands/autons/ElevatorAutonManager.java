@@ -145,4 +145,31 @@ public class ElevatorAutonManager {
             //new WaitUntilCommand(getAtSetpoint)
         ;//);
     }
+
+    public Command getRunReefAlgaeRemoverCommand() {
+        return new InstantCommand(() -> {
+            ElevatorStateManager.INSTANCE.cloneState()
+                .setAlgaeReefRemoverState(AlgaeReefRemoverState.INTAKE)
+                .setAsCurrent();
+            });
+    }
+
+    public Command getOuttakeReefAlgaeRemoverCommand() {
+        return new InstantCommand(() -> {
+            ElevatorStateManager.INSTANCE.cloneState()
+                .setAlgaeReefRemoverState(AlgaeReefRemoverState.OUTTAKE)
+                .setAsCurrent();
+            });
+    }
+
+    public Command getGoToBargeDropCommand() {
+        return new InstantCommand(() -> {
+            ElevatorStateManager.INSTANCE.cloneState()
+                .setHeight(1.04)
+                .setPivotAngle(Rotation2d.fromRotations(0.6))
+                .setCoralIntakeState(ElevatorStateManager.CoralIntakeState.STOPPED)
+                .setAlgaeReefRemoverState(AlgaeReefRemoverState.INTAKE)
+                .setAsCurrent();
+        });
+    }
 }

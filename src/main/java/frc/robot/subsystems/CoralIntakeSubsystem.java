@@ -27,7 +27,7 @@ import frc.robot.util.Util;
 
 public class CoralIntakeSubsystem extends SubsystemBase {
     private static final double VERY_HARD_BACK_LIMIT = 0.03; // to make sure we don't roll-over the intake
-    private static final double FRONT_LIMIT = 0.6;
+    private static final double FRONT_LIMIT = 0.7;
 
     private final SparkMax coralPivotMotor;
     private final RelativeEncoder coralPivotEncoder;

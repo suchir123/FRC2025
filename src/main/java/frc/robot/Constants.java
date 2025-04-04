@@ -43,6 +43,7 @@ public final class Constants {
 			
 			public static final TriggerType RESET_GYRO = TriggerType.POV_180;
 			public static final TriggerType BARGE_OUTTAKE = TriggerType.POV_270;
+			public static final TriggerType BARGE_RESCUE = TriggerType.POV_90;
 			
 			
 			public static final TriggerType BARGE_ALGAE = TriggerType.RIGHT_SHOULDER_TRIGGER;

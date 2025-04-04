@@ -119,10 +119,13 @@ public class RobotContainer {
 		NamedCommands.registerCommand("GoToL3", this.elevatorAutonManager.getGoToL3Command());
 		NamedCommands.registerCommand("GoToL2", this.elevatorAutonManager.getGoToL2Command());
 		NamedCommands.registerCommand("GoToL1", this.elevatorAutonManager.getGoToL1Command());
+		NamedCommands.registerCommand("GoToBargeDrop", this.elevatorAutonManager.getGoToBargeDropCommand());
 		NamedCommands.registerCommand("GoToIntakeAngle", this.elevatorAutonManager.getGoToIntakeStateCommand());
 		NamedCommands.registerCommand("CoralIntake", this.elevatorAutonManager.getCoralIntakeCommand());
 		NamedCommands.registerCommand("PlaceCoral", this.elevatorAutonManager.getPlaceCoralCommand());
 		NamedCommands.registerCommand("ResetGyro", this.elevatorAutonManager.resetGyroCommand());
+		NamedCommands.registerCommand("RunReefAlgaeRemover", this.elevatorAutonManager.getRunReefAlgaeRemoverCommand());
+		NamedCommands.registerCommand("OuttakeReefAlgaeRemover", this.elevatorAutonManager.getOuttakeReefAlgaeRemoverCommand());
 		
 		NamedCommands.registerCommand("FollowApriltagForward4Seconds", new FollowApriltagForwardCommand(driveTrain, 4.0, true));
 		NamedCommands.registerCommand("FollowApriltagForward3Seconds", new FollowApriltagForwardCommand(driveTrain, 2.5, true));
@@ -166,7 +169,7 @@ public class RobotContainer {
 			
 			ControlHandler.get(this.secondaryController, OperatorConstants.SecondaryControllerConstants.L3).onTrue(new InstantCommand(() -> elevatorStateManager.cloneState()
 				.setHeight(0.35)
-				.setPivotAngle(Rotation2d.fromRotations(0.46))
+				.setPivotAngle(Rotation2d.fromRotations(0.41))
 				.setCoralIntakeState(ElevatorStateManager.CoralIntakeState.STOPPED)
 				.setAlgaeReefRemoverState(AlgaeReefRemoverState.STOPPED)
 				.primeAsNext()));
@@ -188,6 +191,10 @@ public class RobotContainer {
 			
 			ControlHandler.get(this.secondaryController, OperatorConstants.SecondaryControllerConstants.BARGE_OUTTAKE).onTrue(new InstantCommand(() -> elevatorStateManager.cloneState()
 				.setAlgaeReefRemoverState(AlgaeReefRemoverState.OUTTAKE)
+				.setAsCurrent()));
+
+			ControlHandler.get(this.secondaryController, OperatorConstants.SecondaryControllerConstants.BARGE_RESCUE).onTrue(new InstantCommand(() -> elevatorStateManager.cloneState()
+				.setPivotAngle(Rotation2d.fromRotations(0.65))
 				.setAsCurrent()));
 			
 			ControlHandler.get(this.primaryController, OperatorConstants.PrimaryControllerConstants.CLIMB_PIVOT_ANGLE_PRIMARY)
@@ -215,23 +222,23 @@ public class RobotContainer {
 			// .alongWith(new InstantCommand(() -> this.algaeGroundIntake.setIntakeSpeed(-0.5), this.algaeGroundIntake))).onFalse(new InstantCommand(() -> this.algaeGroundIntake.setIntakeSpeed(0), this.algaeGroundIntake));
 			
 			ControlHandler.get(this.primaryController, OperatorConstants.PrimaryControllerConstants.ACTIVATE_ELEVATORS).onTrue(new InstantCommand(elevatorStateManager::pushNextState));
+		}
+
+		if (Flags.DriveTrain.IS_ATTACHED) {
+			ControlHandler.get(this.secondaryController, OperatorConstants.SecondaryControllerConstants.RESET_GYRO).onTrue(new InstantCommand(() -> {
+				if (!Util.onBlueTeam()) {
+					RobotGyro.resetGyroAngle();
+				} else {
+					RobotGyro.setGyroAngle(180);
+				}
+				this.driveTrain.setHeadingLockMode(false);
+			}));
 			
-			if (Flags.DriveTrain.IS_ATTACHED) {
-				ControlHandler.get(this.secondaryController, OperatorConstants.SecondaryControllerConstants.RESET_GYRO).onTrue(new InstantCommand(() -> {
-					if (!Util.onBlueTeam()) {
-						RobotGyro.resetGyroAngle();
-					} else {
-						RobotGyro.setGyroAngle(180);
-					}
-					this.driveTrain.setHeadingLockMode(false);
-				}));
-				
-				// we need to defer this b/c we need a new command each time
-				ControlHandler.get(this.primaryController, OperatorConstants.PrimaryControllerConstants.REEF_AUTO_PATHFIND).whileTrue(Commands.defer(driveTrain::getFindToSelectedReefCommand, Set.of(driveTrain)));
-				ControlHandler.get(this.primaryController, OperatorConstants.PrimaryControllerConstants.REEF_AUTO_AIM).whileTrue(new ReefAprilTagCenterCommand(driveTrain, this.primaryController));
-				// ControlHandler.get(this.secondaryController, OperatorConstants.SecondaryControllerConstants.MICRO_ADJUST_DRIVING).whileTrue(new SlowerManualDriveCommand(driveTrain, this.secondaryController));
-				//ControlHandler.get(this.secondaryController, OperatorConstants.SecondaryControllerConstants.INTAKE_STATE).whileTrue(new SlowerManualDriveCommand(driveTrain, this.primaryController));
-			}
+			// we need to defer this b/c we need a new command each time
+			ControlHandler.get(this.primaryController, OperatorConstants.PrimaryControllerConstants.REEF_AUTO_PATHFIND).whileTrue(Commands.defer(driveTrain::getFindToSelectedReefCommand, Set.of(driveTrain)));
+			ControlHandler.get(this.primaryController, OperatorConstants.PrimaryControllerConstants.REEF_AUTO_AIM).whileTrue(new ReefAprilTagCenterCommand(driveTrain, this.primaryController));
+			// ControlHandler.get(this.secondaryController, OperatorConstants.SecondaryControllerConstants.MICRO_ADJUST_DRIVING).whileTrue(new SlowerManualDriveCommand(driveTrain, this.secondaryController));
+			//ControlHandler.get(this.secondaryController, OperatorConstants.SecondaryControllerConstants.INTAKE_STATE).whileTrue(new SlowerManualDriveCommand(driveTrain, this.primaryController));
 		}
 	}
 	
@@ -243,6 +250,9 @@ public class RobotContainer {
 	public void onTeleopInit() {
 		if (this.auto != null) {
 			this.auto.cancel();
+			if(canUseElevatorControlCommand()) {
+				elevatorStateManager.cloneState().setCoralIntakeState(CoralIntakeState.STOPPED).setAsCurrent();
+			}
 		}
 		
 		if (Flags.Elevator.IS_ATTACHED) {

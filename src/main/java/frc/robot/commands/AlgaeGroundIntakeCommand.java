@@ -14,6 +14,7 @@ public class AlgaeGroundIntakeCommand extends Command {
     private final AbstractController secondaryController;
     private final Trigger toggleAlgaeHeight;
     private final Trigger toggleCoralHeight;
+    private final Trigger goToStartConfig;
     private final Trigger intakeButton;
     private final Trigger outtakeButton;
     private boolean atAlgaeHeight = false;
@@ -26,6 +27,7 @@ public class AlgaeGroundIntakeCommand extends Command {
 
         this.toggleAlgaeHeight = ControlHandler.get(this.secondaryController, Constants.OperatorConstants.SecondaryControllerConstants.GROUND_INTAKE_ALGAE_TOGGLE);
         this.toggleCoralHeight = ControlHandler.get(this.secondaryController, Constants.OperatorConstants.SecondaryControllerConstants.GROUND_INTAKE_CORAL_TOGGLE);
+        this.goToStartConfig = ControlHandler.get(this.secondaryController, Constants.OperatorConstants.SecondaryControllerConstants.GROUND_INTAKE_START_CONFIG);
         this.intakeButton = ControlHandler.get(this.primaryController, Constants.OperatorConstants.PrimaryControllerConstants.ALGAE_GROUND_INTAKE);
         this.outtakeButton = ControlHandler.get(this.primaryController, Constants.OperatorConstants.PrimaryControllerConstants.ALGAE_GROUND_OUTTAKE);
 
@@ -37,7 +39,7 @@ public class AlgaeGroundIntakeCommand extends Command {
     public void initialize() {
         this.toggleAlgaeHeight.onTrue(new InstantCommand(() -> {
             if(!atAlgaeHeight) {
-                this.algaeGroundIntake.flapToValue(0.5, 0.5);
+                this.algaeGroundIntake.flapToValue(0.4, 0.6);
             } else {
                 this.algaeGroundIntake.flapToValue(0.85, 0.15);
             }
@@ -52,6 +54,12 @@ public class AlgaeGroundIntakeCommand extends Command {
                 this.algaeGroundIntake.flapToValue(0.85, 0.15);
             }
             atCoralHeight = !atCoralHeight;
+            atAlgaeHeight = false;
+        }));
+
+        this.goToStartConfig.onTrue(new InstantCommand(() -> {
+            this.algaeGroundIntake.flapToValue(0.95, 0.05);
+            atCoralHeight = false;
             atAlgaeHeight = false;
         }));
     }
