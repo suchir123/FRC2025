@@ -73,7 +73,7 @@ public class ElevatorSubsystem extends SubsystemBase {
                 .velocityConversionFactor(360d * ABSOLUTE_DEGREES_PER_RELATIVE_DEGREES / 60d / 762.183 * METERS_ASCENDED_PER_ROTATION);
 
         leftConfig.closedLoop
-                .pidf(2, 0, 0, 0.1)
+                .pidf(2.2, 0, 0, 0.1)
                 .outputRange(-MAX_OUTPUT_LEFT_ELEVATOR_PIDS, MAX_OUTPUT_LEFT_ELEVATOR_PIDS);
 
 
@@ -88,7 +88,7 @@ public class ElevatorSubsystem extends SubsystemBase {
                 .velocityConversionFactor(360d * ABSOLUTE_DEGREES_PER_RELATIVE_DEGREES / 60d / 762.183 * METERS_ASCENDED_PER_ROTATION);
 
         rightConfig.closedLoop
-                .pidf(2, 0, 0, 0.1)
+                .pidf(2.2, 0, 0, 0.1)
                 .outputRange(-MAX_OUTPUT_LEFT_ELEVATOR_PIDS, MAX_OUTPUT_LEFT_ELEVATOR_PIDS);
         
         Util.configureSparkMotor(leftMotor, leftConfig);

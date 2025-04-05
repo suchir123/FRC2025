@@ -46,8 +46,21 @@ public class ElevatorControlCommand extends Command {
 
         targetPivotAngle = Math.max(targetPivotAngle, BACK_LIMIT_WHEN_DOWN);
         // System.out.println("Target height: " + targetHeight);
-        this.elevator.setTargetHeight(targetHeight);
         this.coralIntake.setPivotTargetAngle(Rotation2d.fromRotations(targetPivotAngle));
+        double currentPivotAngle = this.coralIntake.getPivotAngle().getRotations();
+        double currentHeight = this.elevator.getCurrentHeight();
+        // if we're going from a farther pivot angle towards an angle that's inside the robot, AND our height is too low, then pivot first:
+        final double antiGroundIntakeHitRotationsLimit = 0.15; // something above 0.15 going to something below 0.15 triggers case 1
+        final double antiGroundIntakeHitMetersHeightLimit = 0.4; // if we're below 0.4 meters, then it triggers case 2
+
+        //System.out.println("\n" + "currentPivotAngle > antiGroundIntakeHitRotationsLimit: " + (currentPivotAngle > antiGroundIntakeHitRotationsLimit) + "\n" + 
+         //                   "targetPivotAngle < antiGroundIntakeHitRotationsLimit: " + (targetPivotAngle < antiGroundIntakeHitRotationsLimit) + "\n" + 
+          //                  // "currentHeight > targetHeight: " + (currentHeight > targetHeight) + "\n"
+            //+s                "currentHeight < antiGroundIntakeHitMetersHeightLimit: " + (currentHeight < antiGroundIntakeHitMetersHeightLimit));
+                    // going up is always fine
+        if(!(currentPivotAngle > antiGroundIntakeHitRotationsLimit && targetPivotAngle < antiGroundIntakeHitRotationsLimit && currentHeight < antiGroundIntakeHitMetersHeightLimit && currentHeight > targetHeight)) {
+            this.elevator.setTargetHeight(targetHeight);
+        }
 
         switch(this.stateManager.getAlgaeReefRemoverState()) {
             case STOPPED:

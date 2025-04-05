@@ -39,7 +39,7 @@
   "eventMarkers": [
     {
       "name": "GoToL4",
-      "waypointRelativePos": 0.54,
+      "waypointRelativePos": 0.42,
       "endWaypointRelativePos": null,
       "command": {
         "type": "named",
@@ -50,10 +50,10 @@
     }
   ],
   "globalConstraints": {
-    "maxVelocity": 3.0,
-    "maxAcceleration": 2.0,
-    "maxAngularVelocity": 540.0,
-    "maxAngularAcceleration": 540.0,
+    "maxVelocity": 2.8,
+    "maxAcceleration": 1.9,
+    "maxAngularVelocity": 520.0,
+    "maxAngularAcceleration": 520.0,
     "nominalVoltage": 12.0,
     "unlimited": false
   },

@@ -25,7 +25,7 @@ import frc.robot.util.Util;
 
 public class ClimberSubsystem extends SubsystemBase {
     public static final ADIS16470_IMU.IMUAxis ROBOT_TILT_AXIS = IMUAxis.kYaw;
-    private static final double UPPER_HARD_LIMIT = 0.663; // start cnf = 0.535
+    private static final double UPPER_HARD_LIMIT = 0.59; // start cnf = 0.489
     // private final ThroughboreEncoder throughboreEncoder;
 
     private final SparkMax leftClimbMotor;
@@ -61,6 +61,7 @@ public class ClimberSubsystem extends SubsystemBase {
         leftClimbMotorConfig
             // .inverted(false)
             .follow(rightClimbMotor, true)
+            // .disableFollowerMode()
             .idleMode(SparkBaseConfig.IdleMode.kBrake)
             .voltageCompensation(12);
         
@@ -114,6 +115,13 @@ public class ClimberSubsystem extends SubsystemBase {
                 return;
             }
             rightClimbMotor.set(speed);
+        }
+    }
+
+    public void setRawSpeedBoth(double left, double right) {
+        if (Flags.Climber.ENABLED) {
+            rightClimbMotor.set(right);
+            leftClimbMotor.set(left);
         }
     }
 

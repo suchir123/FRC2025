@@ -168,8 +168,8 @@ public class RobotContainer {
 				.primeAsNext()));
 			
 			ControlHandler.get(this.secondaryController, OperatorConstants.SecondaryControllerConstants.L3).onTrue(new InstantCommand(() -> elevatorStateManager.cloneState()
-				.setHeight(0.35)
-				.setPivotAngle(Rotation2d.fromRotations(0.41))
+				.setHeight(0.34)
+				.setPivotAngle(Rotation2d.fromRotations(0.44))
 				.setCoralIntakeState(ElevatorStateManager.CoralIntakeState.STOPPED)
 				.setAlgaeReefRemoverState(AlgaeReefRemoverState.STOPPED)
 				.primeAsNext()));

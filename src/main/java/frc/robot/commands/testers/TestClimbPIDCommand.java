@@ -42,7 +42,7 @@ public class TestClimbPIDCommand extends Command {
             climber.setRawSpeed(-0.4);
         } else if(controller.getPOV() == 90) {
             wasPID = true;
-            climber.setTargetRotationCount(0.66);
+            climber.setTargetRotationCount(0.585);
             ElevatorStateManager.INSTANCE.cloneState()
                     .setHeight(0)
                     .setPivotAngle(Rotation2d.fromRotations(0.4))
@@ -51,7 +51,7 @@ public class TestClimbPIDCommand extends Command {
                     .setAsCurrent();
         } else if(controller.getPOV() == 270) {
             wasPID = true;
-            climber.setTargetRotationCount(0.535);
+            climber.setTargetRotationCount(0.489);
         } else if(!wasPID) {
             climber.setRawSpeed(0);
         }

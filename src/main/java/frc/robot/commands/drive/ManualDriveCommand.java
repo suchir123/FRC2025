@@ -29,8 +29,8 @@ public class ManualDriveCommand extends Command {
         this.leftStickButton = joystick.leftJoystickButtonTrigger();
         this.rightStickButton = joystick.rightJoystickButtonTrigger();
 
-        this.leftStickButton.or(this.rightStickButton).onTrue(new InstantCommand(() -> toggleMicroAdjustment = !toggleMicroAdjustment));
-        // this.aprilTagHandler = aprilTagHandler;
+        this.rightStickButton.onTrue(new InstantCommand(() -> toggleMicroAdjustment = !toggleMicroAdjustment));
+        // this.aprilTagHandler 7= aprilTagHandler;
         // this.autoAimSubwoofer = ControlHandler.get(joystick, ControllerConstants.AUTO_AIM_FOR_SHOOT);
 
         addRequirements(driveTrain);
